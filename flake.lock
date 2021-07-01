@@ -1,0 +1,80 @@
+{
+  "nodes": {
+    "emacs-overlay": {
+      "locked": {
+        "lastModified": 1624727938,
+        "narHash": "sha256-w6vdESHOlSVaa+ts7HB2Yi7zxZepjHnXArdTiauk/2o=",
+        "owner": "nix-community",
+        "repo": "emacs-overlay",
+        "rev": "d756e841ef2d30dcb9d831f47c2f2bc9b7eaaabf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "emacs-overlay",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1624746582,
+        "narHash": "sha256-5RXicZDUxLjzz64oWXoRqAaTsfnG1oucIB3UIQa0rMI=",
+        "owner": "rycee",
+        "repo": "home-manager",
+        "rev": "8d3b273afef0e6c3d6d6e4239c9c9d79b1ab6ed7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rycee",
+        "ref": "master",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1624626397,
+        "narHash": "sha256-+h0ulo5//RqStx6g6MDqD9MzgmBfeZ1VYxwEaSmw/Zs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e1f8852faac7638e88d5e8a5b9ee2a7568685e3f",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-unstable",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1624768879,
+        "narHash": "sha256-phwyXNHvuc8D+YcBb9gfB7FedPgqp9ryvjhWlVRcEXg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f5b9a25cdd21b4e45ab5f11c27b95dfe17384274",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "master",
+        "type": "indirect"
+      }
+    },
+    "root": {
+      "inputs": {
+        "emacs-overlay": "emacs-overlay",
+        "home-manager": "home-manager",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-unstable": "nixpkgs-unstable"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

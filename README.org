@@ -1,0 +1,12 @@
+#+TITLE: Readme
+
+[[file:screenshots/ss01.png]]
+
+#+ATTR_HTML: :border 2 :rules all :frame border
+|------------+----------------|
+| *OS*       | NixOS          |
+| *Shell*    | bash           |
+| *Terminal* | Kitty          |
+| *WM*       | xmonad         |
+| *Font*     | JetBrains Mono |
+| *Editor*   | Emacs          |
