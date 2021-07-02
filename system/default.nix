@@ -123,11 +123,10 @@
         enableContribAndExtras = true;
         extraPackages = hp:
           with hp; [
-            hp.xmonad-contrib
-            hp.dbus
-            hp.monad-logger
-            hp.X11
-            hp.containers_0_6_4_1
+            xmonad-contrib
+            dbus
+            monad-logger
+            X11
           ];
       };
     };

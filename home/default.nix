@@ -85,6 +85,8 @@
       enable = true;
       version = "emacsGcc";
     };
+
+    windowManagers.xmonad.enable = true;
   };
 
   nixpkgs.config.allowUnfree = true;
