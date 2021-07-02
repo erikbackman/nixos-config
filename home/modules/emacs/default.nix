@@ -56,18 +56,19 @@ in {
       libtool
       gnumake
       libvterm
+      # :app everywhere
+      xorg.xwininfo
+      xclip
+      # :org ob-jupyter
+      jupyter
     ];
-    lib.hm.programs.git.extraConfig.core.editor = "emacs";
+    programs.git.extraConfig.core.editor = "emacs";
     services.emacs = {
       enable = true;
       package = emacsPackage;
     };
 
-    home.file = {
-      ".config/foo.txt".text = "bar";
-    };
-    # home.xresources.extraConfig = '''';
-    lib.hm.xresources.properties = {
+    xresources.properties = {
       "Emacs.menuBar" = false;
       "Emacs.toolBar" = false;
       "Emacs.verticalScrollBars" = false;
