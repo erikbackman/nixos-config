@@ -28,13 +28,13 @@
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
-            ./system/default.nix
+            ./system
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit inputs; };
-              home-manager.users.ebn = import ./home/default.nix;
+              home-manager.users.ebn = import ./home;
             }
           ];
         };
