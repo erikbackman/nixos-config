@@ -19,6 +19,10 @@
   }:
     let system = "x86_64-linux";
     in {
+      devShell.${system} = import ./shell.nix {
+        pkgs = import nixpkgs { inherit system; };
+      };
+
       nixosConfigurations = {
         nixos = nixpkgs.lib.nixosSystem {
           inherit system;
