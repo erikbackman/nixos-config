@@ -159,10 +159,6 @@ projects =
             }
   ]
 
-myGaps :: l a -> ModifiedLayout Gaps l a
-myGaps = gaps [(U, outerGaps), (R, outerGaps), (L, outerGaps), (D, outerGaps)]
-  where outerGaps = 10
-
 mySpacing = spacingRaw True (Border 0 10 10 10) True (Border 10 10 10 10) True
 
 myLayouts =
@@ -314,7 +310,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
     [ key "Terminal"      (modm .|. shiftMask, xK_Return) $ spawn myTerminal
     , key "Apps (Rofi)"   (modm                , xK_p       ) $ spawn appLauncher
     -- , key "Lock screen"   (modm .|. controlMask, xK_l       ) $ spawn screenLocker
-    , key "Emacs everywhere"   (modm .|. controlMask, xK_F10) $ spawn "emacsclient --eval \"(emacs-everywhere)\""
+    , key "Emacs everywhere!"   (modm .|. controlMask, xK_F10) $ spawn "emacsclient --eval \"(emacs-everywhere)\""
     ] ^++^
   keySet "Layouts"
     [ key "Next"          (modm              , xK_space     ) $ sendMessage NextLayout
