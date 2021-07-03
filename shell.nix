@@ -2,9 +2,9 @@
 
 with pkgs;
 let
-  ghc' = pkgs.haskellPackages.ghcWithPackages
+  ghc' = haskellPackages.ghcWithPackages
     (hp: with hp; [ X11 X11-xft dbus utf8-string ]);
-  buildInputs = with pkgs; [
+  buildInputs = [
     pkg-config
     haskellPackages.haskell-language-server
     ghc'
@@ -14,6 +14,6 @@ let
     rnix-lsp
   ];
 in
-pkgs.mkShell {
+mkShell {
   inherit buildInputs;
 }
