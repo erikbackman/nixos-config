@@ -10,6 +10,8 @@ in {
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       paper-icon-theme
+      font-awesome
+      roboto-mono
       rofi
     ];
     programs.rofi = {
