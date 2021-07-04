@@ -6,7 +6,7 @@
   };
 
   imports = with (import ./lib.nix lib).modules;
-    findModulesRec ./modules;
+    listModulesRec ./modules;
 
   programs = {
 
@@ -86,8 +86,10 @@
       version = "emacsGcc";
     };
 
-    windowManagers.xmonad.enable = true;
+    windowManager.xmonad.enable = true;
   };
+
+  fonts.fontconfig.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
