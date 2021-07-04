@@ -60,7 +60,6 @@
     libgccjit
     xmobar
     xdotool
-    rofi
     dunst
     claws-mail-gtk3
     gnome3.zenity

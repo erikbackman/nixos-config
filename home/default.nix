@@ -28,11 +28,6 @@
       extraConfig = { core = { editor = "emacs"; }; };
     };
 
-    rofi = {
-      enable = true;
-      theme = ./config/rofi.rasi;
-    };
-
     kitty = {
       enable = true;
       font = {
@@ -87,6 +82,8 @@
     };
 
     windowManager.xmonad.enable = true;
+
+    programs.rofi.enable = true;
   };
 
   fonts.fontconfig.enable = true;
@@ -111,7 +108,6 @@
     gsettings-desktop-schemas
     playonlinux
     gnumake
-    paper-icon-theme
     polybar
   ];
 
