@@ -2,18 +2,22 @@
 
 with pkgs;
 let
-  ghc' = haskellPackages.ghcWithPackages
-    (hp: with hp; [ X11 X11-xft dbus utf8-string ]);
-  buildInputs = [
+  clibsAndTools = [
+    clang
+    zlib
     pkg-config
-    haskellPackages.haskell-language-server
-    ghc'
-    cabal-install
     xorg.libX11
-    gcc
-    rnix-lsp
+    xorg.libXinerama
+    xorg.libXrandr
+    xorg.libXScrnSaver
+    xorg.libXext
   ];
-in
-mkShell {
-  inherit buildInputs;
-}
+
+  languageServers = [ haskellPackages.haskell-language-server rnix-lsp ];
+
+  haskellTooling = let
+    ghc' = haskellPackages.ghcWithPackages
+      (hp: with hp; [ X11 X11-xft dbus utf8-string zlib cpphs ]);
+  in [ ghc' cabal-install ghcid ];
+
+in mkShell { buildInputs = clibsAndTools ++ languageServers ++ haskellTooling; }
