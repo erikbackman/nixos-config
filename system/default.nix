@@ -36,34 +36,13 @@
   environment.systemPackages = with pkgs; [
     wget
     vim
-    feh
     git
     htop
-    neofetch
     mesa
-    openjdk
-    docker
-    docker-compose
-    sbcl
     xorg.xev
-    mpc_cli
-    scrot
-    streamlink
-    mpv
-    obs-studio
     ispell
-    openshot-qt
     ncpamixer
-    orchis
-    numix-gtk-theme
-    dracula-theme
-    libgccjit
-    xmobar
     xdotool
-    dunst
-    claws-mail-gtk3
-    gnome3.zenity
-    yad
     pass
   ];
 
@@ -120,13 +99,6 @@
       windowManager.xmonad = {
         enable = true;
         enableContribAndExtras = true;
-        extraPackages = hp:
-          with hp; [
-            xmonad-contrib
-            dbus
-            monad-logger
-            X11
-          ];
       };
     };
 

@@ -1,4 +1,4 @@
-{ lib, config, pkgs, inputs, myLib, ... }: {
+{ lib, config, pkgs, inputs, ... }: {
   programs.home-manager.enable = true;
 
   lib.hm.users.ebn = { pkgs, ... }: {
@@ -96,18 +96,25 @@
     maxima
     wxmaxima
     texlive.combined.scheme-full
-    libreoffice-qt
-    arc-theme
-    qogir-theme
+    libreoffice
     chromium
-    nyxt
-    lyx
     nitrogen
     playerctl
     gsettings-desktop-schemas
-    playonlinux
     gnumake
     polybar
+    obs-studio
+    claws-mail-gtk3
+    neofetch
+    dracula-theme
+    mpc_cli
+    scrot
+    docker
+    docker-compose
+    xmobar
+    mpv
+    streamlink
+    feh
   ];
 
   # This value determines the Home Manager release that your

@@ -13,14 +13,7 @@
     emacs-overlay.url = "github:nix-community/emacs-overlay";
   };
 
-  outputs = inputs@{
-      self
-    , nixpkgs
-    , nixpkgs-unstable
-    , home-manager
-    , emacs-overlay
-    , ...
-  }:
+  outputs = inputs@{ nixpkgs, home-manager, ... }:
     let system = "x86_64-linux";
     in {
       devShell.${system} = import ./shell.nix {
