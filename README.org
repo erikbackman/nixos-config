@@ -15,3 +15,5 @@
 | *WM*       | xmonad         |
 | *Font*     | JetBrains Mono |
 | *Editor*   | Emacs          |
+
+Visit [[https://nixos.wiki/wiki/Flakes]] for more information about Flakes.
