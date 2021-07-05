@@ -1,4 +1,8 @@
 {
+  description = "ebn nixos configuration";
+
+  nixConfig.bash-prompt = "❄ nix-develop $ ";
+
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/master";
