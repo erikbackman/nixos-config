@@ -101,7 +101,6 @@
     qogir-theme
     chromium
     nyxt
-    kitty
     lyx
     nitrogen
     playerctl

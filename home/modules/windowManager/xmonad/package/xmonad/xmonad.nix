@@ -1,6 +1,6 @@
 {  mkDerivation, lib, base, xmonad, xmonad-contrib, X11, cpphs, dbus, ... }:
 mkDerivation {
-  pname = "xmonad-x86_64-linux";
+  pname = "ebn-xmonad-x86_64-linux";
   version = "1.0.0";
   src = ./.;
   isLibrary = false;

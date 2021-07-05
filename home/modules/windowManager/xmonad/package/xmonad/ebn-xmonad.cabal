@@ -3,7 +3,7 @@ name:               ebn-xmonad
 version:            0.1.0.0
 extra-source-files: CHANGELOG.md
 
-executable xmonad-x86_64-linux
+executable ebn-xmonad-x86_64-linux
     main-is:          xmonad.hs
     build-depends:    base, xmonad, xmonad-contrib, X11, containers
     -- hs-source-dirs:

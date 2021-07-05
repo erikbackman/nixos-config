@@ -30,7 +30,6 @@ import XMonad.Hooks.InsertPosition (Focus (Newer), Position (Below), insertPosit
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers (composeOne, doCenterFloat, doFullFloat, isDialog, isFullscreen, isInProperty, (-?>))
 import XMonad.Layout.BinarySpacePartition
-import XMonad.Layout.Decoration
 import XMonad.Layout.Gaps
 import XMonad.Layout.MultiToggle ( Toggle (..), mkToggle, single,)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
