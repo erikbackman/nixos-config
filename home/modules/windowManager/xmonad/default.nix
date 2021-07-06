@@ -11,11 +11,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ ebn-xmonad pkgs.yad ];
-    home.file.".xmonad/xmobar.conf".source = ./package/ebn-xmonad/xmobar.conf;
-    home.file.".xmonad/build" = {
-      text = ''ln -s $(which ebn-xmonad-x86_64-linux) ./xmonad-x86_64-linux -f'';
-      executable = true;
+    home = {
+      packages = with pkgs; [ yad feh xorg.xset google-fonts ];
+      file.".xmonad/xmobar.conf".source = ./package/ebn-xmonad/xmobar.conf;
+      file.".xmonad/xmonad-x86_64-linux".source = "${ebn-xmonad}/bin/ebn-xmonad-x86_64-linux";
+      file.".xmonad/build" = {
+        text = "# This file stops xmonad from recompiling on restart";
+        executable = true;
+      };
     };
   };
 }

@@ -202,15 +202,12 @@ myLayouts =
      -- Misc
      master = fixMastered (1/4) (1/2) (gapSpaced 10 $ Tall nmaster delta ratio)
 
-
-
 myStartupHook :: X ()
 myStartupHook = do
   spawnOnce "xrandr --output DP-0 --mode 3440x1440 --rate 99.98"
   spawnOnce "~/.fehbg &"
   spawnOnce "xset r rate 500 33"
   setDefaultCursor xC_left_ptr
-  spawnOnce "dunst &"
 
 myPP :: PP
 myPP = namedScratchpadFilterOutWorkspacePP $ def
