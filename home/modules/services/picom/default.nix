@@ -9,11 +9,6 @@
     fadeDelta = 5;
     opacityRule = [
       "95:class_g = 'kitty'"
-      # "100:name *= 'i3lock'"
-      # "100:class_g = 'Chromium-browser'"
-      # "100:class_g = 'Emacs'"
-      # "100:class_g = 'Nyxt'"
-      # "85:class_g = 'Emacs'"
     ];
     shadow = true;
     shadowOpacity = "0.75";

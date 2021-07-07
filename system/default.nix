@@ -1,4 +1,4 @@
-{ pkgs, xmonad, ... }: {
+{ pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   users.users.ebn = {
