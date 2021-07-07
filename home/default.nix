@@ -115,6 +115,7 @@
     mpv
     streamlink
     feh
+    discord
   ];
 
   # This value determines the Home Manager release that your

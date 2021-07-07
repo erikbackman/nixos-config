@@ -183,7 +183,7 @@ projects =
       , projectStartHook =
           Just $
           spawn mailClient >>
-          spawn "chromium-browser --new-window discord.com/login"
+          spawn "discord"
       }
   , Project
       {projectName = wrkWs, projectDirectory = "~/", projectStartHook = Nothing}
