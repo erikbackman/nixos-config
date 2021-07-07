@@ -24,4 +24,4 @@ let
     haskellPackages.haskell-language-server
   ];
 
-in mkShell { buildInputs = clibsAndTools ++ haskellTooling; }
+in mkShell { buildInputs = cLibsAndTools ++ haskellTooling; }
