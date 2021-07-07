@@ -2,7 +2,7 @@
 
 with pkgs;
 let
-  clibsAndTools = [
+  cLibsAndTools = [
     clang
     zlib
     pkg-config
@@ -13,11 +13,15 @@ let
     xorg.libXext
   ];
 
-  languageServers = [ haskellPackages.haskell-language-server rnix-lsp ];
-
   haskellTooling = let
     ghc' = haskellPackages.ghcWithPackages
       (hp: with hp; [ X11 X11-xft dbus utf8-string zlib cpphs ]);
-  in [ ghc' cabal-install ghcid ];
+  in [
+    ghc'
+    cabal-install
+    ghcid
+    haskellPackages.hindent
+    haskellPackages.haskell-language-server
+  ];
 
-in mkShell { buildInputs = clibsAndTools ++ languageServers ++ haskellTooling; }
+in mkShell { buildInputs = clibsAndTools ++ haskellTooling; }
