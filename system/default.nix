@@ -37,12 +37,10 @@
     wget
     vim
     git
-    htop
     mesa
     xorg.xev
     ispell
     ncpamixer
-    xdotool
     pass
   ];
 
