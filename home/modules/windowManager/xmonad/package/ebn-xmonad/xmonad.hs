@@ -68,14 +68,7 @@ import qualified DBus.Client as D
 import qualified Codec.Binary.UTF8.String as UTF8
 
 main = do
-  -- xmproc <- spawnPipe bar
-
-  dbus <- D.connectSession
-  -- Request access to the DBus name
-
-  D.requestName dbus (D.busName_ "org.xmonad.Log")
-      [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-
+  dbus <- mkDbusClient
   xmonad $
     dynamicProjects projects $
     keybindings $
@@ -83,7 +76,6 @@ main = do
     docks
       def
         { manageHook = myManageHook
-        -- , logHook = dynamicLogWithPP myPP {ppOutput = hPutStrLn xmproc}
         , logHook = dynamicLogWithPP (polybarHook dbus)
         , startupHook = myStartupHook
         , terminal = myTerminal
@@ -96,7 +88,6 @@ main = do
         , workspaces = myWS
         }
   where
-    -- bar = "xmobar ~/.xmonad/xmobar.conf"
     keybindings = addDescrKeys' ((mod4Mask, xK_F1), showKeybindings) myKeys
 
 mkDbusClient :: IO D.Client
