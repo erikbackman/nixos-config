@@ -48,16 +48,12 @@
 
   fonts.fonts = with pkgs; [
     hack-font
-    victor-mono
     iosevka
-    fantasque-sans-mono
-    ubuntu_font_family
     jetbrains-mono
     etBook
-    source-sans-pro
-    nerdfonts
-    google-fonts
+    # nerdfonts
     oldstandard
+    siji
   ];
 
   sound.enable = true;
@@ -79,6 +75,21 @@
       layout = "se";
       videoDrivers = [ "nvidia" ];
 
+      # monitorSection = ''
+      #     VendorName     "Unknown"
+      #     ModelName      "Samsung C34H89x"
+      #     HorizSync       30.0 - 152.0
+      #     VertRefresh     50.0 - 100.0
+      #     Option         "DPMS"
+      # '';
+      # screenSection = ''
+      #   Option         "Stereo" "0"
+      #   Option         "metamodes" "3440x1440_100 +0+0"
+      #   Option         "SLI" "Off"
+      #   Option         "MultiGPU" "Off"
+      #   Option         "BaseMosaic" "off"
+      # '';
+
       displayManager = {
         defaultSession = "none+xmonad";
         lightdm.greeters.mini = {
@@ -87,28 +98,32 @@
           extraConfig = ''
             [greeter-theme]
             background-image = "";
+            background-color = "#0C0F12"
             text-color = "#ff79c6"
             password-background-color = "#1E2029"
             window-color = "#181a23"
-            border-color = "#181a23"
+            border-color = "#bd93f9"
           '';
         };
       };
+
       windowManager.xmonad = {
         enable = true;
         enableContribAndExtras = true;
       };
-    };
 
+    };
     # Music daemon
-    mpd.enable = true;
-    mpd.extraConfig = ''
-      audio_output {
-        type "pulse"
-        name "PulseAudio"
-        server "127.0.0.1"
-      }
-    '';
+    # mpd = {
+    #   enable = true;
+    #   extraConfig = ''
+    #     audio_output {
+    #       type "pulse"
+    #       name "PulseAudio"
+    #       server "127.0.0.1"
+    #    }
+    #   '';
+    # };
   };
 
   # Docker

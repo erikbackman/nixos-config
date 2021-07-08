@@ -13,7 +13,7 @@ in {
 
   config = mkIf cfg.enable {
     home = {
-      packages = with pkgs; [ yad xdotool bottom feh xorg.xset ];
+      packages = with pkgs; [ yad xdotool bottom feh xorg.xset xmonad-log ];
 
       file.".xmonad/xmobar.conf".source = ./package/ebn-xmonad/xmobar.conf;
 

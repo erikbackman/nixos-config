@@ -63,9 +63,19 @@ import XMonad.Util.NamedActions
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
+import qualified DBus as D
+import qualified DBus.Client as D
+import qualified Codec.Binary.UTF8.String as UTF8
 
 main = do
-  xmproc <- spawnPipe bar
+  -- xmproc <- spawnPipe bar
+
+  dbus <- D.connectSession
+  -- Request access to the DBus name
+
+  D.requestName dbus (D.busName_ "org.xmonad.Log")
+      [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+
   xmonad $
     dynamicProjects projects $
     keybindings $
@@ -73,7 +83,8 @@ main = do
     docks
       def
         { manageHook = myManageHook
-        , logHook = dynamicLogWithPP myPP {ppOutput = hPutStrLn xmproc}
+        -- , logHook = dynamicLogWithPP myPP {ppOutput = hPutStrLn xmproc}
+        , logHook = dynamicLogWithPP (polybarHook dbus)
         , startupHook = myStartupHook
         , terminal = myTerminal
         , modMask = mod4Mask
@@ -85,8 +96,54 @@ main = do
         , workspaces = myWS
         }
   where
-    bar = "xmobar ~/.xmonad/xmobar.conf"
+    -- bar = "xmobar ~/.xmonad/xmobar.conf"
     keybindings = addDescrKeys' ((mod4Mask, xK_F1), showKeybindings) myKeys
+
+mkDbusClient :: IO D.Client
+mkDbusClient = do
+  dbus <- D.connectSession
+  D.requestName dbus (D.busName_ "org.xmonad.log") opts
+  return dbus
+ where
+  opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+
+-- Emit a DBus signal on log updates
+dbusOutput :: D.Client -> String -> IO ()
+dbusOutput dbus str =
+  let opath  = D.objectPath_ "/org/xmonad/Log"
+      iname  = D.interfaceName_ "org.xmonad.Log"
+      mname  = D.memberName_ "Update"
+      signal = D.signal opath iname mname
+      body   = [D.toVariant $ UTF8.decodeString str]
+  in  D.emit dbus $ signal { D.signalBody = body }
+
+polybarHook :: D.Client -> PP
+polybarHook dbus =
+  let wrapper c s | s /= "NSP" = wrap ("%{F" <> c <> "} ") " %{F-}" s
+                  | otherwise  = mempty
+      blue   = "#2E9AFE"
+      gray   = "#7F7F7F"
+      orange = "#ea4300"
+      purple = "#9058c7"
+      red    = "#722222"
+  in
+    def
+    { ppOutput = dbusOutput dbus
+    , ppCurrent = wrapper focusedFg
+    , ppVisible = wrapper fg
+    , ppUrgent = wrapper red
+    , ppHidden = wrapper gray
+    , ppWsSep = ""
+    , ppSep = " :: "
+    , ppTitle = const "" --shorten 40
+    }
+    where
+      focusedFg = "#bd93f9"
+      fg = "#ebdbb2"
+      bg = "#282828"
+      gray = "#a89984"
+      bg1 = "#3c3836"
+      red = "#fb4934"
 
 myManageHook :: ManageHook
 myManageHook = manageApps <+> manageSpawn <+> manageScratchpads
@@ -234,6 +291,7 @@ myStartupHook = do
   spawnOnce "xrandr --output DP-0 --mode 3440x1440 --rate 99.98"
   spawnOnce "~/.fehbg &"
   spawnOnce "xset r rate 500 33"
+  spawnOnce "polybar"
   setDefaultCursor xC_left_ptr
 
 myPP :: PP

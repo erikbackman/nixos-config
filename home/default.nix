@@ -86,7 +86,25 @@
     programs.rofi.enable = true;
   };
 
-  fonts.fontconfig.enable = true;
+  services.polybar = {
+    enable = true;
+    package = pkgs.polybar.override {
+      alsaSupport = true;
+      pulseSupport = true;
+      mpdSupport = true;
+    };
+    config = ./config/polybar;
+    extraConfig = ''
+      [module/xmonad]
+      type = custom/script
+      exec = ${pkgs.xmonad-log}/bin/xmonad-log
+      tail = true
+      interval = 1
+    '';
+    script = "polybar main &";
+  };
+
+  # fonts.fontconfig.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
@@ -102,7 +120,6 @@
     playerctl
     gsettings-desktop-schemas
     gnumake
-    polybar
     obs-studio
     claws-mail-gtk3
     neofetch
@@ -116,6 +133,8 @@
     streamlink
     feh
     discord
+    xmonad-log
+    gnome.gucharmap
   ];
 
   # This value determines the Home Manager release that your
