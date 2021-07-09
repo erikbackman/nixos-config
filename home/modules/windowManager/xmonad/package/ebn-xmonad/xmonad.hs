@@ -6,6 +6,9 @@
 {-# OPTIONS_GHC -Wno-overflowed-literals #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PartialTypeSignatures #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE LambdaCase #-}
 
 import qualified Control.Exception as E
 import qualified Data.Map as M
@@ -58,7 +61,6 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
 import qualified XMonad.StackSet as W
 import XMonad.Util.Cursor (setDefaultCursor)
-import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.NamedActions
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run
@@ -67,27 +69,22 @@ import qualified DBus as D
 import qualified DBus.Client as D
 import qualified Codec.Binary.UTF8.String as UTF8
 
-main = do
-  dbus <- mkDbusClient
-  xmonad $
-    dynamicProjects projects $
-    keybindings $
-    ewmh $
-    docks
-      def
-        { manageHook = myManageHook
-        , logHook = dynamicLogWithPP (polybarHook dbus)
-        , startupHook = myStartupHook
-        , terminal = myTerminal
-        , modMask = mod4Mask
-        , borderWidth = 1
-        , handleEventHook = handleEventHook def <+> fullscreenEventHook
-        , layoutHook = myLayouts
-        , focusedBorderColor = "#bd93f9"
-        , normalBorderColor = "#434C5E"
-        , workspaces = myWS
-        }
+main = xmonad . dynamicProjects projects . keybindings . ewmh . docks . config =<< mkDbusClient
   where
+    config dbus =
+      def { manageHook = myManageHook
+          , logHook = dynamicLogWithPP (polybarHook dbus)
+          , startupHook = myStartupHook
+          , terminal = myTerminal
+          , modMask = mod4Mask
+          , borderWidth = 1
+          , handleEventHook = handleEventHook def <+> fullscreenEventHook
+          , layoutHook = myLayouts
+          , focusedBorderColor = "#bd93f9"
+          , normalBorderColor = "#434C5E"
+          , workspaces = myWS
+          }
+
     keybindings = addDescrKeys' ((mod4Mask, xK_F1), showKeybindings) myKeys
 
 mkDbusClient :: IO D.Client
@@ -204,13 +201,6 @@ etcWs = "etc"
 
 myWS :: [WorkspaceId]
 myWS = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
-  where
-    clickable :: [WorkspaceId] -> [WorkspaceId]
-    clickable =
-      zipWith
-        (\i ws ->
-           "<action=xdotool key super+" ++ show i ++ ">" ++ ws ++ "</action>")
-        [1 .. 9]
 
 -- Dynamic Projects ----------------------------------------------------------
 projects :: [Project]
@@ -243,8 +233,6 @@ projects =
   , Project
       {projectName = etcWs, projectDirectory = "~/", projectStartHook = Nothing}
   ]
-
-mySpacing = spacingRaw True (Border 0 10 10 10) True (Border 10 10 10 10) True
 
 myLayouts =
   avoidStruts .
@@ -284,24 +272,6 @@ myStartupHook = do
   spawnOnce "xset r rate 500 33"
   spawnOnce "polybar"
   setDefaultCursor xC_left_ptr
-
-myPP :: PP
-myPP =
-  namedScratchpadFilterOutWorkspacePP $
-  def
-    { ppUrgent = xmobarColor "red" "yellow"
-    , ppCurrent = xmobarColor "#cd00cd" "" . wrap ":" ":"
-    , ppVisible = xmobarColor "#d2b7e5" ""
-    , ppHidden = xmobarColor "#7c5295" "" . wrap " " " "
-    , ppHiddenNoWindows = xmobarColor "#BF616A" ""
-    , ppTitle = const ""
-    , ppSep = "<fc=#D8DEE9> :: </fc>"
-    , ppExtras = []
-    , ppOrder = \(ws:l:t:ex) -> [ws, l] ++ ex ++ [t]
-    }
-
-withKeys :: [(String, X ())] -> XConfig a -> XConfig a
-withKeys = flip additionalKeysP
 
 tryResize :: ResizeDirectional -> Resize -> X ()
 tryResize x y = sequence_ [tryMessageWithNoRefreshToCurrent x y, refresh]
