@@ -13,11 +13,14 @@
     emacs-overlay.url = "github:nix-community/emacs-overlay";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, ... }:
+  outputs = inputs@{ nixpkgs, home-manager, emacs-overlay, ... }:
     let system = "x86_64-linux";
     in {
       devShell.${system} = import ./shell.nix {
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ emacs-overlay.overlay ];
+        };
       };
 
       nixosConfigurations = {
