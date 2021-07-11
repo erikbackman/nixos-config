@@ -107,31 +107,30 @@ dbusOutput dbus str =
 
 polybarHook :: D.Client -> PP
 polybarHook dbus =
-  let wrapper c s | s /= "NSP" = wrap ("%{F" <> c <> "} ") " %{F-}" s
-                  | otherwise  = mempty
-      blue   = "#2E9AFE"
-      gray   = "#7F7F7F"
-      orange = "#ea4300"
-      purple = "#9058c7"
-      red    = "#722222"
-  in
-    def
-    { ppOutput = dbusOutput dbus
-    , ppCurrent = wrapper focusedFg
-    , ppVisible = wrapper fg
-    , ppUrgent = wrapper red
-    , ppHidden = wrapper gray
-    , ppWsSep = ""
-    , ppSep = " :: "
-    , ppTitle = const "" --shorten 40
-    }
-    where
-      focusedFg = "#bd93f9"
-      fg = "#ebdbb2"
-      bg = "#282828"
-      gray = "#a89984"
-      bg1 = "#3c3836"
-      red = "#fb4934"
+  def
+  { ppOutput = dbusOutput dbus
+  , ppCurrent = wrapper focusedFg
+  , ppVisible = wrapper fg
+  , ppUrgent = wrapper red
+  , ppHidden = wrapper gray
+  , ppWsSep = ""
+  , ppSep = " :: "
+  , ppTitle = const "" --shorten 40
+  }
+  where
+    wrapper c s | s /= "NSP" = wrap ("%{F" <> c <> "} ") " %{F-}" s
+                | otherwise  = mempty
+
+    blue      = "#2E9AFE"
+    gray      = "#7F7F7F"
+    orange    = "#ea4300"
+    purple    = "#9058c7"
+    -- red       = "#722222"
+    focusedFg = "#bd93f9"
+    fg        = "#ebdbb2"
+    bg        = "#282828"
+    bg1       = "#3c3836"
+    red       = "#fb4934"
 
 myManageHook :: ManageHook
 myManageHook = manageApps <+> manageSpawn <+> manageScratchpads
