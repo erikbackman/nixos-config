@@ -82,26 +82,43 @@
     };
 
     windowManager.xmonad.enable = true;
-
     programs.rofi.enable = true;
+    services.polybar.enable = true;
   };
 
-  services.polybar = {
+  services.mpd = {
     enable = true;
-    package = pkgs.polybar.override {
-      alsaSupport = true;
-      pulseSupport = true;
-      mpdSupport = true;
-    };
-    config = ./config/polybar;
+    network.startWhenNeeded = true;
     extraConfig = ''
-      [module/xmonad]
-      type = custom/script
-      exec = ${pkgs.xmonad-log}/bin/xmonad-log
-      tail = true
-      interval = 1
+        audio_output {
+          type "pulse"
+          name "pulse audio"
+        }
+        audio_output {
+          type "fifo"
+          name "my_fifo"
+          path "~/.local/share/mpd/fifo"
+          format "44100:16:2"
+        }
     '';
-    script = "polybar main &";
+  };
+  programs.ncmpcpp = {
+    enable = true;
+    package = pkgs.ncmpcpp.override {
+      outputsSupport = true;
+      visualizerSupport = true;
+      clockSupport = true;
+    };
+    settings = {
+      visualizer_in_stereo = "no";
+      visualizer_fifo_path = "~/.local/share/mpd/fifo";
+      visualizer_output_name = "my_fifo";
+      visualizer_sync_interval = "10";
+      visualizer_type = "wave_filled";
+      # visualizer_look = "+";
+      visualizer_color = "gray, magenta, magenta, magenta, magenta";
+      # visualizer_color = "#6272a4, #bd93f9, #bd93f9, #ff79c6";
+    };
   };
 
   # fonts.fontconfig.enable = true;
@@ -135,6 +152,7 @@
     discord
     xmonad-log
     gnome.gucharmap
+    xdotool
   ];
 
   # This value determines the Home Manager release that your

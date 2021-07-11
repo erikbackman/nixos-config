@@ -47,12 +47,12 @@ module-margin-left = 0
 module-margin-right = 0
 
 font-0 = "JetBrains Mono:style=Medium:size=9;2"
-font-1 = "Material\-Design\-Iconic\-Font:size=13;3"
-font-2 = "FontAwesome:size=10;3"
-font-3 = "FontAwesome Brands:size=18;4"
-font-4 = "Siji:pixelsize=10;2"
+font-1 = "FontAwesome 5 Brands:size=11;3"
+font-2 = "Material\-Design\-Iconic\-Font:size=13;3"
+font-3 = "FontAwesome:size=10;3"
+font-4 = "Siji:pixelsize=10;3"
 
-modules-left = pulseaudio pad cpu pad memory
+modules-left = cpu pad memory pad pulseaudio pad spotify
 modules-center = xmonad pad test
 modules-right = network-up pad network-down pad date
 
@@ -134,29 +134,29 @@ type = internal/xwindow
 label = %title:0:80:...%
 label-padding-left = 2
 
-; [module/mpd]
-; type = internal/mpd
-; host = 
-;
-; format-online = <label-song> <toggle>
-; format-padding = 5
-;
-; label-song-maxlen = 45
-; label-song-ellipsis = true
-;
-; icon-prev = 
-; icon-seekb = 
-; icon-stop = 
-; icon-play = 
-; icon-pause = 
-; icon-next = 
-; icon-seekf = 
-;
-; icon-random = 
-; icon-repeat = 
-;
-; toggle-on-foreground = ${colors.fg}
-; toggle-off-foreground = #66
+[module/mpd]
+type = internal/mpd
+host = localhost
+
+format-online = <label-song> <toggle>
+format-padding = 5
+
+label-song-maxlen = 45
+label-song-ellipsis = true
+
+icon-prev = 
+icon-seekb = 
+icon-stop = 
+icon-play = 
+icon-pause = 
+icon-next = 
+icon-seekf = 
+
+icon-random = 
+icon-repeat = 
+
+toggle-on-foreground = ${colors.fg}
+toggle-off-foreground = #66
 
 [module/cpu]
 type = internal/cpu
@@ -256,4 +256,4 @@ content = "   "
 
 [module/logo]
 type = custom/text
-content = ""
+content = " "
