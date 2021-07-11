@@ -11,12 +11,13 @@
       "95:class_g = 'kitty'"
     ];
     shadow = true;
-    shadowOpacity = "0.75";
+    shadowOpacity = "1"; # def: 0.75
     blur = true;
     extraOptions = ''
+      shadow-offset = -14;
+      shadow-radius = 20;
       unredir-if-possible = false;
       blur-strength = 12;
-      shadowRadius = 7;
     '';
   };
 }
