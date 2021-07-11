@@ -142,7 +142,7 @@
     binaryCaches = [
       "https://nix-community.cachix.org/"
       "https://hydra.iohk.io" # Haskell.nix
-      "ebn.cachix.org"
+      "https://ebn.cachix.org"
     ];
 
     binaryCachePublicKeys = [
