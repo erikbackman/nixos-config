@@ -49,7 +49,7 @@ listview {
   lines: 12;
   fixed-height: false;
   /* reverse: true; */
-  columns: 2;
+  columns: 1;
   scrollbar: true;
   spacing: 1px;
   /* Remove strange gap between listview and inputbar */
