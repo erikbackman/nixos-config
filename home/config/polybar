@@ -46,10 +46,11 @@ padding-right = 2
 module-margin-left = 0
 module-margin-right = 0
 
-font-0 = "JetBrains Mono:style=Medium:size=8;2"
-font-1 = "FontAwesome:size=10;3"
-font-2 = "Siji:pixelsize=10;2"
-font-3 = "Material\-Design\-Iconic\-Font:size=13;3"
+font-0 = "JetBrains Mono:style=Medium:size=9;2"
+font-1 = "Material\-Design\-Iconic\-Font:size=13;3"
+font-2 = "FontAwesome:size=10;3"
+font-3 = "FontAwesome Brands:size=18;4"
+font-4 = "Siji:pixelsize=10;2"
 
 modules-left = pulseaudio pad cpu pad memory
 modules-center = xmonad pad test
@@ -66,7 +67,7 @@ label-focused-foreground = ${colors.fg}
 label-focused-padding = 1
 
 label-occupied = %icon%
-label-occupied-foreground = ${colors.accent}
+label-occupied-foreground = ${colors.purple}
 label-occupied-padding = 1
 
 label-urgent-foreground = ${colors.alert}
@@ -84,9 +85,9 @@ date = %A, %h %d
 date-alt = %Y-%m-%d
 time = %I:%M %p
 time-alt = %H:%M:%S
-format-prefix = ""
+format-prefix = ""
 format-prefix-padding = 1
-format-prefix-foreground = ${colors.accent}
+format-prefix-foreground = ${colors.purple}
 
 [module/fs]
 type = internal/fs
@@ -99,7 +100,7 @@ interval = 30
 ;   <bar-used>
 ;   <ramp-capacity>
 format-mounted = "<bar-used>"
-format-mounted-foreground = ${colors.accent}
+format-mounted-foreground = ${colors.purple}
 ; Available tokens:
 ;   %mountpoint%
 ;   %type%
@@ -180,7 +181,7 @@ bar-load-empty-foreground = ${colors.gray}
 type = internal/memory
 interval = 3
 format = <bar-used>
-format-prefix = " "
+format-prefix = " "
 format-prefix-foreground = ${colors.purple}
 format-padding-left = 1
 ; Only applies if <bar-used> is used
@@ -200,8 +201,8 @@ type = internal/network
 interface = eno1
 interval = 4.0
 label-connected = "%upspeed%"
-format-connected-prefix = " "
-format-connected-prefix-foreground = ${colors.accent}
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.purple}
 format-connected-foreground = ${colors.fg}
 format-connected-background =
 format-connected-underline =
@@ -213,8 +214,8 @@ type = internal/network
 interface = eno1
 interval = 4.0
 label-connected = "%downspeed%"
-format-connected-prefix = " "
-format-connected-prefix-foreground = ${colors.accent}
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.purple}
 format-connected-foreground = ${colors.fg}
 format-connected-background =
 format-connected-underline =
@@ -252,3 +253,7 @@ enable-scroll = false
 type = custom/text
 content = "   "
 ;content-foreground = ${colors.gray}
+
+[module/logo]
+type = custom/text
+content = ""
