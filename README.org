@@ -6,8 +6,8 @@
 
 [[file:screenshots/overview.png]]
 [[file:screenshots/busy.png]]
-[[file:screenshots/btm_scratchpad.png]]
 [[file:screenshots/clean.png]]
+[[file:screenshots/btm_scratchpad.png]]
 
 #+ATTR_HTML: :border 2 :rules all :frame border
 |------------+----------------|
