@@ -6,6 +6,7 @@ background = #0a0d10
 purple = #bd93f9
 white = #e6e8ee
 foreground = #ebdbb2
+foreground-alt = #ebdbb2
 black = #000
 yellow = #ddb566
 alert = ${colors.yellow}
@@ -19,7 +20,6 @@ margin-bottom = 0
 
 [bar/main]
 enable-ipc = true
-wm-restack = xmonad
 override-redirect = true
 fixed-center = true
 
@@ -53,7 +53,7 @@ font-3 = "FontAwesome:size=10;3"
 font-4 = "Siji:pixelsize=10;3"
 
 modules-left = cpu pad memory pad pulseaudio pad spotify
-modules-center = xmonad pad test
+modules-center = xmonad pad
 modules-right = network-up pad network-down pad date
 
 format = <label-state> <label-mode>
@@ -61,7 +61,7 @@ label-padding = 1
 
 label-focused = %icon%
 label-focused-background = ${colors.bg-dark}
-label-focused-foreground = ${colors.fg}
+label-focused-foreground = ${colors.foreground}
 # label-focused-underline = ${colors.magenta}
 ; label-focused-foreground = ${xrdb:color2}
 label-focused-padding = 1
@@ -74,7 +74,7 @@ label-urgent-foreground = ${colors.alert}
 label-urgent-padding = 1
 
 label-empty = %icon%
-label-empty-foreground = ${colors.fg-alt}
+label-empty-foreground = ${colors.foreground-alt}
 label-empty-padding = 1
 
 [module/date]
@@ -116,18 +116,18 @@ format-mounted-foreground = ${colors.purple}
 ;   <label-unmounted> (default)
 format-unmounted =
 label-unmounted =
-label-unmounted-foreground = ${colors.fg-alt}
+label-unmounted-foreground = ${colors.foreground-alt}
 
 bar-used-indicator =
 bar-used-width = 8
-bar-used-foreground-0 = ${colors.fg}
-bar-used-foreground-1 = ${colors.fg}
+bar-used-foreground-0 = ${colors.foreground}
+bar-used-foreground-1 = ${colors.foreground}
 bar-used-foreground-2 = ${colors.yellow}
 bar-used-foreground-3 = ${colors.alert}
 bar-used-foreground-4 = ${colors.alert}
 bar-used-fill = |
 bar-used-empty = ¦
-bar-used-empty-foreground = ${colors.fg-alt}
+bar-used-empty-foreground = ${colors.foreground-alt}
 
 [module/xwindow]
 type = internal/xwindow
@@ -155,7 +155,7 @@ icon-seekf = 
 icon-random = 
 icon-repeat = 
 
-toggle-on-foreground = ${colors.fg}
+toggle-on-foreground = ${colors.foreground}
 toggle-off-foreground = #66
 
 [module/cpu]
@@ -164,7 +164,7 @@ interval = 2
 format = <bar-load>
 format-prefix = " "
 format-prefix-foreground = ${colors.purple}
-format-foreground = white
+format-foreground = ${colors.white}
 format-padding = 1
 bar-load-indicator =
 bar-load-width = 8
@@ -203,7 +203,7 @@ interval = 4.0
 label-connected = "%upspeed%"
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.purple}
-format-connected-foreground = ${colors.fg}
+format-connected-foreground = ${colors.foreground}
 format-connected-background =
 format-connected-underline =
 format-disconnected-prefix-foreground = ${colors.alert}
@@ -216,7 +216,7 @@ interval = 4.0
 label-connected = "%downspeed%"
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.purple}
-format-connected-foreground = ${colors.fg}
+format-connected-foreground = ${colors.foreground}
 format-connected-background =
 format-connected-underline =
 format-disconnected-prefix = " "
