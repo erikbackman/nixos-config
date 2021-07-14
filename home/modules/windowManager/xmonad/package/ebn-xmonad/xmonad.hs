@@ -106,7 +106,7 @@ dbusOutput dbus str =
   in  D.emit dbus $ signal { D.signalBody = body }
 
 polybarHook :: D.Client -> PP
-polybarHook dbus =
+polybarHook dbus = namedScratchpadFilterOutWorkspacePP $
   def
   { ppOutput = dbusOutput dbus
   , ppCurrent = wrapper focusedFg
@@ -118,8 +118,7 @@ polybarHook dbus =
   , ppTitle = const "" --shorten 40
   }
   where
-    wrapper c s | s /= "NSP" = wrap ("%{F" <> c <> "} ") " %{F-}" s
-                | otherwise  = mempty
+    wrapper c s = wrap ("%{F" <> c <> "} ") " %{F-}" s
 
     blue      = "#2E9AFE"
     gray      = "#7F7F7F"
