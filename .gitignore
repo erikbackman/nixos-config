@@ -2,3 +2,4 @@
 tmp/
 result
 .direnv/
+bin-tmp
