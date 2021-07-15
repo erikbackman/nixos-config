@@ -8,7 +8,7 @@
     fade = true;
     fadeDelta = 5;
     opacityRule = [
-      "95:class_g = 'kitty'"
+      "90:class_g = 'kitty'"
     ];
     shadow = true;
     shadowOpacity = "1"; # def: 0.75
