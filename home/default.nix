@@ -78,7 +78,7 @@
 
     emacs = {
       enable = true;
-      version = "emacsPgtkGcc";
+      version = "emacsGcc";
     };
 
     windowManager.xmonad.enable = true;
