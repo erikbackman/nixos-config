@@ -87,7 +87,8 @@ if ${use_color}; then
 	if [[ ${EUID} == 0 ]]; then
 		PS1+='\[\033[01;31m\]\h\[\033[01;34m\] \w \$\[\033[00m\] '
 	else
-		PS1+='\[\033[01;35m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
+		# PS1+='\[\033[01;35m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\]\n '
+		PS1+='\[\033[01;32m\]\w\[\033[00m\]\n\[\033[01;35m\]λ\[\033[00m\] '
 	fi
 
 	#BSD#@export CLICOLOR=1
@@ -108,6 +109,8 @@ done
 unset use_color sh
 
 # Misc
+alias la='ls -al'
+
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
 
