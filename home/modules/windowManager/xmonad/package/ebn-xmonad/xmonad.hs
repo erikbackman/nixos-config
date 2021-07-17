@@ -1,14 +1,5 @@
-{-# OPTIONS_GHC -fwarn-unused-imports #-}
-{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
-{-# OPTIONS_GHC -Wno-deferred-type-errors #-}
-{-# OPTIONS_GHC -Wno-deprecations #-}
-{-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
 {-# OPTIONS_GHC -Wno-overflowed-literals #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE PartialTypeSignatures #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE LambdaCase #-}
 
 import qualified Control.Exception as E
 import qualified Data.Map as M
@@ -51,7 +42,6 @@ import XMonad.Hooks.ManageHelpers
   )
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.Gaps
-import XMonad.Layout.Master
 import XMonad.Layout.MultiToggle (Toggle(..), mkToggle, single)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL))
 import XMonad.Layout.NoBorders (smartBorders)
@@ -69,6 +59,7 @@ import qualified DBus as D
 import qualified DBus.Client as D
 import qualified Codec.Binary.UTF8.String as UTF8
 
+main :: IO ()
 main = xmonad . dynamicProjects projects . keybindings . ewmh . docks . config =<< mkDbusClient
   where
     config dbus =
@@ -88,11 +79,9 @@ main = xmonad . dynamicProjects projects . keybindings . ewmh . docks . config =
     keybindings = addDescrKeys' ((mod4Mask, xK_F1), showKeybindings) myKeys
 
 mkDbusClient :: IO D.Client
-mkDbusClient = do
-  dbus <- D.connectSession
-  D.requestName dbus (D.busName_ "org.xmonad.log") opts
-  return dbus
+mkDbusClient = D.connectSession >>= \dbus -> requestBus dbus >> pure dbus
  where
+  requestBus dbus = D.requestName dbus ( D.busName_ "org.xmonad.log" ) opts
   opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
 -- Emit a DBus signal on log updates
@@ -243,6 +232,7 @@ myLayouts =
     full = gapSpaced 5 Full
     column3 = gapSpaced 10 $ ThreeColMid 1 (3 / 100) (1 / 2)
     float = simpleFloat
+    mirrorTall = gapSpaced 10 $ Mirror (Tall 1 (3/100) (1/2))
     -- The default number of windows in the master pane
     nmaster = 1
     -- Default proportion of screen occupied by master pane
@@ -253,22 +243,21 @@ myLayouts =
     gapSpaced g = spacing g . myGaps g
     -- Per workspace layout
     comLayout = onWorkspace comWs (tiled ||| full)
-    devLayout = onWorkspace devWs (full ||| column3 ||| tiled ||| master)
+    devLayout = onWorkspace devWs (full ||| column3 ||| tiled ||| mirrorTall)
     webLayout = onWorkspace webWs (tiled ||| full)
     wrkLayout = onWorkspace wrkWs (tiled ||| full)
     etcLayout = onWorkspace etcWs float
     -- Fullscreen
     fullScreenToggle = mkToggle (single NBFULL)
     -- Misc
-    master =
-      fixMastered (1 / 4) (1 / 2) (gapSpaced 10 $ Tall nmaster delta ratio)
+    -- master l = fixMastered (1 / 4) (1 / 2) l
 
 myStartupHook :: X ()
 myStartupHook = do
   spawnOnce "xrandr --output DP-0 --mode 3440x1440 --rate 99.98"
   spawnOnce "~/.fehbg &"
   spawnOnce "xset r rate 500 33"
-  spawnOnce "polybar"
+  spawnOnce "systemctl --user restart polybar"
   setDefaultCursor xC_left_ptr
 
 tryResize :: ResizeDirectional -> Resize -> X ()
@@ -401,7 +390,11 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
     , key "Incr  abs size" (modm .|. shiftMask, xK_s) $
       withFocused (keysAbsResizeWindow (10, 10) (1024, 752))
     ] ^++^
-  keySet "Workspaces" [key "Remove" (modm .|. shiftMask, xK_F4) removeWorkspace] ++ switchWsById
+  keySet
+    "Workspaces"
+    [ key "Remove" (modm .|. shiftMask, xK_F4) removeWorkspace
+    -- , key "Next" (modm, xK_comma)
+    ] ++ switchWsById
   where
     togglePolybar = spawn "polybar-msg cmd toggle &"
 
@@ -421,6 +414,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
       if m == shiftMask
         then "Move to "
         else "Switch to "
+
 
   -- mod-[1..9]: Switch to workspace N | mod-shift-[1..9]: Move client to workspace N
     switchWsById =
