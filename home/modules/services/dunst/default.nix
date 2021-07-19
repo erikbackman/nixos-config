@@ -45,12 +45,12 @@
         word_wrap = "yes";
       };
       urgency_low = {
-          background = "#1E2029";
+          background = "#0C0F12";
           foreground = "#bbc2cf";
           timeout = 8;
       };
       urgency_normal = {
-          background = "#2a2d39";
+          background = "#0C0F12";
           foreground = "#bbc2cf";
           timeout = 14;
       };
@@ -58,6 +58,10 @@
           background = "#cc6666";
           foreground = "#1E2029";
           timeout = 0;
+      };
+      spotify = {
+        appname="Spotify";
+        format = ''%b - %s'';
       };
     };
   };
