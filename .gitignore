@@ -1,5 +1,6 @@
 *.log
 tmp/
 result
+result-doc
 .direnv/
 bin-tmp

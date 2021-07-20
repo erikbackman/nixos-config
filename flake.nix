@@ -18,15 +18,13 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ emacs-overlay.overlay ];
+        config.allowUnfree = true;
+        overlays = [ emacs-overlay.overlay (import ./overlays) ];
       };
     in {
       devShell.${system} = import ./shell.nix { inherit pkgs; };
 
-      packages.${system} = {
-        xmonad = pkgs.haskell.packages.ghc884.callPackage
-          ./home/modules/windowManager/xmonad/package/ebn-xmonad/xmonad.nix { };
-      };
+      packages.${system} = { ebn-xmonad = pkgs.ebn.ebn-xmonad; };
 
       nixosConfigurations = {
         nixos = nixpkgs.lib.nixosSystem {
@@ -38,7 +36,7 @@
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.extraSpecialArgs = { inherit inputs pkgs; };
               home-manager.users.ebn = import ./home;
             }
           ];
