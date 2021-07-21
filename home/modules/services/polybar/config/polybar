@@ -62,7 +62,7 @@ label-padding = 1
 label-focused = %icon%
 label-focused-background = ${colors.bg-dark}
 label-focused-foreground = ${colors.foreground}
-# label-focused-underline = ${colors.magenta}
+; label-focused-underline = ${colors.magenta}
 ; label-focused-foreground = ${xrdb:color2}
 label-focused-padding = 1
 
@@ -201,7 +201,7 @@ type = internal/network
 interface = eno1
 interval = 4.0
 label-connected = "%upspeed%"
-format-connected-prefix = " "
+format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.purple}
 format-connected-foreground = ${colors.foreground}
 format-connected-background =
