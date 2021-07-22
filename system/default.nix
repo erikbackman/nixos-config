@@ -51,8 +51,8 @@
     iosevka
     jetbrains-mono
     etBook
-    # nerdfonts
     oldstandard
+    google-fonts
     siji
   ];
 
