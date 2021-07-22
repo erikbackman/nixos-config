@@ -11,7 +11,7 @@ in {
 
   config = mkIf cfg.enable {
     home = {
-      packages = with pkgs; [ yad xdotool bottom feh xorg.xset xmonad-log ];
+      packages = with pkgs; [ yad xdotool bottom flameshot feh xorg.xset xmonad-log ];
 
       file.".xmonad/xmonad-x86_64-linux".source =
         "${ebn-xmonad}/bin/ebn-xmonad-x86_64-linux";
