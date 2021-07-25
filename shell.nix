@@ -24,4 +24,11 @@ let
     haskellPackages.haskell-language-server
   ];
 
-in mkShell { buildInputs = cLibsAndTools ++ haskellTooling; }
+in mkShell {
+  buildInputs = cLibsAndTools ++ haskellTooling;
+  shellHook = ''
+    alias os-build="nixos-rebuild build --flake ."
+    alias os-test="sudo nixos-rebuild test --flake ."
+    alias os-switch="sudo nixos-rebuild switch --flake ."
+  '';
+}
