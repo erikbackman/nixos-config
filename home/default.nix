@@ -52,8 +52,8 @@
         color12              = "#6a7b92";
         color5               = "#9d81ba";
         color13              = "#9d81ba";
-        color6               = "#3f93a8";
-        color14              = "#3f93a8";
+        color6               = "#0D9C94";
+        color14              = "#0D9C94";
         color7               = "#e6e8ee";
         color15              = "#ebedf2";
         selection_foreground = "#1b1d22";
@@ -102,6 +102,13 @@
         }
     '';
   };
+
+  services.pulseeffects = {
+    enable = true;
+    package = pkgs.pulseeffects-legacy;
+    preset = "ebn-preset";
+  };
+
   programs.ncmpcpp = {
     enable = true;
     package = pkgs.ncmpcpp.override {
@@ -115,9 +122,7 @@
       visualizer_output_name = "my_fifo";
       visualizer_sync_interval = "10";
       visualizer_type = "wave_filled";
-      # visualizer_look = "+";
       visualizer_color = "gray, magenta, magenta, magenta, magenta";
-      # visualizer_color = "#6272a4, #bd93f9, #bd93f9, #ff79c6";
     };
   };
 
@@ -154,7 +159,6 @@
     gnome.gucharmap
     xdotool
   ];
-
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards
