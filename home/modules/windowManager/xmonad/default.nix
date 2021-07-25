@@ -2,10 +2,10 @@
 
 with lib;
 let
-  cfg = config.ebn.windowManager.xmonad;
+  cfg = config.xsession.ebn.windowManager.xmonad;
   ebn-xmonad = pkgs.ebn.ebn-xmonad;
 in {
-  options.ebn.windowManager.xmonad = {
+  options.xsession.ebn.windowManager.xmonad = {
     enable = mkEnableOption "Enable ebn xmonad config";
   };
 

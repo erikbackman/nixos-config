@@ -2,12 +2,12 @@
 
 with lib;
 let
-  cfg = config.ebn.emacs;
-  version = config.ebn.emacs.version;
+  cfg = config.programs.ebn.emacs;
+  version = config.programs.ebn.emacs.version;
   emacsPackage = pkgs."${version}";
 in {
   options = {
-    ebn.emacs = {
+    programs.ebn.emacs = {
       enable = mkEnableOption "Enable Emacs";
       version = mkOption {
         type = types.str;

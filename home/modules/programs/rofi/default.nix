@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-let cfg = config.ebn.programs.rofi;
+let cfg = config.programs.ebn.rofi;
 in {
-  options.ebn.programs.rofi = {
+  options.programs.ebn.rofi = {
     enable = mkEnableOption "Enable Rofi";
   };
 

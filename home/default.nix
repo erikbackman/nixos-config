@@ -8,6 +8,9 @@
   imports = with (import ./lib.nix lib).modules;
     listModulesRec ./modules;
 
+  #############################################################################
+  #                                  Programs                                 #
+  #############################################################################
   programs = {
 
     direnv = {
@@ -24,8 +27,6 @@
       enable = true;
       userName = "erikbackman";
       userEmail = "erikbackman@users.noreply.github.com";
-
-      extraConfig = { core = { editor = "emacs"; }; };
     };
 
     kitty = {
@@ -70,20 +71,46 @@
         inactive_tab_background = "#999";
       };
     };
-  };
 
-  ebn = {
-    # C/C++
-    dev.cc.enable = true;
+    ncmpcpp = {
+      enable = true;
+      package = pkgs.ncmpcpp.override {
+        outputsSupport = true;
+        visualizerSupport = true;
+        clockSupport = true;
+      };
+      settings = {
+        visualizer_in_stereo = "no";
+        visualizer_fifo_path = "~/.local/share/mpd/fifo";
+        visualizer_output_name = "my_fifo";
+        visualizer_sync_interval = "10";
+        visualizer_type = "wave_filled";
+        visualizer_color = "gray, magenta, magenta, magenta, magenta";
+      };
+    };
 
-    emacs = {
+    ebn.emacs = {
       enable = true;
       version = "emacsGcc";
     };
 
-    windowManager.xmonad.enable = true;
-    programs.rofi.enable = true;
-    services.polybar.enable = true;
+    ebn.rofi.enable = true;
+  };
+
+  #############################################################################
+  #                                  XSession                                 #
+  #############################################################################
+  xsession.ebn.windowManager.xmonad.enable = true;
+
+  #############################################################################
+  #                                  Services                                 #
+  #############################################################################
+  services.ebn.polybar.enable = true;
+
+  services.pulseeffects = {
+    enable = true;
+    package = pkgs.pulseeffects-legacy;
+    preset = "ebn-preset";
   };
 
   services.mpd = {
@@ -103,33 +130,14 @@
     '';
   };
 
-  services.pulseeffects = {
-    enable = true;
-    package = pkgs.pulseeffects-legacy;
-    preset = "ebn-preset";
-  };
+  #############################################################################
+  #                           Programming Languages                           #
+  #############################################################################
+  ebn.dev.cc.enable = true;
 
-  programs.ncmpcpp = {
-    enable = true;
-    package = pkgs.ncmpcpp.override {
-      outputsSupport = true;
-      visualizerSupport = true;
-      clockSupport = true;
-    };
-    settings = {
-      visualizer_in_stereo = "no";
-      visualizer_fifo_path = "~/.local/share/mpd/fifo";
-      visualizer_output_name = "my_fifo";
-      visualizer_sync_interval = "10";
-      visualizer_type = "wave_filled";
-      visualizer_color = "gray, magenta, magenta, magenta, magenta";
-    };
-  };
-
-  # fonts.fontconfig.enable = true;
-
-  nixpkgs.config.allowUnfree = true;
-
+  #############################################################################
+  #                               User Packages                               #
+  #############################################################################
   home.packages = with pkgs; [
     zathura
     spotify

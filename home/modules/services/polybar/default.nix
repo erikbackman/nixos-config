@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.ebn.services.polybar;
+  cfg = config.services.ebn.polybar;
 in with lib; {
-  options.ebn.services.polybar = {
+  options.services.ebn.polybar = {
     enable = mkEnableOption "Enable ebn polybar";
   };
 
