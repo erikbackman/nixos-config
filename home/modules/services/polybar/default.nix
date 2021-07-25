@@ -2,18 +2,13 @@
 
 let
   cfg = config.ebn.services.polybar;
-in
-with lib;
-{
+in with lib; {
   options.ebn.services.polybar = {
     enable = mkEnableOption "Enable ebn polybar";
-    extraModules = mkOption {
-      type = with types; listOf functionTo string;
-      default = [];
-    };
   };
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [ font-awesome siji jetbrains-mono font-awesome ];
     services.polybar = {
       enable = true;
       package = pkgs.polybar.override {
