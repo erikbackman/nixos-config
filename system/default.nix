@@ -36,7 +36,7 @@
     wget
     vim
     git
-    mesa
+    # mesa
     xorg.xev
     ispell
     ncpamixer
@@ -59,8 +59,9 @@
   sound.enable = true;
   hardware.pulseaudio = {
     enable = true;
-    extraConfig =
-      "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1"; # Needed by mpd
+    extraConfig = ''
+      load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1; ### Needed by mpd
+    '';
   };
 
   services = {
