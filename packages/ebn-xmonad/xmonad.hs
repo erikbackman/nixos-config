@@ -254,10 +254,10 @@ myLayouts =
 
 myStartupHook :: X ()
 myStartupHook = do
-  spawnOnce "xrandr --output DP-0 --mode 3440x1440 --rate 99.98"
-  spawnOnce "~/.fehbg &"
-  spawnOnce "xset r rate 500 33"
-  spawnOnce "systemctl --user restart polybar"
+  -- spawnOnce "xrandr --output DP-0 --mode 3440x1440 --rate 99.98"
+  -- spawnOnce "~/.fehbg &"
+  -- spawnOnce "xset r rate 500 33"
+  -- spawnOnce "systemctl --user restart polybar"
   setDefaultCursor xC_left_ptr
 
 tryResize :: ResizeDirectional -> Resize -> X ()
