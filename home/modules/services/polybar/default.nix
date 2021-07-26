@@ -8,7 +8,7 @@ in with lib; {
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ font-awesome siji jetbrains-mono font-awesome ];
+    home.packages = with pkgs; [ font-awesome siji jetbrains-mono ];
     services.polybar = {
       enable = true;
       package = pkgs.polybar.override {
