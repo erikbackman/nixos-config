@@ -394,7 +394,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
     "Workspaces"
     [ key "Remove" (modm .|. shiftMask, xK_F4) removeWorkspace
     -- , key "Next" (modm, xK_comma)
-    ] ++ switchWsById
+    ] ++ switchWsById ++ switchWsByIdF
   where
     togglePolybar = spawn "polybar-msg cmd toggle &"
 
@@ -415,10 +415,15 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
         then "Move to "
         else "Switch to "
 
-
   -- mod-[1..9]: Switch to workspace N | mod-shift-[1..9]: Move client to workspace N
     switchWsById =
       [ key (action m <> show i) (m .|. modm, k) (windows $ f i)
       | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
+      , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
+      ]
+
+    switchWsByIdF =
+      [ key (action m <> show i) (m, k) (windows $ f i)
+      | (i, k) <- zip (XMonad.workspaces conf) [xK_F1 .. xK_F6]
       , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
       ]
