@@ -4,7 +4,14 @@ with lib;
 let
   cfg = config.programs.ebn.emacs;
   version = config.programs.ebn.emacs.version;
-  emacsPackage = pkgs."${version}";
+  emacsPackage =
+    (pkgs.emacsWithPackagesFromUsePackage {
+      config = ./config/ebn-core.el;
+      alwaysEnsure = false;
+      package = pkgs."${version}";
+      extraEmacsPackages = epkgs: with epkgs; [ vterm ];
+    });
+
 in {
   options = {
     programs.ebn.emacs = {
@@ -17,15 +24,8 @@ in {
   };
 
   config = mkIf cfg.enable {
-    nixpkgs.overlays = [ inputs.emacs-overlay.overlay ];
     home.packages = with pkgs; [
-      (emacsWithPackagesFromUsePackage {
-        config = ./config/ebn-core.el;
-        alwaysEnsure = false;
-        package = emacsPackage;
-        extraEmacsPackages = epkgs: with epkgs; [ vterm ];
-      })
-
+      emacsPackage
       ## Doom dependencies
       git
       (ripgrep.override { withPCRE2 = true; })
