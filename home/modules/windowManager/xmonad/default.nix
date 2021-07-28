@@ -29,6 +29,14 @@ in {
         executable = true;
       };
 
+      file.".config/bottom/bottom.toml".text = ''
+        [colors]
+        border_color="#434C5E"
+        highlighted_border_color="#bd93f9"
+        table_header_color="green"
+        widget_title_color="magenta"
+      '';
+
     };
     xsession = {
       enable = true;
