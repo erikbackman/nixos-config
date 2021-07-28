@@ -5,12 +5,12 @@ let cfg = config.programs.ebn.kitty;
 in {
   options.programs.ebn.kitty = {
     enable = mkEnableOption "Enable Kitty";
-    theme = mkOption {
-      type = lib.types.attrs;
+    extraSettings = mkOption {
+      type = types.attrs;
       default = {};
     };
     settings = mkOption {
-      type = lib.types.attrs;
+      type = types.attrs;
       default = {
         dynamic_background_opacity = true;
         window_padding_width = 10;
@@ -34,7 +34,7 @@ in {
         name = "JetBrains mono";
         size = 11;
       };
-      settings = cfg.settings // cfg.theme;
+      settings = cfg.settings // cfg.extraSettings;
     };
   };
 }

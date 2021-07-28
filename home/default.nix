@@ -48,7 +48,7 @@
 
     ebn.kitty = {
       enable = true;
-      theme = import ./config/kittyThemes/aurora.nix;
+      extraSettings = import ./config/kittyThemes/aurora.nix;
     };
 
     ebn.emacs = {
