@@ -108,7 +108,6 @@
     texlive.combined.scheme-full
     libreoffice
     chromium
-    nitrogen
     playerctl
     gsettings-desktop-schemas
     gnumake
@@ -117,7 +116,6 @@
     neofetch
     dracula-theme
     mpc_cli
-    scrot
     docker
     docker-compose
     xmobar
@@ -125,9 +123,7 @@
     streamlink
     feh
     discord
-    xmonad-log
     gnome.gucharmap
-    xdotool
   ];
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
