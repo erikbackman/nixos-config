@@ -26,93 +26,98 @@ shopt -s no_empty_cmd_completion
 # Enable history appending instead of overwriting when exiting.  #139609
 shopt -s histappend
 
-# Save each command to the history file as it's executed.  #517342
-# This does mean sessions get interleaved when reading later on, but this
-# way the history is always up to date.  History is not synced across live
-# sessions though; that is what `history -n` does.
-# Disabled by default due to concerns related to system recovery when $HOME
-# is under duress, or lives somewhere flaky (like NFS).  Constantly syncing
-# the history will halt the shell prompt until it's finished.
-#PROMPT_COMMAND='history -a'
-
-# Change the window title of X terminals
-case ${TERM} in
-[aEkx]term* | rxvt* | gnome* | konsole* | interix | tmux*)
-	PS1='\[\033]0;\u@\h:\w\007\]'
-	;;
-screen*)
-	PS1='\[\033k\u@\h:\w\033\\\]'
-	;;
-*)
-	unset PS1
-	;;
-esac
-
-# Set colorful PS1 only on colorful terminals.
-# dircolors --print-database uses its own built-in database
-# instead of using /etc/DIR_COLORS.  Try to use the external file
-# first to take advantage of user additions.
-# We run dircolors directly due to its changes in file syntax and
-# terminal name patching.
-use_color=false
-if type -P dircolors >/dev/null; then
-	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-	LS_COLORS=
-	if [[ -f ~/.dir_colors ]]; then
-		eval "$(dircolors -b ~/.dir_colors)"
-	elif [[ -f /etc/DIR_COLORS ]]; then
-		eval "$(dircolors -b /etc/DIR_COLORS)"
-	else
-		eval "$(dircolors -b)"
-	fi
-	# Note: We always evaluate the LS_COLORS setting even when it's the
-	# default.  If it isn't set, then `ls` will only colorize by default
-	# based on file attributes and ignore extensions (even the compiled
-	# in defaults of dircolors). #583814
-	if [[ -n ${LS_COLORS:+set} ]]; then
-		use_color=true
-	else
-		# Delete it if it's empty as it's useless in that case.
-		unset LS_COLORS
-	fi
-else
-	# Some systems (e.g. BSD & embedded) don't typically come with
-	# dircolors so we need to hardcode some terminals in here.
-	case ${TERM} in
-	[aEkx]term* | rxvt* | gnome* | konsole* | screen | tmux | cons25 | *color) use_color=true ;;
-	esac
-fi
-
-if ${use_color}; then
-	if [[ ${EUID} == 0 ]]; then
-		PS1+='\[\033[01;31m\]\h\[\033[01;34m\] \w \$\[\033[00m\] '
-	else
-		# PS1+='\[\033[01;35m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\]\n '
-		PS1+='\[\033[01;32m\]\w\[\033[00m\]\n\[\033[01;35m\]λ\[\033[00m\] '
-	fi
-
-	#BSD#@export CLICOLOR=1
-	#GNU#@alias ls='ls --color=auto'
-	alias grep='grep --colour=auto'
-	alias egrep='egrep --colour=auto'
-	alias fgrep='fgrep --colour=auto'
-else
-	# show root@ when we don't have colors
-	PS1+='\u@\h \w \$ '
-fi
-
-for sh in /etc/bash/bashrc.d/*; do
-	[[ -r ${sh} ]] && source "${sh}"
-done
-
-# Try to keep environment pollution down, EPA loves us.
-unset use_color sh
-
-# Misc
-alias la='ls -al'
-
+# Env Vars
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
 
+export GITUSER="$USER"
+export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
+export GHREPOS="$HOME/repos/github.com/$GITUSER/"
+
+# Aliases
+alias grep='grep --colour=auto'
+alias egrep='egrep --colour=auto'
+alias fgrep='fgrep --colour=auto'
+alias la='ls -al'
 alias cdgh="cd ~/source/github.com/erikbackman"
 alias ghd="cd ~/source/github.com/$1"
+
+# Prompt
+PROMPT_LONG=70
+PROMPT_MAX=95
+
+__ps1() {
+  local P=' λ'
+
+  if test -n "${ZSH_VERSION}"; then
+    local r='%F{red}'
+    local g='%F{black}'
+    local h='%F{blue}'
+    local u='%F{yellow}'
+    local p='%F{yellow}'
+    local w='%F{magenta}'
+    local b='%F{cyan}'
+    local x='%f'
+  else
+    local r='\[\e[31m\]'
+    local g='\[\e[30m\]'
+    local y='\[\e[32m\]'
+    local h='\[\e[34m\]'
+    local u='\[\e[33m\]'
+    local p='\[\e[33m\]'
+    local w='\[\e[35m\]'
+    local b='\[\e[36m\]'
+    local x='\[\e[0m\]'
+  fi
+
+  if test "${EUID}" == 0; then
+    P='#'
+    if test -n "${ZSH_VERSION}"; then
+      u='$F{red}'
+    else
+      u=$r
+    fi
+    p=$u
+  fi
+
+  local dir;
+  if test "$PWD" = "$HOME"; then
+    dir='~'
+  else
+    dir="${PWD##*/}"
+    if test "${dir}" = _; then
+      dir=${PWD#*${PWD%/*/_}}
+      dir=${dir#/}
+    elif test "${dir}" = work; then
+      dir=${PWD#*${PWD%/*/work}}
+      dir=${dir#/}
+    fi
+  fi
+
+  local B=$(git branch --show-current 2>/dev/null)
+  test "$dir" = "$B" && B='.'
+  local countme="$USER@$(hostname):$dir($B)\$ "
+
+  test "$B" = master -o "$B" = main && b=$r
+  test -n "$B" && B="$g($b$B$g)"
+
+  if test -n "${ZSH_VERSION}"; then
+    local short="$u%n$g@$h%m$g:$y$dir$B$p$P$x "
+    local long="$g╔ $u%n$g@%m\h$g:$y$dir$B\n$g╚ $p$P$x "
+    local double="$g╔ $u%n$g@%m\h$g:$y$dir\n$g║ $B\n$g╚ $p$P$x "
+  else
+    local short="$u\u$g@$h\h$g:$y$dir$B$w$P$x "
+    local long="$g╔ $u\u$g@$h\h$g:$y$dir$B\n$g╚ $w$P$x "
+    local double="$g╔ $u\u$g@$h\h$g:$y$dir\n$g║ $B\n$g╚ $w$P$x "
+  fi
+
+  if test ${#countme} -gt "${PROMPT_MAX}"; then
+    PS1="$double"
+  elif test ${#countme} -gt "${PROMPT_LONG}"; then
+    PS1="$long"
+  else
+    PS1="$short"
+  fi
+}
+
+PROMPT_COMMAND="__ps1"
