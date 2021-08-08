@@ -4,10 +4,8 @@
 [[https://builtwithnix.org][https://img.shields.io/badge/Built_With-Nix-5277C3.svg?style=flat-square&logo=nixos&labelColor=41439a&logoColor=white]]
 [[https://github.com/hlissner/doom-emacs][https://img.shields.io/badge/Made_with-Doom_Emacs-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white]]
 
-[[file:screenshots/overview.png]]
 [[file:screenshots/busy.png]]
 [[file:screenshots/clean.png]]
-[[file:screenshots/btm_scratchpad.png]]
 
 #+ATTR_HTML: :border 2 :rules all :frame border
 |------------+----------------|
