@@ -26,6 +26,7 @@ in {
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       emacsPackage
+
       ## Doom dependencies
       git
       (ripgrep.override { withPCRE2 = true; })
@@ -38,6 +39,9 @@ in {
       fd # faster projectile indexing
       imagemagick # for image-dired
       zstd # for undo-fu-session/undo-tree compression
+
+      ## Fonts
+      jetbrains-mono
 
       ## Module dependencies
       # :checkers spell
