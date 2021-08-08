@@ -7,7 +7,6 @@
     shell = pkgs.bash;
   };
 
-  # Forgive me Saint Stallman for I have sinned.. and fuck you nvidia.
   nixpkgs.config.allowUnfree = true;
 
   boot = {
@@ -21,8 +20,6 @@
   networking = {
     hostName = "nixos";
     firewall.enable = true;
-    #firewall.allowedTCPPorts = [ ... ];
-    #firewall.allowedUDPPorts = [ ... ];
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -37,11 +34,10 @@
     wget
     vim
     git
-    # mesa
     xorg.xev
     ispell
     ncpamixer
-    pass
+    (pass.withExtensions (exts: [ exts.pass-import ]))
     cachix
   ];
 
@@ -77,21 +73,6 @@
       layout = "se";
       videoDrivers = [ "nvidia" ];
 
-      # monitorSection = ''
-      #     VendorName     "Unknown"
-      #     ModelName      "Samsung C34H89x"
-      #     HorizSync       30.0 - 152.0
-      #     VertRefresh     50.0 - 100.0
-      #     Option         "DPMS"
-      # '';
-      # screenSection = ''
-      #   Option         "Stereo" "0"
-      #   Option         "metamodes" "3440x1440_100 +0+0"
-      #   Option         "SLI" "Off"
-      #   Option         "MultiGPU" "Off"
-      #   Option         "BaseMosaic" "off"
-      # '';
-
       displayManager = {
         defaultSession = "none+xmonad";
         lightdm.greeters.mini = {
@@ -109,26 +90,10 @@
         };
       };
 
-      windowManager.xmonad = {
-        enable = true;
-        enableContribAndExtras = true;
-      };
-
+      windowManager.xmonad.enable = true;
     };
-    # Music daemon
-    # mpd = {
-    #   enable = true;
-    #   extraConfig = ''
-    #     audio_output {
-    #       type "pulse"
-    #       name "PulseAudio"
-    #       server "127.0.0.1"
-    #    }
-    #   '';
-    # };
   };
 
-  # Docker
   virtualisation.docker.enable = true;
 
   nix = {
