@@ -77,7 +77,7 @@ main = xmonad . dynamicProjects projects . keybindings . ewmh . docks . config =
           workspaces = myWS
         }
 
-    keybindings = addDescrKeys' ((mod4Mask, xK_F1), showKeybindings) myKeys
+    keybindings = addDescrKeys' ((mod4Mask .|. controlMask, xK_F1), showKeybindings) myKeys
 
 mkDbusClient :: IO D.Client
 mkDbusClient = D.connectSession >>= \dbus -> requestBus dbus >> pure dbus
