@@ -5,7 +5,7 @@
 [[https://github.com/hlissner/doom-emacs][https://img.shields.io/badge/Made_with-Doom_Emacs-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white]]
 
 [[file:screenshots/busy.png]]
-[[file:screenshots/clean.png]]
+[[file:screenshots/clean2.png]]
 
 #+ATTR_HTML: :border 2 :rules all :frame border
 |------------+----------------|
