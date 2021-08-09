@@ -13,19 +13,18 @@ let
     xorg.libXext
   ];
 
-  haskellTooling = let
-    ghc' = haskellPackages.ghcWithPackages
-      (hp: with hp; [ X11 X11-xft dbus utf8-string zlib cpphs ]);
-  in [
-    ghc'
+  ebn-xmonad = import ./packages/ebn-xmonad pkgs;
+  haskellTooling = [
     cabal-install
     ghcid
     haskellPackages.hindent
+    haskellPackages.ormolu
     haskellPackages.haskell-language-server
   ];
 
 in mkShell {
   buildInputs = cLibsAndTools ++ haskellTooling;
+  inputsFrom = [ ebn-xmonad.env ];
   shellHook = ''
     alias os-build="nixos-rebuild build --flake ."
     alias os-test="sudo nixos-rebuild test --flake ."
