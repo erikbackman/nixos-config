@@ -30,17 +30,17 @@ shopt -s histappend
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
 
-export GITUSER="$USER"
+export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
 export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
 export GHREPOS="$HOME/repos/github.com/$GITUSER/"
 
-# Aliases
 alias grep='grep --colour=auto'
 alias egrep='egrep --colour=auto'
 alias fgrep='fgrep --colour=auto'
+alias du='du -h -a --total'
 alias la='ls -al'
-alias cdgh="cd ~/source/github.com/erikbackman"
-alias ghd="cd ~/source/github.com/$1"
+alias dots='cd ${DOTFILES}'
+alias nb="nix build"
 
 # Prompt
 PROMPT_LONG=70
