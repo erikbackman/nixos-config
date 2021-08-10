@@ -1,1 +1,1 @@
-pkgs: pkgs.haskell.packages.ghc884.callCabal2nix "ebn-xmonad" ./. { }
+pkgs: pkgs.haskell.packages.ghc8104.callCabal2nix "ebn-xmonad" ./. { }
