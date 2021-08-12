@@ -1,9 +1,12 @@
+" Some sensible defaults before we load the lua configuration
+"
 set path+=**
 if exists('+termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     set termguicolors
 endif
+
 colorscheme aurora
 set termguicolors
 
@@ -23,20 +26,17 @@ set cmdheight=1
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-" set updatetime=50
+" set updatetime=500
 
 " Don't pass messages to |ins-completion-menu|.
 " set shortmess+=c
 
 let mapleader = " "
-" nnoremap <leader>fs :write<CR>
-" nnoremap <leader>ca :lua vim.lsp.buf.code_action()<CR>
-" nnoremap <leader>sp :Telescope git_files<CR>
-" nnoremap <leader>ff :Telescope file_browser<CR>
-
-" Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" Clear search on esc
+nnoremap <esc> :noh<return><esc>
 
 " Set completeopt to have a better completion experience
 set completeopt=menuone,noinsert,noselect
