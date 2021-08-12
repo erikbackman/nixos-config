@@ -4,6 +4,7 @@
     enable = true;
     package = pkgs.neovim;
     plugins = with pkgs.vimPlugins; [
+      nlua-nvim
       vim-startify
       vim-nix
       haskell-vim
