@@ -31,25 +31,26 @@
   time.timeZone = "Europe/Stockholm";
 
   environment.systemPackages = with pkgs; [
-    wget
-    vim
+    cachix
     git
-    xorg.xev
     ispell
     ncpamixer
     (pass.withExtensions (exts: [ exts.pass-import ]))
-    cachix
+    vim
+    w3m
+    wget
+    xorg.xev
   ];
 
   programs.steam.enable = true;
 
   fonts.fonts = with pkgs; [
+    etBook
+    google-fonts
     hack-font
     iosevka
     jetbrains-mono
-    etBook
     oldstandard
-    google-fonts
     siji
   ];
 
