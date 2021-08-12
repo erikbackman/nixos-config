@@ -3,6 +3,9 @@
 
   lib.hm.users.ebn = { pkgs, ... }: {
     nixpkgs.config.allowUnfree = true;
+    nixpkgs.overlays = [
+      inputs.neovim-git.overlay
+    ];
   };
 
   imports = with (import ./lib.nix lib).modules;
