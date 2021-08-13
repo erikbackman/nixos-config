@@ -47,5 +47,9 @@ set shortmess+=c
 " let g:completion_enable_auto_popup = 0
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
 
+let g:startify_lists = [
+        \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
+        \ ]
+
 " load lua configuration
 lua require("ebn")

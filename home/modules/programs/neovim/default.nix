@@ -1,4 +1,8 @@
 { config, lib, pkgs, ... }:
+let 
+  sumneko       = pkgs.sumneko-lua-language-server;
+  sumneko_bin   = "${sumneko}/bin/lua-language-server";
+in
 {
   programs.neovim = {
     enable = true;
@@ -10,15 +14,22 @@
       haskell-vim
       completion-nvim
       pkgs.ebn.spaceduck
-      pkgs.ebn.aurora-vim
+      # pkgs.ebn.aurora-vim
       popup-nvim
       plenary-nvim
-      telescope-nvim
+      # telescope-nvim
       nvim-lspconfig
       lualine-nvim
+      nnn-vim
+      fzf-vim
     ];
     extraConfig = builtins.readFile ./config/init.vim;
   };
-  # I choose not to have Nix manage this directory for now until my config it somewhat done
-  # home.file.".config/nvim/lua".source = ./config/lua;
+
+  home.packages = with pkgs; [
+    sumneko
+    fzf
+  ];
+
+  home.file.".cache/nvim/lspconfig/sumneko_lua/lua-language-server".source = sumneko_bin;
 }
