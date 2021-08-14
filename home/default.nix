@@ -8,6 +8,7 @@
     ];
   };
 
+  # This will import every default.nix found in ./modules
   imports = with (import ./lib.nix lib).modules;
     listModulesRec ./modules;
 
