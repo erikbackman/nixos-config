@@ -14,10 +14,8 @@ in
       haskell-vim
       completion-nvim
       pkgs.ebn.spaceduck
-      # pkgs.ebn.aurora-vim
       popup-nvim
       plenary-nvim
-      # telescope-nvim
       nvim-lspconfig
       lualine-nvim
       nnn-vim
