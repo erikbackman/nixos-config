@@ -36,10 +36,10 @@
     ispell
     ncpamixer
     (pass.withExtensions (exts: [ exts.pass-import ]))
-    vim
     w3m
     wget
     xorg.xev
+    nnn
   ];
 
   programs.steam.enable = true;
