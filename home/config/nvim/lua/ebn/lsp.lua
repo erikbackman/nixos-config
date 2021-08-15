@@ -23,3 +23,4 @@ local on_attach = function(client, bufnr)
 end
 
 require('lspconfig').hls.setup({ on_attach = on_attach})
+require('lspconfig').rnix.setup({ on_attach = on_attach})
