@@ -1,12 +1,3 @@
--- TODO Implement this
-local map = function(opts)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-
-  if opts['bufnr'] ~= nil then
-
-  end
-end
-
 local on_attach = function(client, bufnr)
     require('completion').on_attach()
 
