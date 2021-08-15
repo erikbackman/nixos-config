@@ -23,7 +23,7 @@ let
   ];
 
 in mkShell {
-  buildInputs = cLibsAndTools ++ haskellTooling;
+  buildInputs = cLibsAndTools ++ haskellTooling ++ [ rnix-lsp ];
   inputsFrom = [ ebn-xmonad.env ];
   shellHook = ''
     alias os-build="nixos-rebuild build --flake ."
