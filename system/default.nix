@@ -55,6 +55,7 @@
   ];
 
   sound.enable = true;
+  programs.dconf.enable = true;
   hardware.pulseaudio = {
     enable = true;
     extraConfig = ''
