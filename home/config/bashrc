@@ -40,7 +40,12 @@ alias fgrep='fgrep --colour=auto'
 alias du='du -h -a --total'
 alias la='ls -al'
 alias dots='cd ${DOTFILES}'
-alias nb="nix build"
+alias nb='nix build'
+alias v='nvim'
+
+p() {
+  cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | fzf)
+}
 
 # Prompt
 PROMPT_LONG=70
@@ -102,23 +107,20 @@ __ps1() {
   test -n "$B" && B="$g($b$B$g)"
 
   if test -n "${ZSH_VERSION}"; then
-    local short="$u%n$g@$h%m$g:$y$dir$B$p$P$x "
-    local long="$g╔ $u%n$g@%m\h$g:$y$dir$B\n$g╚ $p$P$x "
-    local double="$g╔ $u%n$g@%m\h$g:$y$dir\n$g║ $B\n$g╚ $p$P$x "
+    local short="$g╔ $u%n$g@%m\h$g:$y$dir$B\n$g╚ $p$P$x "
+    local long="$g╔ $u%n$g@%m\h$g:$y$dir\n$g║ $B\n$g╚ $p$P$x "
   else
-    local short="$u\u$g@$h\h$g:$y$dir$B$w$P$x "
-    local long="$g╔ $u\u$g@$h\h$g:$y$dir$B\n$g╚ $w$P$x "
-    local double="$g╔ $u\u$g@$h\h$g:$y$dir\n$g║ $B\n$g╚ $w$P$x "
+    local short="$g╔ $u\u$g@$h\h$g:$y$dir$B\n$g╚ $w$P$x "
+    local long="$g╔ $u\u$g@$h\h$g:$y$dir\n$g║ $B\n$g╚ $w$P$x "
   fi
 
-  # if test ${#countme} -gt "${PROMPT_MAX}"; then
-  #   PS1="$double"
-  # elif test ${#countme} -gt "${PROMPT_LONG}"; then
-  #   PS1="$long"
-  # else
-  #   PS1="$short"
-  # fi
-  PS1="$long"
+  if test ${#countme} -gt "${PROMPT_MAX}"; then
+    PS1="$double"
+  elif test ${#countme} -gt "${PROMPT_LONG}"; then
+    PS1="$long"
+  else
+    PS1="$short"
+  fi
 }
 
 PROMPT_COMMAND="__ps1"
