@@ -12,7 +12,7 @@ in {
     settings = mkOption {
       type = types.attrs;
       default = {
-        dynamic_background_opacity = true;
+        dynamic_background_opacity = false;
         window_padding_width = 10;
         default_pointer_shape = "beam";
         cursor_shape = "underline";
