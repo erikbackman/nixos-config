@@ -1,31 +1,34 @@
-function map(mode, lhs, rhs, opts)
+local function keymap(mode, lhs, rhs, opts)
   local options = { noremap = true, silent = true }
   if opts then options = vim.tbl_extend('force', options, opts) end
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
 -- General
-map('n', '<leader>qq', '<cmd>qa<CR>', nil) 
-map('n', '<leader>ot', '<cmd>term<CR>', nil) 
+keymap('n', '<leader>qq', '<cmd>qa<CR>', nil) 
+keymap('n', '<leader>ot', '<cmd>term<CR>', nil) 
 
 -- Buffer
-map('n', '<leader>fs', '<cmd>w<CR>', nil)
-map('n', '<leader>bk', '<cmd>bd<CR>', nil)
-map('n', '<leader>eb', '<cmd>luafile %<CR>', nil) 
-map('n', '<leader>bb', '<cmd>Buffers<CR>', nil)
-map('n', '<leader>sb', '<cmd>:BLines<CR>', nil)  
+keymap('n', '<leader>fs', '<cmd>w<CR>', nil)
+keymap('n', '<leader>bk', '<cmd>bd<CR>', nil)
+keymap('n', '<leader>eb', '<cmd>luafile %<CR>', { silent = false }) 
+keymap('n', '<leader>bb', '<cmd>Buffers<CR>', nil)
+keymap('n', '<leader>sb', '<cmd>:BLines<CR>', nil)  
+
+-- Project
+keymap('n', '<leader>sp', '<cmd>Rg<CR>', nil)
 
 -- Files
-map('n', '<leader>fp', '<cmd>FZF /home/ebn/.config/nvim/lua/<CR>', nil)
-map('n', '<leader>pp', '<cmd>FZF /home/ebn/repos/github.com/erikbackman/<CR>', nil)
-map('n', '<leader>pf', '<cmd>GitFiles<CR>', nil)
-map('n', '<leader>ff', '<cmd>Files<CR>', nil)
-map('n', '<leader>fd', '<cmd>NnnPicker %<CR>', nil)
-map('n', '<leader>fr', '<cmd>:History<CR>', nil) -- Recent files
+keymap('n', '<leader>fp', '<cmd>FZF /home/ebn/.config/nvim/lua/<CR>', nil)
+keymap('n', '<leader>pp', '<cmd>FZF /home/ebn/repos/github.com/erikbackman/<CR>', nil)
+keymap('n', '<leader>pf', '<cmd>GitFiles<CR>', nil)
+keymap('n', '<leader>ff', '<cmd>Files<CR>', nil)
+keymap('n', '<leader>fd', '<cmd>NnnPicker %<CR>', nil)
+keymap('n', '<leader>fr', '<cmd>:History<CR>', nil) -- Recent files
 
 -- History 
-map('n', '<leader>h', '<cmd>:History:<CR>', nil) -- Command history
-map('n', '<leader>hh', '<cmd>:History/<CR>', nil) -- Search history
+keymap('n', '<leader>h', '<cmd>:History:<CR>', nil) -- Command history
+keymap('n', '<leader>hh', '<cmd>:History/<CR>', nil) -- Search history
 
 -- Docs
-map('n', '<leader>H', '<cmd>:Helptags<CR>', nil)
+keymap('n', '<leader>H', '<cmd>:Helptags<CR>', nil)
