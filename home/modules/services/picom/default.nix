@@ -1,18 +1,18 @@
 {
   services.picom = {
     enable = true;
-    experimentalBackends = true;
+    experimentalBackends = false;
     activeOpacity = "1.0";
     inactiveOpacity = "1.0";
     backend = "glx";
     fade = true;
-    fadeDelta = 5;
-    opacityRule = [
-      "90:class_g = 'kitty'"
-    ];
+    fadeDelta = 4;
+    # opacityRule = [
+    #   "95:class_g = 'kitty'"
+    # ];
     shadow = true;
     shadowOpacity = "1"; # def: 0.75
-    blur = true;
+    blur = false;
     extraOptions = ''
       shadow-offset = -14;
       shadow-radius = 20;
