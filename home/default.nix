@@ -73,6 +73,11 @@
   #############################################################################
   services.ebn.polybar.enable = true;
 
+  services.ebn.picom = {
+    enable = true;
+    opacityEnabled = false;
+  };
+
   services.pulseeffects = {
     enable = true;
     package = pkgs.pulseeffects-legacy;
