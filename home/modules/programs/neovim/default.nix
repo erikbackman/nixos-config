@@ -8,18 +8,15 @@ in
     enable = true;
     package = pkgs.neovim;
     plugins = with pkgs.vimPlugins; [
-      nlua-nvim
-      vim-startify
-      vim-nix
-      haskell-vim
       completion-nvim
-      pkgs.ebn.spaceduck
-      popup-nvim
-      plenary-nvim
-      nvim-lspconfig
+      fzf-vim
+      haskell-vim
       lualine-nvim
       nnn-vim
-      fzf-vim
+      nvim-lspconfig
+      vim-nix
+      vim-sneak
+      vim-startify
     ];
     extraConfig = builtins.readFile ./config/init.vim;
   };
