@@ -22,7 +22,7 @@ keymap('n', '<leader>sp', '<cmd>Rg<CR>', nil)
 keymap('n', '<leader>fp', '<cmd>FZF /home/ebn/.config/nvim/lua/<CR>', nil)
 keymap('n', '<leader>pp', '<cmd>FZF /home/ebn/repos/github.com/erikbackman/<CR>', nil)
 keymap('n', '<leader>pf', '<cmd>GitFiles<CR>', nil)
-keymap('n', '<leader>ff', '<cmd>Files<CR>', nil)
+keymap('n', '<leader>ff', '<cmd>Files %:p:h<CR>', nil) -- Files in current file directory
 keymap('n', '<leader>fd', '<cmd>NnnPicker %<CR>', nil)
 keymap('n', '<leader>fr', '<cmd>:History<CR>', nil) -- Recent files
 
