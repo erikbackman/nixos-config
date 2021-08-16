@@ -1,4 +1,5 @@
 /* -*- mode: css; -*- */
+/* vim: set syntax=css: */
 configuration {
   icon-theme:       "Paper";
   cycle:            true;
