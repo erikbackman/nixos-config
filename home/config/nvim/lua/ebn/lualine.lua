@@ -1,27 +1,29 @@
-require'lualine'.setup {
+local config = { 
   options = {
-    icons_enabled = false,
-    theme = 'iceberg_dark',
-    component_separators = {'', ''},
-    section_separators = {'', ''},
+    icons_enabled = true,
+    theme = require 'lualine/themes/aurora',
+    component_separators = {'', ''},
+    section_separators = {'', ''},
     disabled_filetypes = {}
   },
   sections = {
+    lualine_a = {'filename'},
+    lualine_b = {'location', 'progress'},
+    lualine_c = {},
+    lualine_x = {},
+    lualine_y = {'filetype'},
+    lualine_z = {'branch'},
+  },
+  inactive_sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch'},
     lualine_c = {'filename'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_x = {'encoding', 'fileformat'},
     lualine_y = {'progress'},
     lualine_z = {'location'}
-  },
-  inactive_sections = {
-    lualine_a = {},
-    lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
-    lualine_y = {},
-    lualine_z = {}
   },
   tabline = {},
   extensions = {}
 }
+
+require 'lualine'.setup(config)
