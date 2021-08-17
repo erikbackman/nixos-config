@@ -42,6 +42,12 @@ alias la='ls -al'
 alias dots='cd ${DOTFILES}'
 alias nb='nix build'
 alias v='nvim'
+alias vim='nvim'
+alias vi='nvim'
+alias gs='git status'
+alias ga='git add'
+alias gc='git add'
+alias gp='git push'
 
 p() {
   cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | fzf)
@@ -53,26 +59,18 @@ PROMPT_MAX=95
 
 __ps1() {
   local P='λ'
+  local r='\[\e[31m\]'
+  local g='\[\e[30m\]'
+  local y='\[\e[32m\]'
+  local h='\[\e[34m\]'
+  local u='\[\e[33m\]'
+  local p='\[\e[33m\]'
+  local w='\[\e[35m\]'
+  local b='\[\e[36m\]'
+  local x='\[\e[0m\]'
 
-  if test -n "${ZSH_VERSION}"; then
-    local r='%F{red}'
-    local g='%F{black}'
-    local h='%F{blue}'
-    local u='%F{yellow}'
-    local p='%F{yellow}'
-    local w='%F{magenta}'
-    local b='%F{cyan}'
-    local x='%f'
-  else
-    local r='\[\e[31m\]'
-    local g='\[\e[30m\]'
-    local y='\[\e[32m\]'
-    local h='\[\e[34m\]'
-    local u='\[\e[33m\]'
-    local p='\[\e[33m\]'
-    local w='\[\e[35m\]'
-    local b='\[\e[36m\]'
-    local x='\[\e[0m\]'
+  if test -n "${IN_NIX_SHELL}"; then
+    P='❄'
   fi
 
   if test "${EUID}" == 0; then
