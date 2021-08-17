@@ -24,3 +24,32 @@ end
 
 require('lspconfig').hls.setup({ on_attach = on_attach})
 require('lspconfig').rnix.setup({ on_attach = on_attach})
+require('lspconfig').ccls.setup({ on_attach = on_attach})
+
+-- Lua LSP
+local runtime_path = vim.split(package.path, ';')
+table.insert(runtime_path, "lua/?.lua")
+table.insert(runtime_path, "lua/?/init.lua")
+
+require('lspconfig').sumneko_lua.setup {
+  cmd = { "lua-language-server" };
+  on_attach = on_attach,
+  settings = {
+    Lua = {
+      runtime = {
+        version = 'LuaJIT',
+        path = runtime_path,
+      },
+      diagnostics = {
+        globals = {'vim'},
+      },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
+}
+

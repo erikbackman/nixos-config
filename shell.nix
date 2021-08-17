@@ -23,7 +23,9 @@ let
   ];
 
 in mkShell {
-  buildInputs = cLibsAndTools ++ haskellTooling ++ [ rnix-lsp ];
+  buildInputs = cLibsAndTools ++ haskellTooling ++ [ rnix-lsp ]
+    ++ [ sumneko-lua-language-server ];
+
   inputsFrom = [ ebn-xmonad.env ];
   shellHook = ''
     alias os-build="nixos-rebuild build --flake ."
