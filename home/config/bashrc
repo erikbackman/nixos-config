@@ -46,7 +46,7 @@ alias vim='nvim'
 alias vi='nvim'
 alias gs='git status'
 alias ga='git add'
-alias gc='git add'
+alias gc='git commit'
 alias gp='git push'
 
 p() {
