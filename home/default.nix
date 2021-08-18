@@ -3,9 +3,6 @@
 
   lib.hm.users.ebn = { pkgs, ... }: {
     nixpkgs.config.allowUnfree = true;
-    nixpkgs.overlays = [
-      inputs.neovim-git.overlay
-    ];
   };
 
   # This will import every default.nix found in ./modules
@@ -59,6 +56,8 @@
       enable = true;
       version = "emacsGcc";
     };
+
+    ebn.nvim.enable = true;
 
     ebn.rofi.enable = true;
   };

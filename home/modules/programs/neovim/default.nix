@@ -1,23 +1,36 @@
-{ config, lib, pkgs, ... }:
-{
-  programs.neovim = {
-    enable = true;
-    package = pkgs.neovim;
-    plugins = with pkgs.vimPlugins; [
-      completion-nvim
-      fzf-vim
-      haskell-vim
-      lualine-nvim
-      nnn-vim
-      nvim-lspconfig
-      vim-nix
-      vim-sneak
-      vim-startify
-    ];
-    extraConfig = builtins.readFile ./config/init.vim;
+{ config, lib, pkgs, inputs, ... }:
+let
+  cfg = config.programs.ebn.nvim;
+in with lib; {
+  options.programs.ebn.nvim = {
+    enable = mkEnableOption "Enable ebn nvim";
   };
 
-  home.packages = with pkgs; [
-    fzf
-  ];
+  config = mkIf cfg.enable {
+    
+    nixpkgs.overlays = [
+      inputs.neovim-git.overlay
+    ];
+
+    programs.neovim = {
+      enable = true;
+      package = pkgs.neovim;
+      plugins = with pkgs.vimPlugins; [
+        completion-nvim
+        fzf-vim
+        haskell-vim
+        lualine-nvim
+        nnn-vim
+        nvim-lspconfig
+        vim-nix
+        vim-sneak
+        vim-startify
+      ];
+      extraConfig = builtins.readFile ./config/init.vim;
+    };
+
+    home.packages = with pkgs; [
+      fzf
+    ];
+  };
 }
