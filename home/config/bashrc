@@ -21,7 +21,7 @@ shopt -s checkwinsize
 
 # Disable completion when the input buffer is empty.  i.e. Hitting tab
 # and waiting a long time for bash to expand all of $PATH.
-shopt -s no_empty_cmd_completion
+# shopt -s no_empty_cmd_completion
 
 # Enable history appending instead of overwriting when exiting.  #139609
 shopt -s histappend
