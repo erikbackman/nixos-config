@@ -66,7 +66,6 @@ in {
       # :org ob-jupyter
       jupyter
     ];
-    programs.git.extraConfig.core.editor = "emacs";
     services.emacs = {
       enable = true;
       package = emacsPackage;

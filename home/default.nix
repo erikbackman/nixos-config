@@ -28,6 +28,7 @@
       enable = true;
       userName = "erikbackman";
       userEmail = "erikbackman@users.noreply.github.com";
+      extraConfig.core.editor = "nvim";
     };
 
     ncmpcpp = {
