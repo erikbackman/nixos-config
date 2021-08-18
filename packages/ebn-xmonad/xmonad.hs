@@ -204,7 +204,7 @@ projects =
     Project
       { projectName = devWs,
         projectDirectory = "~/repos/github.com/erikbackman",
-        projectStartHook = Just $ spawn myEditor
+        projectStartHook = Just $ spawn myTerminal
       },
     Project
       { projectName = comWs,
