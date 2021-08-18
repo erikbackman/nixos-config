@@ -1,8 +1,4 @@
 { config, lib, pkgs, ... }:
-let 
-  sumneko       = pkgs.sumneko-lua-language-server;
-  sumneko_bin   = "${sumneko}/bin/lua-language-server";
-in
 {
   programs.neovim = {
     enable = true;
@@ -22,9 +18,6 @@ in
   };
 
   home.packages = with pkgs; [
-    sumneko
     fzf
   ];
-
-  home.file.".cache/nvim/lspconfig/sumneko_lua/lua-language-server".source = sumneko_bin;
 }
