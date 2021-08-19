@@ -3,7 +3,7 @@
 
   users.users.ebn = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "docker" "audio" "video" ];
+    extraGroups = [ "wheel" "networkmanager" "audio" "video" ];
     shell = pkgs.bash;
   };
 
@@ -95,8 +95,6 @@
       windowManager.xmonad.enable = true;
     };
   };
-
-  virtualisation.docker.enable = true;
 
   nix = {
     gc = {

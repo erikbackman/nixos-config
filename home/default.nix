@@ -127,8 +127,6 @@
     neofetch
     dracula-theme
     mpc_cli
-    docker
-    docker-compose
     xmobar
     mpv
     streamlink
