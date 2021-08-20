@@ -8,7 +8,7 @@ end
 keymap('n', '<leader>qq', '<cmd>qa<CR>')
 keymap('n', '<leader>ot', '<cmd>term<CR>')
 keymap('n', 'Y', 'v$y')
-keymap('n', '<C-Space>', '80li<CR><Esc>')
+keymap('n', '<C-Space>', '80lbi<CR><Esc>')
 
 -- Buffer
 keymap('n', '<leader>fs', '<cmd>w<CR>')
@@ -34,5 +34,3 @@ keymap('n', '<leader>hh', '<cmd>:History/<CR>') -- Search history
 
 -- Docs
 keymap('n', '<leader>H', '<cmd>:Helptags<CR>')
-
-
