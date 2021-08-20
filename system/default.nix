@@ -10,6 +10,7 @@
   nixpkgs.config.allowUnfree = true;
 
   boot = {
+    kernelPackages = pkgs.linuxPackages_5_13;
     loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot.configurationLimit = 10;
