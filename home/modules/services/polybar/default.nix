@@ -25,10 +25,10 @@ in with lib; {
 
         [module/spotify]
         type = custom/script
-        exec = ${pkgs.playerctl}/bin/playerctl --player=spotify metadata --format "{{ artist }} - {{ title }}"
+        exec = ${pkgs.playerctl}/bin/playerctl --player=ncspot metadata --format "{{ artist }} - {{ title }}"
         format-prefix = " "
         format-suffix = "  "
-        click-left = ${pkgs.playerctl}/bin/playerctl --player=spotify play-pause
+        click-left = ${pkgs.playerctl}/bin/playerctl --player=ncspot play-pause
         format-prefix-foreground = "#5ab977"
       '';
       script = "polybar main &";
