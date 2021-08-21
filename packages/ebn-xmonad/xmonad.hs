@@ -2,9 +2,14 @@
 {-# OPTIONS_GHC -Wno-overflowed-literals #-}
 {-# OPTIONS_GHC -Wunused-imports #-}
 
+import Applications (AppConfig, defaultAppConfig)
+import qualified Applications as App
 import qualified Codec.Binary.UTF8.String as UTF8
+import Control.Monad (replicateM_)
 import qualified DBus as D
 import qualified DBus.Client as D
+import Data.Maybe (fromMaybe)
+import Keybinds (KeybindConfig (..), keybinds)
 import XMonad
 import XMonad.Actions.DynamicProjects
 import XMonad.Actions.MessageFeedback
@@ -34,17 +39,12 @@ import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.WindowNavigation (windowNavigation)
 import XMonad.Util.Cursor (setDefaultCursor)
 import XMonad.Util.NamedScratchpad
-import Control.Monad (replicateM_)
-import qualified Applications as App
-import Keybinds (KeybindConfig(..), keybinds)
-import XMonad.Layout.WindowNavigation (windowNavigation)
-import Applications (AppConfig, defaultAppConfig)
-import Data.Maybe (fromMaybe)
 
 main :: IO ()
-main = xmonad . dynamicProjects (projects apps)  . ewmh . docks . cfg =<< mkDbusClient
+main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< mkDbusClient
   where
     cfg dbus =
       def
@@ -62,11 +62,12 @@ main = xmonad . dynamicProjects (projects apps)  . ewmh . docks . cfg =<< mkDbus
           workspaces = myWS
         }
 
-    apps = defaultAppConfig
-      { App.terminal = Just "kitty",
-        App.launcher = Just "rofi -matching fuzzy -show drun -modi drun,run -show-icons"
-      }
-    
+    apps =
+      defaultAppConfig
+        { App.terminal = Just "kitty",
+          App.launcher = Just "rofi -matching fuzzy -show drun -modi drun,run -show-icons"
+        }
+
 mkDbusClient :: IO D.Client
 mkDbusClient = D.connectSession >>= \dbus -> requestBus dbus >> pure dbus
   where
@@ -169,7 +170,7 @@ myWS = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
 
 -- Dynamic Projects ----------------------------------------------------------
 projects :: AppConfig -> [Project]
-projects apps  =
+projects apps =
   [ Project
       { projectName = webWs,
         projectDirectory = "~/",
@@ -237,7 +238,7 @@ myLayouts =
     etcLayout = onWorkspace etcWs float
     -- Fullscreen
     fullScreenToggle = mkToggle (single NBFULL)
-    
+
 myStartupHook :: X ()
 myStartupHook = do
   setDefaultCursor xC_left_ptr

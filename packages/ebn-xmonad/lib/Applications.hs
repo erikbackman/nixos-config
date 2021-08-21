@@ -2,6 +2,7 @@ module Applications where
 
 import Control.Monad.IO.Class (MonadIO)
 import XMonad (spawn)
+
 data AppConfig = AppConfig
   { terminal :: Maybe String,
     launcher :: Maybe String,
