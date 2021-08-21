@@ -2,35 +2,18 @@
 {-# OPTIONS_GHC -Wno-overflowed-literals #-}
 {-# OPTIONS_GHC -Wunused-imports #-}
 
-import Applications (AppConfig, defaultAppConfig)
-import qualified Applications as App
-import qualified Codec.Binary.UTF8.String as UTF8
 import Control.Monad (replicateM_)
-import qualified DBus as D
-import qualified DBus.Client as D
 import Data.Maybe (fromMaybe)
-import Keybinds (KeybindConfig (..), keybinds)
+import Ebn.Applications (AppConfig, defaultAppConfig)
+import Ebn.Keybinds (KeybindConfig (..), keybinds)
+import qualified Ebn.Applications as App
 import XMonad
 import XMonad.Actions.DynamicProjects
 import XMonad.Actions.MessageFeedback
 import XMonad.Actions.SpawnOn (manageSpawn)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
-import XMonad.Hooks.InsertPosition
-  ( Focus (Newer),
-    Position (Below),
-    insertPosition,
-  )
 import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.ManageHelpers
-  ( composeOne,
-    doCenterFloat,
-    doFullFloat,
-    isDialog,
-    isFullscreen,
-    isInProperty,
-    (-?>),
-  )
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.MultiToggle (mkToggle, single)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
@@ -41,14 +24,14 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.WindowNavigation (windowNavigation)
 import XMonad.Util.Cursor (setDefaultCursor)
-import XMonad.Util.NamedScratchpad
+import Ebn.Polybar (polybar, polybarHook)
 
 main :: IO ()
-main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< mkDbusClient
+main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< polybar
   where
     cfg dbus =
       def
-        { manageHook = myManageHook,
+        { manageHook = App.manageApps <+> manageSpawn,
           logHook = dynamicLogWithPP (polybarHook dbus),
           startupHook = myStartupHook,
           terminal = fromMaybe "xterm" $ App.terminal apps,
@@ -68,89 +51,9 @@ main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< mkDbusC
           App.launcher = Just "rofi -matching fuzzy -show drun -modi drun,run -show-icons"
         }
 
-mkDbusClient :: IO D.Client
-mkDbusClient = D.connectSession >>= \dbus -> requestBus dbus >> pure dbus
-  where
-    requestBus dbus = D.requestName dbus (D.busName_ "org.xmonad.log") opts
-    opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-
--- Emit a DBus signal on log updates
-dbusOutput :: D.Client -> String -> IO ()
-dbusOutput dbus str =
-  let opath = D.objectPath_ "/org/xmonad/Log"
-      iname = D.interfaceName_ "org.xmonad.Log"
-      mname = D.memberName_ "Update"
-      signal = D.signal opath iname mname
-      body = [D.toVariant $ UTF8.decodeString str]
-   in D.emit dbus $ signal {D.signalBody = body}
-
-polybarHook :: D.Client -> PP
-polybarHook dbus =
-  namedScratchpadFilterOutWorkspacePP $
-    def
-      { ppOutput = dbusOutput dbus,
-        ppCurrent = wrapper focusedFg,
-        ppVisible = wrapper fg,
-        ppUrgent = wrapper red,
-        ppHidden = wrapper gray,
-        ppWsSep = "",
-        ppSep = " :: ",
-        ppTitle = const ""
-      }
-  where
-    wrapper c s = wrap ("%{F" <> c <> "} ") " %{F-}" s
-    blue = "#2E9AFE"
-    gray = "#7F7F7F"
-    orange = "#ea4300"
-    purple = "#9058c7"
-    focusedFg = "#bd93f9"
-    fg = "#ebdbb2"
-    bg = "#282828"
-    bg1 = "#3c3836"
-    red = "#fb4934"
-
-myManageHook :: ManageHook
-myManageHook = manageApps <+> manageSpawn
-  where
-    isBrowserDialog = isDialog <&&> className =? "chromium-browser"
-
-    isFileChooserDialog = isRole =? "GtkFileChooserDialog"
-
-    isPopup = isRole =? "pop-up"
-
-    isSplash = isInProperty "_NET_WM_WINDOW_TYPE" "_NET_WM_WINDOW_TYPE_SPLASH"
-
-    isRole = stringProperty "WM_WINDOW_ROLE"
-
-    tileBelow = insertPosition Below Newer
-
-    anyOf :: [Query Bool] -> Query Bool
-    anyOf = foldl (<||>) (pure False)
-
-    match :: [App] -> Query Bool
-    match = anyOf . fmap isInstance
-
-    manageApps :: ManageHook
-    manageApps =
-      composeOne
-        [ resource =? "desktop_window" -?> doIgnore,
-          resource =? "kdesktop" -?> doIgnore,
-          anyOf
-            [ isBrowserDialog,
-              isFileChooserDialog,
-              isDialog,
-              isPopup,
-              isSplash
-            ]
-            -?> doCenterFloat,
-          isFullscreen -?> doFullFloat,
-          pure True -?> tileBelow
-        ]
-
-isInstance :: App -> Query Bool
-isInstance (ClassApp c _) = className =? c
-isInstance (TitleApp t _) = title =? t
-isInstance (NameApp n _) = appName =? n
+    myStartupHook :: X ()
+    myStartupHook = do
+      setDefaultCursor xC_left_ptr
 
 -- Workspaces ---------------------------------------------------------------
 webWs = "web"
@@ -239,23 +142,5 @@ myLayouts =
     -- Fullscreen
     fullScreenToggle = mkToggle (single NBFULL)
 
-myStartupHook :: X ()
-myStartupHook = do
-  setDefaultCursor xC_left_ptr
-
 tryResize :: ResizeDirectional -> Resize -> X ()
 tryResize x y = sequence_ [tryMessageWithNoRefreshToCurrent x y, refresh]
-
-type AppName = String
-
-type AppTitle = String
-
-type AppClassName = String
-
-type AppCommand = String
-
-data App
-  = ClassApp AppClassName AppCommand
-  | TitleApp AppTitle AppCommand
-  | NameApp AppName AppCommand
-  deriving (Show)

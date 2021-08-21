@@ -6,8 +6,10 @@ extra-source-files: CHANGELOG.md
 library
   hs-source-dirs: lib
   exposed-modules:
-      Keybinds
-      Applications
+      Ebn.Keybinds
+      Ebn.Applications
+      Ebn.Polybar
+      Ebn.Dbus
   build-depends:
       base,
       xmonad,

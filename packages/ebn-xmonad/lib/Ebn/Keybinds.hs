@@ -2,9 +2,9 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# OPTIONS_GHC -Wunused-imports #-}
 
-module Keybinds where
+module Ebn.Keybinds where
 
-import Applications (AppConfig (..), maybeSpawn)
+import Ebn.Applications (AppConfig (..), maybeSpawn)
 import Data.Map (Map)
 import Graphics.X11
 import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.))
