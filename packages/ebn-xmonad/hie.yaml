@@ -1,0 +1,6 @@
+cradle:
+  cabal:
+    - path: "./xmonad.hs"
+      component: "exe:ebn-xmonad-x86_64-linux"
+    - path: "./lib"
+      component: "lib:ebn-xmonad"

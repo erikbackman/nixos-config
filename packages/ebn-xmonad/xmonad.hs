@@ -1,31 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -Wno-overflowed-literals #-}
+{-# OPTIONS_GHC -Wunused-imports #-}
 
 import qualified Codec.Binary.UTF8.String as UTF8
-import qualified Control.Exception as E
 import qualified DBus as D
 import qualified DBus.Client as D
-import qualified Data.Map as M
-import Graphics.X11.ExtraTypes
-  ( xF86XK_AudioLowerVolume,
-    xF86XK_AudioMute,
-    xF86XK_AudioNext,
-    xF86XK_AudioPause,
-    xF86XK_AudioPrev,
-    xF86XK_AudioStop,
-  )
-import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioRaiseVolume)
-import System.Exit (exitSuccess)
-import System.IO (hClose)
 import XMonad
 import XMonad.Actions.DynamicProjects
-import XMonad.Actions.DynamicWorkspaces (removeWorkspace)
-import XMonad.Actions.FloatKeys (keysAbsResizeWindow, keysResizeWindow)
 import XMonad.Actions.MessageFeedback
-import XMonad.Actions.Navigation2D
-import XMonad.Actions.RotSlaves (rotSlavesUp)
-import XMonad.Actions.SpawnOn (manageSpawn, spawnOn)
-import XMonad.Actions.WithAll (killAll)
+import XMonad.Actions.SpawnOn (manageSpawn)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
 import XMonad.Hooks.InsertPosition
@@ -44,32 +27,34 @@ import XMonad.Hooks.ManageHelpers
     (-?>),
   )
 import XMonad.Layout.BinarySpacePartition
-import XMonad.Layout.Gaps
-import XMonad.Layout.MultiToggle (Toggle (..), mkToggle, single)
+import XMonad.Layout.MultiToggle (mkToggle, single)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
-import qualified XMonad.StackSet as W
 import XMonad.Util.Cursor (setDefaultCursor)
-import XMonad.Util.NamedActions
 import XMonad.Util.NamedScratchpad
-import XMonad.Util.Run
-import XMonad.Util.SpawnOnce
+import Control.Monad (replicateM_)
+import qualified Applications as App
+import Keybinds (KeybindConfig(..), keybinds)
+import XMonad.Layout.WindowNavigation (windowNavigation)
+import Applications (AppConfig, defaultAppConfig)
+import Data.Maybe (fromMaybe)
 
 main :: IO ()
-main = xmonad . dynamicProjects projects . keybindings . ewmh . docks . config =<< mkDbusClient
+main = xmonad . dynamicProjects (projects apps)  . ewmh . docks . cfg =<< mkDbusClient
   where
-    config dbus =
+    cfg dbus =
       def
         { manageHook = myManageHook,
           logHook = dynamicLogWithPP (polybarHook dbus),
           startupHook = myStartupHook,
-          terminal = myTerminal,
+          terminal = fromMaybe "xterm" $ App.terminal apps,
           modMask = mod4Mask,
           borderWidth = 1,
+          keys = keybinds . KeybindConfig apps,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,
           focusedBorderColor = "#bd93f9",
@@ -77,8 +62,11 @@ main = xmonad . dynamicProjects projects . keybindings . ewmh . docks . config =
           workspaces = myWS
         }
 
-    keybindings = addDescrKeys' ((mod4Mask .|. controlMask, xK_question), showKeybindings) myKeys
-
+    apps = defaultAppConfig
+      { App.terminal = Just "kitty",
+        App.launcher = Just "rofi -matching fuzzy -show drun -modi drun,run -show-icons"
+      }
+    
 mkDbusClient :: IO D.Client
 mkDbusClient = D.connectSession >>= \dbus -> requestBus dbus >> pure dbus
   where
@@ -110,7 +98,6 @@ polybarHook dbus =
       }
   where
     wrapper c s = wrap ("%{F" <> c <> "} ") " %{F-}" s
-
     blue = "#2E9AFE"
     gray = "#7F7F7F"
     orange = "#ea4300"
@@ -122,7 +109,7 @@ polybarHook dbus =
     red = "#fb4934"
 
 myManageHook :: ManageHook
-myManageHook = manageApps <+> manageSpawn <+> manageScratchpads
+myManageHook = manageApps <+> manageSpawn
   where
     isBrowserDialog = isDialog <&&> className =? "chromium-browser"
 
@@ -136,8 +123,6 @@ myManageHook = manageApps <+> manageSpawn <+> manageScratchpads
 
     tileBelow = insertPosition Below Newer
 
-    manageScratchpads = namedScratchpadManageHook scratchpads
-
     anyOf :: [Query Bool] -> Query Bool
     anyOf = foldl (<||>) (pure False)
 
@@ -147,9 +132,7 @@ myManageHook = manageApps <+> manageSpawn <+> manageScratchpads
     manageApps :: ManageHook
     manageApps =
       composeOne
-        [ match [office] -?> doFloat,
-          match [btm, spotify, mpv, yad] -?> doFullFloat,
-          resource =? "desktop_window" -?> doIgnore,
+        [ resource =? "desktop_window" -?> doIgnore,
           resource =? "kdesktop" -?> doIgnore,
           anyOf
             [ isBrowserDialog,
@@ -168,14 +151,6 @@ isInstance (ClassApp c _) = className =? c
 isInstance (TitleApp t _) = title =? t
 isInstance (NameApp n _) = appName =? n
 
-myEditor = "emacs"
-
-myTerminal = "kitty"
-
-appLauncher = "rofi -matching fuzzy rofi -show drun -modi drun,run -show-icons"
-
-mailClient = "claws-mail"
-
 -- Workspaces ---------------------------------------------------------------
 webWs = "web"
 
@@ -193,8 +168,8 @@ myWS :: [WorkspaceId]
 myWS = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
 
 -- Dynamic Projects ----------------------------------------------------------
-projects :: [Project]
-projects =
+projects :: AppConfig -> [Project]
+projects apps  =
   [ Project
       { projectName = webWs,
         projectDirectory = "~/",
@@ -203,14 +178,14 @@ projects =
     Project
       { projectName = devWs,
         projectDirectory = "~/repos/github.com/erikbackman",
-        projectStartHook = Just $ spawn myTerminal
+        projectStartHook = Just $ replicateM_ 3 (App.maybeSpawn $ App.terminal apps)
       },
     Project
       { projectName = comWs,
         projectDirectory = "~/",
         projectStartHook =
           Just $
-            spawn mailClient
+            App.maybeSpawn (App.mailClient apps)
               >> spawn "discord"
       },
     Project
@@ -221,7 +196,7 @@ projects =
     Project
       { projectName = sysWs,
         projectDirectory = "~/repos/github.com/erikbackman/nixos-config",
-        projectStartHook = Nothing
+        projectStartHook = Just $ App.maybeSpawn (App.terminal apps)
       },
     Project
       { projectName = etcWs,
@@ -232,6 +207,7 @@ projects =
 
 myLayouts =
   avoidStruts
+    . windowNavigation
     . smartBorders
     . fullScreenToggle
     . comLayout
@@ -241,21 +217,18 @@ myLayouts =
     . wrkLayout
     $ (tiled ||| Mirror tiled ||| column3 ||| full)
   where
-    -- default tiling algorithm partitions the screen into two panes
-
-    tiled = gapSpaced 10 $ Tall nmaster delta ratio
-    full = gapSpaced 5 Full
-    column3 = gapSpaced 10 $ ThreeColMid 1 (3 / 100) (1 / 2)
+    tiled = gapSpaced $ Tall nmaster delta ratio
+    full = gapSpaced Full
+    column3 = gapSpaced $ ThreeColMid 1 (3 / 100) (1 / 2)
     float = simpleFloat
-    mirrorTall = gapSpaced 10 $ Mirror (Tall 1 (3 / 100) (1 / 2))
+    mirrorTall = gapSpaced $ Mirror (Tall 1 (3 / 100) (1 / 2))
     -- The default number of windows in the master pane
     nmaster = 1
     -- Default proportion of screen occupied by master pane
     ratio = 1 / 2
     -- Percent of screen to increment by when resizing panes
     delta = 3 / 100 -- Gaps bewteen windows
-    myGaps gap = gaps [(U, gap), (D, gap), (L, gap), (R, gap)]
-    gapSpaced g = spacing g . myGaps g
+    gapSpaced = spacingRaw True (Border 5 5 5 5) True (Border 5 5 5 5) True
     -- Per workspace layout
     comLayout = onWorkspace comWs (tiled ||| full)
     devLayout = onWorkspace devWs (full ||| column3 ||| tiled ||| mirrorTall)
@@ -264,10 +237,7 @@ myLayouts =
     etcLayout = onWorkspace etcWs float
     -- Fullscreen
     fullScreenToggle = mkToggle (single NBFULL)
-
--- Misc
--- master l = fixMastered (1 / 4) (1 / 2) l
-
+    
 myStartupHook :: X ()
 myStartupHook = do
   setDefaultCursor xC_left_ptr
@@ -288,138 +258,3 @@ data App
   | TitleApp AppTitle AppCommand
   | NameApp AppName AppCommand
   deriving (Show)
-
-office = ClassApp "libreoffice" "libreoffice"
-
-btm = TitleApp "btm" "kitty --title=btm btm"
-
-nautilus = ClassApp "Org.gnome.Nautilus" "nautilus"
-
-spotify = ClassApp "Spotify" "myspotify"
-
-mpv = ClassApp "mpv" "mpv"
-
-yad = ClassApp "Yad" "yad --text-info --text 'XMonad'"
-
-getNameCommand :: App -> (AppClassName, AppCommand)
-getNameCommand (ClassApp n c) = (n, c)
-getNameCommand (TitleApp n c) = (n, c)
-getNameCommand (NameApp n c) = (n, c)
-
-getAppName :: App -> AppClassName
-getAppName = fst . getNameCommand
-
-getAppCommand :: App -> AppCommand
-getAppCommand = snd . getNameCommand
-
-scratchpadApp :: App -> NamedScratchpad
-scratchpadApp app =
-  NS (getAppName app) (getAppCommand app) (isInstance app) defaultFloating
-
-runScratchpadApp :: App -> X ()
-runScratchpadApp = namedScratchpadAction scratchpads . getAppName
-
-scratchpads :: NamedScratchpads
-scratchpads = scratchpadApp <$> [spotify, btm]
-
-playerctl :: String -> String
-playerctl c = "playerctl --player=spotify,%any " <> c
-
-showKeybindings :: [((KeyMask, KeySym), NamedAction)] -> NamedAction
-showKeybindings x =
-  addName "Show Keybindings" . io $
-    E.bracket
-      (spawnPipe $ getAppCommand yad)
-      hClose
-      (\h -> hPutStr h (unlines $ showKm x))
-
-myKeys conf@XConfig {XMonad.modMask = modm} =
-  keySet "Applications" [key "Slack" (modm, xK_F2) $ spawnOn comWs "slack"]
-    ^++^ keySet
-      "Audio"
-      [ key "Mute" (0, xF86XK_AudioMute) $ spawn "amixer -q set Master toggle",
-        key "Lower volume" (0, xF86XK_AudioLowerVolume) $
-          spawn "amixer -q set Master 5%-",
-        key "Raise volume" (0, xF86XK_AudioRaiseVolume) $
-          spawn "amixer -q set Master 5%+",
-        key "Play / Pause" (0, xF86XK_AudioPause) $ spawn $ playerctl "play-pause",
-        key "Stop" (0, xF86XK_AudioStop) $ spawn $ playerctl "stop",
-        key "Previous" (0, xF86XK_AudioPrev) $ spawn $ playerctl "previous",
-        key "Next" (0, xF86XK_AudioNext) $ spawn $ playerctl "next"
-      ]
-    ^++^ keySet
-      "Launchers"
-      [ key "Terminal" (modm .|. shiftMask, xK_Return) $ spawn myTerminal,
-        key "Apps (Rofi)" (modm, xK_p) $ spawn appLauncher
-      ]
-    ^++^ keySet
-      "Layouts"
-      [ key "Next" (modm, xK_space) $ sendMessage NextLayout,
-        key "Reset" (modm .|. shiftMask, xK_space) $
-          setLayout (XMonad.layoutHook conf),
-        key "Fullscreen" (modm, xK_f) $ sendMessage (Toggle NBFULL),
-        key "Float" (modm .|. shiftMask, xK_t) $ withFocused toggleFloat
-      ]
-    ^++^ keySet
-      "Scratchpads"
-      [ key "mpv" (modm .|. controlMask, xK_a) $ runScratchpadApp mpv,
-        key "bottom" (modm .|. controlMask, xK_y) $ runScratchpadApp btm,
-        key "Spotify" (modm .|. controlMask, xK_s) $ runScratchpadApp spotify
-      ]
-    ^++^ keySet
-      "System"
-      [ key "Toggle status bar gap" (modm, xK_b) toggleStruts,
-        key "Logout (quit XMonad)" (modm .|. shiftMask, xK_q) $ io exitSuccess,
-        key "Restart XMonad" (modm, xK_q) $ spawn "xmonad --recompile && xmonad --restart",
-        key "Capture entire screen" (modm, xK_Print) $
-          spawn "flameshot full -p ~/Pictures/flameshot/"
-      ]
-    ^++^ keySet
-      "Windows"
-      [ key "Close focused" (modm, xK_c) kill,
-        key "Close all in ws" (modm .|. shiftMask, xK_c) killAll,
-        key "Refresh size" (modm, xK_n) refresh,
-        key "Focus next" (modm, xK_j) $ windows W.focusDown,
-        key "Focus previous" (modm, xK_k) $ windows W.focusUp,
-        key "Focus master" (modm, xK_m) $ windows W.focusMaster,
-        key "Swap master" (modm, xK_Return) $ windows W.swapMaster,
-        key "Swap next" (modm .|. shiftMask, xK_j) $ windows W.swapDown,
-        key "Swap previous" (modm .|. shiftMask, xK_k) $ windows W.swapUp,
-        key "Shrink master" (modm, xK_h) $ sendMessage Shrink,
-        key "Expand master" (modm, xK_l) $ sendMessage Expand,
-        key "Switch to tile" (modm, xK_t) $ withFocused (windows . W.sink),
-        key "Rotate slaves" (modm .|. shiftMask, xK_Tab) rotSlavesUp,
-        key "Decr  abs size" (modm .|. shiftMask, xK_d) $
-          withFocused (keysAbsResizeWindow (-10, -10) (1024, 752)),
-        key "Incr  abs size" (modm .|. shiftMask, xK_s) $
-          withFocused (keysAbsResizeWindow (10, 10) (1024, 752))
-      ]
-    ^++^ keySet
-      "Workspaces"
-        switchWsById
-  where
-    togglePolybar = spawn "polybar-msg cmd toggle &"
-
-    toggleStruts = togglePolybar >> sendMessage ToggleStruts
-
-    toggleFloat w =
-      windows
-        ( \s ->
-            if M.member w (W.floating s)
-              then W.sink w s
-              else W.float w (W.RationalRect (1 / 3) (1 / 4) (1 / 2) (4 / 5)) s
-        )
-    keySet s ks = subtitle s : ks
-
-    key n k a = (k, addName n a)
-
-    action m =
-      if m == shiftMask
-        then "Move to "
-        else "Switch to "
-
-    switchWsById =
-      [ key (action m <> show i) (m, k) (windows $ f i)
-        | (i, k) <- zip (XMonad.workspaces conf) [xK_F1 .. xK_F6],
-          (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
-      ]
