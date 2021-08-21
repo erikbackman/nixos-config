@@ -370,14 +370,14 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
       "System"
       [ key "Toggle status bar gap" (modm, xK_b) toggleStruts,
         key "Logout (quit XMonad)" (modm .|. shiftMask, xK_q) $ io exitSuccess,
-        key "Restart XMonad" (modm, xK_q) $ spawn "xmonad --restart",
+        key "Restart XMonad" (modm, xK_q) $ spawn "xmonad --recompile && xmonad --restart",
         key "Capture entire screen" (modm, xK_Print) $
           spawn "flameshot full -p ~/Pictures/flameshot/"
       ]
     ^++^ keySet
       "Windows"
-      [ key "Close focused" (modm, xK_k) kill,
-        key "Close all in ws" (modm .|. shiftMask, xK_k) killAll,
+      [ key "Close focused" (modm, xK_c) kill,
+        key "Close all in ws" (modm .|. shiftMask, xK_c) killAll,
         key "Refresh size" (modm, xK_n) refresh,
         key "Focus next" (modm, xK_j) $ windows W.focusDown,
         key "Focus previous" (modm, xK_k) $ windows W.focusUp,
