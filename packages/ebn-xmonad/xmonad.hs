@@ -77,7 +77,7 @@ main = xmonad . dynamicProjects projects . keybindings . ewmh . docks . config =
           workspaces = myWS
         }
 
-    keybindings = addDescrKeys' ((mod4Mask .|. controlMask, xK_F1), showKeybindings) myKeys
+    keybindings = addDescrKeys' ((mod4Mask .|. controlMask, xK_question), showKeybindings) myKeys
 
 mkDbusClient :: IO D.Client
 mkDbusClient = D.connectSession >>= \dbus -> requestBus dbus >> pure dbus
@@ -106,7 +106,7 @@ polybarHook dbus =
         ppHidden = wrapper gray,
         ppWsSep = "",
         ppSep = " :: ",
-        ppTitle = const "" --shorten 40
+        ppTitle = const ""
       }
   where
     wrapper c s = wrap ("%{F" <> c <> "} ") " %{F-}" s
@@ -115,7 +115,6 @@ polybarHook dbus =
     gray = "#7F7F7F"
     orange = "#ea4300"
     purple = "#9058c7"
-    -- red       = "#722222"
     focusedFg = "#bd93f9"
     fg = "#ebdbb2"
     bg = "#282828"
@@ -271,10 +270,6 @@ myLayouts =
 
 myStartupHook :: X ()
 myStartupHook = do
-  -- spawnOnce "xrandr --output DP-0 --mode 3440x1440 --rate 99.98"
-  -- spawnOnce "~/.fehbg &"
-  -- spawnOnce "xset r rate 500 33"
-  -- spawnOnce "systemctl --user restart polybar"
   setDefaultCursor xC_left_ptr
 
 tryResize :: ResizeDirectional -> Resize -> X ()
@@ -355,10 +350,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
     ^++^ keySet
       "Launchers"
       [ key "Terminal" (modm .|. shiftMask, xK_Return) $ spawn myTerminal,
-        key "Apps (Rofi)" (modm, xK_p) $ spawn appLauncher,
-        -- , key "Lock screen"   (modm .|. controlMask, xK_l       ) $ spawn screenLocker
-        key "Emacs everywhere!" (modm .|. controlMask, xK_F10) $
-          spawn "emacsclient --eval \"(emacs-everywhere)\""
+        key "Apps (Rofi)" (modm, xK_p) $ spawn appLauncher
       ]
     ^++^ keySet
       "Layouts"
@@ -378,15 +370,14 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
       "System"
       [ key "Toggle status bar gap" (modm, xK_b) toggleStruts,
         key "Logout (quit XMonad)" (modm .|. shiftMask, xK_q) $ io exitSuccess,
-        key "Restart XMonad" (modm, xK_q) $
-          spawn "xmonad --recompile; xmonad --restart",
+        key "Restart XMonad" (modm, xK_q) $ spawn "xmonad --restart",
         key "Capture entire screen" (modm, xK_Print) $
           spawn "flameshot full -p ~/Pictures/flameshot/"
       ]
     ^++^ keySet
       "Windows"
-      [ key "Close focused" (modm, xK_BackSpace) kill,
-        key "Close all in ws" (modm .|. shiftMask, xK_BackSpace) killAll,
+      [ key "Close focused" (modm, xK_k) kill,
+        key "Close all in ws" (modm .|. shiftMask, xK_k) killAll,
         key "Refresh size" (modm, xK_n) refresh,
         key "Focus next" (modm, xK_j) $ windows W.focusDown,
         key "Focus previous" (modm, xK_k) $ windows W.focusUp,
@@ -398,10 +389,6 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
         key "Expand master" (modm, xK_l) $ sendMessage Expand,
         key "Switch to tile" (modm, xK_t) $ withFocused (windows . W.sink),
         key "Rotate slaves" (modm .|. shiftMask, xK_Tab) rotSlavesUp,
-        key "Decrease size" (modm, xK_d) $
-          withFocused (keysResizeWindow (-10, -10) (1, 1)),
-        key "Increase size" (modm, xK_s) $
-          withFocused (keysResizeWindow (10, 10) (1, 1)),
         key "Decr  abs size" (modm .|. shiftMask, xK_d) $
           withFocused (keysAbsResizeWindow (-10, -10) (1024, 752)),
         key "Incr  abs size" (modm .|. shiftMask, xK_s) $
@@ -409,11 +396,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
       ]
     ^++^ keySet
       "Workspaces"
-      [ key "Remove" (modm .|. shiftMask, xK_F4) removeWorkspace
-      -- , key "Next" (modm, xK_comma)
-      ]
-      ++ switchWsById
-      ++ switchWsByIdF
+        switchWsById
   where
     togglePolybar = spawn "polybar-msg cmd toggle &"
 
@@ -435,14 +418,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} =
         then "Move to "
         else "Switch to "
 
-    -- mod-[1..9]: Switch to workspace N | mod-shift-[1..9]: Move client to workspace N
     switchWsById =
-      [ key (action m <> show i) (m .|. modm, k) (windows $ f i)
-        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9],
-          (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
-      ]
-
-    switchWsByIdF =
       [ key (action m <> show i) (m, k) (windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_F1 .. xK_F6],
           (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
