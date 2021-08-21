@@ -1,26 +1,21 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE NamedFieldPuns #-}
+{-# OPTIONS_GHC -Wunused-imports #-}
 
 module Keybinds where
 
 import Applications (AppConfig (..), maybeSpawn)
 import Data.Map (Map)
-import qualified Data.Map as M
 import Graphics.X11
-import Graphics.X11.ExtraTypes (xF86XK_AudioLowerVolume, xF86XK_AudioMute, xF86XK_AudioNext, xF86XK_AudioPause, xF86XK_AudioPrev, xF86XK_AudioRaiseVolume, xF86XK_AudioStop)
-import System.Exit (exitSuccess)
-import XMonad (ChangeLayout (NextLayout), Layout (Layout), MonadIO, Resize (Expand, Shrink), X, XConfig (XConfig, layoutHook, modMask), io, kill, refresh, sendMessage, setLayout, spawn, windows, withFocused, workspaces, (.|.))
-import XMonad.Actions.FloatKeys (keysAbsResizeWindow)
-import XMonad.Actions.RotSlaves (rotSlavesUp)
-import XMonad.Actions.SpawnOn (spawnOn)
-import XMonad.Actions.WithAll (killAll)
-import qualified XMonad.Core
-import XMonad.Hooks.ManageDocks (Direction2D (D, R, U), ToggleStruts (ToggleStruts))
-import XMonad.Layout.MultiToggle (Toggle (..), mkToggle, single)
+import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.))
+import XMonad.Hooks.ManageDocks (Direction2D (D, R, U))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
+import XMonad.Layout.MultiToggle (Toggle (..))
 import XMonad.Layout.WindowNavigation (Direction2D (L), Navigate (Go))
+import XMonad.Util.NamedActions (addName)
+
+import qualified Data.Map as M
 import qualified XMonad.StackSet as W
-import XMonad.Util.NamedActions (NamedAction, addName, subtitle, (^++^))
 
 data KeybindConfig l = KeybindConfig
   { appConfig :: AppConfig,
@@ -39,6 +34,8 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
       ((modm, xK_j), sendMessage $ Go D),
       ((modm, xK_k), sendMessage $ Go U),
       ((modm, xK_l), sendMessage $ Go R),
+      ((modm, xK_n), windows W.focusUp),
+      ((modm, xK_m), windows W.focusDown),
       ((modm, xK_Return), windows W.swapMaster),
       ((modm, xK_f), sendMessage (Toggle NBFULL)),
       ((modm .|. shiftMask, xK_t), withFocused toggleFloat)
