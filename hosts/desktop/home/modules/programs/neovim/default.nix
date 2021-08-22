@@ -32,5 +32,9 @@ in with lib; {
     home.packages = with pkgs; [
       fzf
     ];
+
+    home.activation.linkMutableLuaConfig = lib.hm.dag.entryAfter [ "writeBoundry" ] ''
+      ln -sf ${./config/lua} $HOME/.config/nvim/lua
+    '';
   };
 }
