@@ -33,7 +33,10 @@ in with lib; {
       fzf
     ];
 
+    
+    #home.file.".config/nvim/lua".source = config.lib.file.mkOutOfStoreSymlink ./config/lua;
     home.activation.linkMutableLuaConfig = lib.hm.dag.entryAfter [ "writeBoundry" ] ''
+      rm $HOME/.config/nvim/lua
       ln -sf ${./config/lua} $HOME/.config/nvim/lua
     '';
   };

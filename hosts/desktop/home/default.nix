@@ -1,4 +1,4 @@
-{ lib, config, pkgs, inputs, ... }: {
+{ lib, config, pkgs, inputs, hm-modules-path, ... }: {
   programs.home-manager.enable = true;
 
   lib.hm.users.ebn = { pkgs, ... }: {
@@ -7,7 +7,7 @@
 
   # This will import every default.nix found in ./modules
   imports = with (import ./lib.nix lib).modules;
-    listModulesRec ./modules;
+    listModulesRec hm-modules-path;
 
   #############################################################################
   #                                  Programs                                 #
@@ -141,6 +141,7 @@
     ncspot
     pavucontrol
     taskwarrior
+    dstask
   ];
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage

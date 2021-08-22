@@ -38,7 +38,7 @@
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = { inherit inputs pkgs; };
+              home-manager.extraSpecialArgs = { inherit inputs pkgs; hm-modules-path = ./hm-modules; };
               home-manager.users.ebn = import ./hosts/desktop/home;
             }
           ];
