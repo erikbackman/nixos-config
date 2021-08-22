@@ -43,8 +43,8 @@ in {
       windowManager.xmonad.enable = true;
       initExtra = ''
           xrandr --output DP-0 --mode 3440x1440 --rate 99.98
+          xrdb $HOME/.Xresources
           xset r rate 500 33
-          systemctl --user restart polybar
 
           if test -e $HOME/wallpaper; then
              ${pkgs.feh}/bin/feh --no-fehbg --bg-scale $HOME/wallpaper
