@@ -33,13 +33,13 @@
           inherit system;
           specialArgs = { inherit inputs pkgs; };
           modules = [
-            ./system
+            ./hosts/desktop/system
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit inputs pkgs; };
-              home-manager.users.ebn = import ./home;
+              home-manager.users.ebn = import ./hosts/desktop/home;
             }
           ];
         };
