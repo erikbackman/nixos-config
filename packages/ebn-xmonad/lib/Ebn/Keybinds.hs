@@ -7,7 +7,7 @@ module Ebn.Keybinds where
 import Ebn.Applications (AppConfig (..), maybeSpawn)
 import Data.Map (Map)
 import Graphics.X11
-import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.))
+import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.), kill)
 import XMonad.Hooks.ManageDocks (Direction2D (D, R, U))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import XMonad.Layout.MultiToggle (Toggle (..))
@@ -16,6 +16,7 @@ import XMonad.Util.NamedActions (addName)
 
 import qualified Data.Map as M
 import qualified XMonad.StackSet as W
+import XMonad.Actions.WithAll (killAll)
 
 data KeybindConfig l = KeybindConfig
   { appConfig :: AppConfig,
@@ -27,6 +28,8 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
   M.fromList $
     [ ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart"),
       ((modm .|. shiftMask, xK_Return), maybeSpawn (terminal apps)),
+      ((modm, xK_c), kill),
+      ((modm .|. shiftMask, xK_c), killAll),
       ((modm, xK_p), maybeSpawn (launcher apps)),
       ((modm, xK_Return), maybeSpawn (launcher apps)),
       ((modm, xK_space), sendMessage NextLayout),

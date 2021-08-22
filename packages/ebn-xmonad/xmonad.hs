@@ -48,7 +48,8 @@ main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< polybar
     apps =
       defaultAppConfig
         { App.terminal = Just "kitty",
-          App.launcher = Just "rofi -matching fuzzy -show drun -modi drun,run -show-icons"
+          App.launcher = Just "rofi -matching fuzzy -show drun -modi drun,run -show-icons",
+          App.mailClient = Just "claws-mail"
         }
 
     myStartupHook :: X ()
