@@ -5,7 +5,8 @@
     nixpkgs.config.allowUnfree = true;
   };
 
-  # This will import every default.nix found in ./modules
+  # This will import every default.nix found in hm-modules-path
+  # (see flake.nix)
   imports = with (import ./lib.nix lib).modules;
     listModulesRec hm-modules-path;
 
