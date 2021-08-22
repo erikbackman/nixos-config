@@ -12,11 +12,10 @@ import XMonad.Hooks.ManageDocks (Direction2D (D, R, U))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import XMonad.Layout.MultiToggle (Toggle (..))
 import XMonad.Layout.WindowNavigation (Direction2D (L), Navigate (Go))
-import XMonad.Util.NamedActions (addName)
+import XMonad.Actions.WithAll (killAll)
 
 import qualified Data.Map as M
 import qualified XMonad.StackSet as W
-import XMonad.Actions.WithAll (killAll)
 
 data KeybindConfig l = KeybindConfig
   { appConfig :: AppConfig,
