@@ -6,11 +6,11 @@ import XMonad.Hooks.ManageHelpers ((-?>), composeOne, isDialog, doCenterFloat, i
 import XMonad.Hooks.InsertPosition
 
 data AppConfig = AppConfig
-  { terminal :: Maybe String,
-    launcher :: Maybe String,
-    browser :: Maybe String,
-    visualEditor :: Maybe String,
-    mailClient :: Maybe String
+  { terminal :: !(Maybe String),
+    launcher :: !(Maybe String),
+    browser :: !(Maybe String),
+    visualEditor :: !(Maybe String),
+    mailClient :: !(Maybe String)
   }
 
 type AppName = String
@@ -57,21 +57,7 @@ manageApps =
       pure True -?> tileBelow
     ]
 
-isInstance :: App -> Query Bool
-isInstance (ClassApp c _) = className =? c
-isInstance (TitleApp t _) = title =? t
-isInstance (NameApp n _) = appName =? n
-
-isBrowserDialog = isDialog <&&> className =? "chromium-browser"
-
-isFileChooserDialog = isRole =? "GtkFileChooserDialog"
-
-isPopup = isRole =? "pop-up"
-
-isSplash = isInProperty "_NET_WM_WINDOW_TYPE" "_NET_WM_WINDOW_TYPE_SPLASH"
-
-isRole = stringProperty "WM_WINDOW_ROLE"
-
+tileBelow :: ManageHook
 tileBelow = insertPosition Below Newer
 
 anyOf :: [Query Bool] -> Query Bool
@@ -79,3 +65,23 @@ anyOf = foldl (<||>) (pure False)
 
 match :: [App] -> Query Bool
 match = anyOf . fmap isInstance
+
+isInstance :: App -> Query Bool
+isInstance (ClassApp c _) = className =? c
+isInstance (TitleApp t _) = title =? t
+isInstance (NameApp n _) = appName =? n
+
+isBrowserDialog :: Query Bool
+isBrowserDialog = isDialog <&&> className =? "chromium-browser"
+
+isFileChooserDialog :: Query Bool
+isFileChooserDialog = isRole =? "GtkFileChooserDialog"
+
+isPopup :: Query Bool
+isPopup = isRole =? "pop-up"
+
+isSplash :: Query Bool
+isSplash = isInProperty "_NET_WM_WINDOW_TYPE" "_NET_WM_WINDOW_TYPE_SPLASH"
+
+isRole :: Query String
+isRole = stringProperty "WM_WINDOW_ROLE"
