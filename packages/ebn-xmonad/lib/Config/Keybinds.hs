@@ -2,9 +2,9 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# OPTIONS_GHC -Wunused-imports #-}
 
-module Ebn.Keybinds where
+module Config.Keybinds where
 
-import Ebn.Applications (AppConfig (..), maybeSpawn)
+import Config.Applications (AppConfig (..), maybeSpawn)
 import Data.Map (Map)
 import Graphics.X11
 import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.), kill)
@@ -51,7 +51,6 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
           (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
       ]
       where
-        key n k a = (k, addName n a)
         action m = if m == shiftMask then "Move to " else "Switch to "
 
     toggleFloat w =

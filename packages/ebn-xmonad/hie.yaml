@@ -2,5 +2,7 @@ cradle:
   cabal:
     - path: "./xmonad.hs"
       component: "exe:ebn-xmonad-x86_64-linux"
-    - path: "./lib/Ebn"
+    - path: "./lib/Config.hs"
+      component: "lib:ebn-xmonad"
+    - path: "./lib/Config"
       component: "lib:ebn-xmonad"

@@ -1,9 +1,9 @@
-module Ebn.Polybar where
+module Config.Polybar where
 
 import qualified DBus.Client as D
 import XMonad.Hooks.DynamicLog (PP(..), wrap)
 import XMonad.Util.NamedScratchpad (namedScratchpadFilterOutWorkspacePP)
-import Ebn.Dbus (mkDbusClient, dbusOutput, SignalConfig(..))
+import Config.Dbus (mkDbusClient, dbusOutput, SignalConfig(..))
 import XMonad (def)
 import DBus.Client (Client)
 

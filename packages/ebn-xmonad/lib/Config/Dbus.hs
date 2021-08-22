@@ -1,4 +1,4 @@
-module Ebn.Dbus where
+module Config.Dbus where
 
 import qualified Codec.Binary.UTF8.String as UTF8
 import qualified DBus as D

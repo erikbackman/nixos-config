@@ -1,4 +1,4 @@
-module Ebn.Applications where
+module Config.Applications where
 
 import Control.Monad.IO.Class (MonadIO)
 import XMonad (spawn, ManageHook, Query, resource, (=?), doIgnore, className, title, appName, (<&&>), stringProperty, (<||>))
