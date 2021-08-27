@@ -45,3 +45,4 @@ autocmd TermOpen * startinsert
 
 " load lua configuration
 lua require("ebn")
+#let g:aniseed#env = v:true
