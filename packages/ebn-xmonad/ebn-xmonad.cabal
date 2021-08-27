@@ -19,7 +19,8 @@ library
       containers,
       dbus,
       utf8-string,
-      cpphs
+      cpphs,
+      mtl
 
 executable ebn-xmonad-x86_64-linux
     main-is:          xmonad.hs
@@ -32,6 +33,7 @@ executable ebn-xmonad-x86_64-linux
         dbus,
         utf8-string,
         cpphs,
+        mtl,
         ebn-xmonad
     -- hs-source-dirs:
     default-language: Haskell2010

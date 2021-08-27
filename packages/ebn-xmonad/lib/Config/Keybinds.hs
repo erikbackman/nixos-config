@@ -13,9 +13,12 @@ import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import XMonad.Layout.MultiToggle (Toggle (..))
 import XMonad.Layout.WindowNavigation (Direction2D (L), Navigate (Go))
 import XMonad.Actions.WithAll (killAll)
+import XMonad.Prompt.Window
 
 import qualified Data.Map as M
 import qualified XMonad.StackSet as W
+import XMonad.Prompt (def, bgColor, XPConfig (..), height, promptBorderWidth)
+import XMonad.Prompt.FuzzyMatch (fuzzyMatch)
 
 data KeybindConfig l = KeybindConfig
   { appConfig :: AppConfig,
@@ -30,7 +33,7 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
       ((modm, xK_c), kill),
       ((modm .|. shiftMask, xK_c), killAll),
       ((modm, xK_p), maybeSpawn (launcher apps)),
-      ((modm, xK_Return), maybeSpawn (launcher apps)),
+      ((modm, xK_o), windowPrompt xpConf Goto wsWindows),
       ((modm, xK_space), sendMessage NextLayout),
       ((modm, xK_h), sendMessage $ Go L),
       ((modm, xK_j), sendMessage $ Go D),
@@ -49,11 +52,18 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
         | (i, k) <- zip (XMonad.workspaces conf) [xK_F1 .. xK_F6],
           (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
       ]
-      where
-        action m = if m == shiftMask then "Move to " else "Switch to "
 
     toggleFloat w =
       windows \s ->
         if M.member w (W.floating s)
           then W.sink w s
           else W.float w (W.RationalRect (1 / 3) (1 / 4) (1 / 2) (4 / 5)) s
+
+    xpConf = def 
+      { bgColor = "#0C0F12",
+        font = "xft:JetBrains Mono:size=9",
+        height = 20,
+        promptBorderWidth = 0,
+        searchPredicate = fuzzyMatch,
+        maxComplRows = Just 4
+      }

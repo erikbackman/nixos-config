@@ -5,11 +5,7 @@
 
 module Config where
 
-import Control.Monad (replicateM_)
 import Data.Maybe (fromMaybe)
-import Config.Applications (AppConfig, defaultAppConfig)
-import Config.Keybinds (KeybindConfig (..), keybinds)
-import qualified Config.Applications as App
 import XMonad
 import XMonad.Actions.DynamicProjects
 import XMonad.Actions.MessageFeedback
@@ -18,8 +14,8 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.BinarySpacePartition
-import XMonad.Layout.MultiToggle (mkToggle, single)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
+import XMonad.Layout.MultiToggle (mkToggle, single)
 import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.SimpleFloat (simpleFloat)
@@ -27,7 +23,12 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.WindowNavigation (windowNavigation)
 import XMonad.Util.Cursor (setDefaultCursor)
+
+import Config.Applications (AppConfig, defaultAppConfig)
+import Config.Keybinds (KeybindConfig (..), keybinds)
 import Config.Polybar (polybar, polybarHook)
+import Control.Monad (replicateM_)
+import qualified Config.Applications as App
 
 main :: IO ()
 main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< polybar
