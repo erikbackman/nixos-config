@@ -13,24 +13,30 @@
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     neovim-git.url = "github:neovim/neovim?dir=contrib";
 
-    nixos-hardware.url = github:NixOS/nixos-hardware/master;
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
   outputs = inputs@{ nixpkgs, home-manager, emacs-overlay, neovim-git, nixos-hardware, ... }:
     let
       system = "x86_64-linux";
+
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays =
-          [ emacs-overlay.overlay neovim-git.overlay (import ./overlays) ];
+        overlays = [ 
+          emacs-overlay.overlay
+          neovim-git.overlay
+          (import ./overlays)
+        ];
       };
+
     in {
       devShell.${system} = import ./shell.nix { inherit pkgs; };
 
       packages.${system} = { ebn-xmonad = pkgs.ebn.ebn-xmonad; };
 
       nixosConfigurations = {
+
         nixos = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs pkgs; };
@@ -40,7 +46,10 @@
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = { inherit inputs pkgs; hm-modules-path = ./hm-modules; };
+              home-manager.extraSpecialArgs = {
+                inherit inputs pkgs;
+                hm-modules-path = ./hm-modules;
+              };
               home-manager.users.ebn = import ./hosts/desktop/home;
             }
           ];
@@ -48,11 +57,12 @@
 
         thinkpad = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [
-            ./hosts/thinkpad/system
+          modules = [ 
+            ./hosts/thinkpad/system 
             nixos-hardware.lenovo-thinkpad-t480
           ];
         };
+
       };
     };
 }
