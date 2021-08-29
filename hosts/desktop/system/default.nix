@@ -1,18 +1,22 @@
 { pkgs, lib, ... }: {
-  #imports = [ 
-  #  ./hardware-configuration.nix 
-  #  ../../base
-  #]; 
-  #++ myModules; 
 
-  networking = {
-    hostName = "nixos";
-  };
+  networking.hostName = "nixos";
 
   nixpkgs.config.allowUnfree = true;
   programs.steam.enable = true;
   programs.ebn.nvim.enable = true;
+  programs.ebn.kitty.enable = true;
+  programs.ebn.rofi.enable = true;
   windowManager.ebn.xmonad.enable = true;
+
+  services.ebn.polybar.enable = true;
+  services.ebn.pulseeffects.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.layout = "se";
+  services.dbus = {
+    enable = true;
+    packages = [ pkgs.gnome3.dconf ];
+  };
 
   fonts.fonts = with pkgs; [
     etBook
@@ -24,36 +28,32 @@
     siji
   ];
 
-  services = {
-
-    dbus = {
-      enable = true;
-      packages = [ pkgs.gnome3.dconf ];
-    };
-
-    #xserver = {
-    #  enable = true;
-    #  layout = "se";
-    #  videoDrivers = [ "nvidia" ];
-
-    #  displayManager = {
-    #    defaultSession = "none+xmonad";
-    #    lightdm.greeters.mini = {
-    #      enable = true;
-    #      user = "ebn";
-    #      extraConfig = ''
-    #        [greeter-theme]
-    #        background-image = "";
-    #        background-color = "#0C0F12"
-    #        text-color = "#ff79c6"
-    #        password-background-color = "#1E2029"
-    #        window-color = "#181a23"
-    #        border-color = "#bd93f9"
-    #      '';
-    #    };
-    #  };
-
-    #  windowManager.xmonad.enable = true;
-    #};
-  };
+  environment.systemPackages = with pkgs; [
+    zathura
+    maxima
+    wxmaxima
+    texlive.combined.scheme-full
+    libreoffice
+    chromium
+    playerctl
+    gsettings-desktop-schemas
+    gnumake
+    obs-studio
+    claws-mail-gtk3
+    neofetch
+    mpc_cli
+    mpv
+    streamlink
+    feh
+    discord
+    gnome.gucharmap
+    gimp
+    rofi-pass
+    kdenlive
+    cowsay
+    ncspot
+    pavucontrol
+    taskwarrior
+    dstask
+  ];
 }

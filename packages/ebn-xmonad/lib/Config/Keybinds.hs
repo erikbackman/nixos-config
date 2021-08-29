@@ -19,6 +19,8 @@ import qualified Data.Map as M
 import qualified XMonad.StackSet as W
 import XMonad.Prompt (def, bgColor, XPConfig (..), height, promptBorderWidth)
 import XMonad.Prompt.FuzzyMatch (fuzzyMatch)
+import System.Exit (exitSuccess)
+import XMonad.Core (io)
 
 data KeybindConfig l = KeybindConfig
   { appConfig :: AppConfig,
@@ -29,6 +31,7 @@ keybinds :: KeybindConfig l -> Map (KeyMask, KeySym) (X ())
 keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
   M.fromList $
     [ ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart"),
+      ((modm .|. shiftMask, xK_q), io exitSuccess),
       ((modm .|. shiftMask, xK_Return), maybeSpawn (terminal apps)),
       ((modm, xK_c), kill),
       ((modm .|. shiftMask, xK_c), killAll),

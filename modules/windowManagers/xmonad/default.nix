@@ -39,8 +39,6 @@ in {
     services = {
       xserver = {
         enable = true;
-        layout = "se";
-        videoDrivers = [ "nvidia" ];
 
         displayManager = {
           defaultSession = "none+xmonad";

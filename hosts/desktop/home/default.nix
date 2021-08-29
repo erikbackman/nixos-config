@@ -1,3 +1,5 @@
+# NOTE: I'm slowly migrating away from home-manager
+# This file will continue to shrink until it's no more :p
 { lib, config, pkgs, inputs, hm-modules-path, ... }: {
   programs.home-manager.enable = true;
 
@@ -34,74 +36,16 @@
       };
     };
 
-    ncmpcpp = {
-      enable = true;
-      package = pkgs.ncmpcpp.override {
-        outputsSupport = true;
-        visualizerSupport = true;
-        clockSupport = true;
-      };
-      settings = {
-        visualizer_in_stereo = "no";
-        visualizer_fifo_path = "~/.local/share/mpd/fifo";
-        visualizer_output_name = "my_fifo";
-        visualizer_sync_interval = "10";
-        visualizer_type = "wave_filled";
-        visualizer_color = "gray, magenta, magenta, magenta, magenta";
-      };
-    };
-
-    ebn.kitty = {
-      enable = true;
-      extraSettings = import ./config/kittyThemes/aurora.nix;
-    };
-
     ebn.emacs = {
       enable = true;
       version = "emacsGcc";
     };
 
-    #ebn.nvim.enable = true;
-
-    ebn.rofi.enable = true;
   };
-
-  #############################################################################
-  #                                  XSession                                 #
-  #############################################################################
-  #xsession.windowManager.ebn.xmonad.enable = true;
-
-  #############################################################################
-  #                                  Services                                 #
-  #############################################################################
-  services.ebn.polybar.enable = true;
 
   services.ebn.picom = {
     enable = true;
     opacityEnabled = false;
-  };
-
-  services.pulseeffects = {
-    enable = true;
-    package = pkgs.pulseeffects-legacy;
-    preset = "ebn-preset";
-  };
-
-  services.mpd = {
-    enable = true;
-    network.startWhenNeeded = true;
-    extraConfig = ''
-        audio_output {
-          type "pulse"
-          name "pulse audio"
-        }
-        audio_output {
-          type "fifo"
-          name "my_fifo"
-          path "~/.local/share/mpd/fifo"
-          format "44100:16:2"
-        }
-    '';
   };
 
   #############################################################################
@@ -109,41 +53,6 @@
   #############################################################################
   ebn.dev.cc.enable = true;
 
-  #############################################################################
-  #                               User Packages                               #
-  #############################################################################
-  home.packages = with pkgs; [
-    zathura
-    spotify
-    maxima
-    wxmaxima
-    texlive.combined.scheme-full
-    libreoffice
-    chromium
-    playerctl
-    gsettings-desktop-schemas
-    gnumake
-    obs-studio
-    claws-mail-gtk3
-    neofetch
-    dracula-theme
-    mpc_cli
-    xmobar
-    mpv
-    streamlink
-    feh
-    discord
-    gnome.gucharmap
-    gimp
-    qutebrowser
-    rofi-pass
-    kdenlive
-    cowsay
-    ncspot
-    pavucontrol
-    taskwarrior
-    dstask
-  ];
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards

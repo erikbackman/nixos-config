@@ -3,7 +3,16 @@
 with lib;
 let 
   cfg = config.programs.ebn.rofi;
-  packaged = pkgs.rofi;
+  wrapped = pkgs.writeShellScriptBin "rofi" ''
+    exec ${pkgs.rofi}/bin/rofi -config /etc/rofi/rofi.rasi $@
+  '';
+  package = pkgs.symlinkJoin {
+    name = "rofi";
+    paths = [
+      wrapped
+      pkgs.rofi
+    ];
+  };
 in {
   options.programs.ebn.rofi = {
     enable = mkEnableOption "Enable Rofi";
@@ -15,9 +24,7 @@ in {
       paper-icon-theme
       font-awesome
       roboto-mono
-      (pkgs.writeScriptBin "rofi" ''
-        ${pkgs.bash}/bin/bash exec rofi --config /etc/rofi/rofi.rasi "$@"
-      '';
+      package 
     ];
   };
 }
