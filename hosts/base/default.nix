@@ -1,12 +1,10 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
 
   users.users.ebn = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "audio" "video" ];
     shell = pkgs.bash;
   };
-
-  nixpkgs.config.allowUnfree = true;
 
   boot = {
     kernelPackages = pkgs.linuxPackages_5_13;
@@ -33,7 +31,6 @@
     (pass.withExtensions (exts: [ exts.pass-import ]))
     w3m
     wget
-    xorg.xev
     nnn
   ];
 

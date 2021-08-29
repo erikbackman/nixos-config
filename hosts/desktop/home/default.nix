@@ -61,7 +61,7 @@
       version = "emacsGcc";
     };
 
-    ebn.nvim.enable = true;
+    #ebn.nvim.enable = true;
 
     ebn.rofi.enable = true;
   };
@@ -69,7 +69,7 @@
   #############################################################################
   #                                  XSession                                 #
   #############################################################################
-  xsession.windowManager.ebn.xmonad.enable = true;
+  #xsession.windowManager.ebn.xmonad.enable = true;
 
   #############################################################################
   #                                  Services                                 #

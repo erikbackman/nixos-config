@@ -16,7 +16,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, emacs-overlay, neovim-git, nixos-hardware, ... }:
+  outputs = inputs@{ self, nixpkgs, home-manager, emacs-overlay, neovim-git, nixos-hardware, ... }:
     let
       system = "x86_64-linux";
 
@@ -30,6 +30,9 @@
         ];
       };
 
+      myLib = import ./lib/lib.nix pkgs.lib;
+      myModules = myLib.listModulesRec ./modules;
+
     in {
       devShell.${system} = import ./shell.nix { inherit pkgs; };
 
@@ -40,8 +43,11 @@
         nixos = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs pkgs; };
-          modules = [
+          modules = pkgs.lib.lists.flatten [
+            ./hosts/base
             ./hosts/desktop/system
+            ./hosts/desktop/system/hardware-configuration.nix
+            myModules
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
@@ -55,10 +61,12 @@
           ];
         };
 
-        thinkpad = nixpkgs.lib.nixosSystem {
+        bifrost = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ 
+          modules = pkgs.lib.lists.flatten [ 
+            ./hosts/base
             ./hosts/thinkpad/system 
+            myModules
             nixos-hardware.lenovo-thinkpad-t480
           ];
         };

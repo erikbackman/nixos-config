@@ -1,14 +1,11 @@
-{ pkgs, ... }: {
-  imports = [ 
-    ../../base-system.nix
-  ];
+{ pkgs, lib, ... }: {
 
-  networking = {
-    hostName = "thinkpad";
-    firewall.enable = true;
-  };
+  networking.hostName = "bifrost";
 
+  nixpkgs.config.allowUnfree = true;
   programs.steam.enable = true;
+  programs.ebn.nvim.enable = true;
+  windowManager.ebn.xmonad.enable = true;
 
   fonts.fonts = with pkgs; [
     etBook
@@ -21,34 +18,9 @@
   ];
 
   services = {
-
     dbus = {
       enable = true;
       packages = [ pkgs.gnome3.dconf ];
-    };
-
-    xserver = {
-      enable = true;
-      layout = "se";
-
-      displayManager = {
-        defaultSession = "none+xmonad";
-        lightdm.greeters.mini = {
-          enable = true;
-          user = "ebn";
-          extraConfig = ''
-            [greeter-theme]
-            background-image = "";
-            background-color = "#0C0F12"
-            text-color = "#ff79c6"
-            password-background-color = "#1E2029"
-            window-color = "#181a23"
-            border-color = "#bd93f9"
-          '';
-        };
-      };
-
-      windowManager.xmonad.enable = true;
     };
   };
 }

@@ -16,19 +16,18 @@
   powerManagement.cpuFreqGovernor = "performance";
   hardware.cpu.intel.updateMicrocode = true;
 
-  # TODO Use device labels
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f89d6eaf-20f2-4f42-8c13-9a97a9935fd7";
+    { device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/A9C7-9C3E";
+    { device = "/dev/disk/by-label/boot";
       fsType = "vfat";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/a2470923-a61b-4055-af99-1c2415359da0"; }
+    [ { device = "/dev/disk/by-label/swap"; }
     ];
 
   # High-DPI console
