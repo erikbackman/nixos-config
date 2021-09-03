@@ -55,5 +55,6 @@
     pavucontrol
     taskwarrior
     dstask
+    anki
   ];
 }
