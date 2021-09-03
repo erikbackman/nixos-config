@@ -24,4 +24,23 @@
     oldstandard
     siji
   ];
+
+  environment.systemPackages = with pkgs; [
+    zathura
+    texlive.combined.scheme-full
+    libreoffice
+    chromium
+    playerctl
+    gsettings-desktop-schemas
+    gnumake
+    neofetch
+    feh
+    rofi-pass
+    cowsay
+    ncspot
+    pavucontrol
+    taskwarrior
+    dstask
+    anki
+  ];
 }

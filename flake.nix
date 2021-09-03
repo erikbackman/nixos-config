@@ -65,7 +65,7 @@
           inherit system;
           modules = pkgs.lib.lists.flatten [ 
             ./hosts/base
-            ./hosts/thinkpad/system 
+            ./hosts/bifrost/system 
             myModules
             nixos-hardware.lenovo-thinkpad-t480
           ];
