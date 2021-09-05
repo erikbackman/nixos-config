@@ -48,16 +48,16 @@
             ./hosts/desktop/system
             ./hosts/desktop/system/hardware-configuration.nix
             myModules
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = false;
-              home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = {
-                inherit inputs pkgs;
-                hm-modules-path = ./hm-modules;
-              };
-              home-manager.users.ebn = import ./hosts/desktop/home;
-            }
+            #home-manager.nixosModules.home-manager
+            #{
+            #  home-manager.useGlobalPkgs = false;
+            #  home-manager.useUserPackages = true;
+            #  home-manager.extraSpecialArgs = {
+            #    inherit inputs pkgs;
+            #    hm-modules-path = ./hm-modules;
+            #  };
+            #  home-manager.users.ebn = import ./hosts/desktop/home;
+            #}
           ];
         };
 
