@@ -3,10 +3,15 @@
   networking.hostName = "nixos";
 
   nixpkgs.config.allowUnfree = true;
+
   programs.steam.enable = true;
   programs.ebn.nvim.enable = true;
   programs.ebn.kitty.enable = true;
   programs.ebn.rofi.enable = true;
+  programs.ebn.bash.enable = true;
+  programs.ebn.bash.starship.enable = true;
+  programs.ebn.bash.direnv.enable = true;
+
   windowManager.ebn.xmonad.enable = true;
 
   services.ebn.polybar.enable = true;

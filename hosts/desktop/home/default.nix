@@ -17,15 +17,15 @@
   #############################################################################
   programs = {
 
-    direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
+    #direnv = {
+    #  enable = true;
+    #  nix-direnv.enable = true;
+    #};
 
-    bash = {
-      enable = true;
-      bashrcExtra = builtins.readFile ./config/bashrc;
-    };
+    #bash = {
+    #  enable = true;
+    #  bashrcExtra = builtins.readFile ./config/bashrc;
+    #};
 
     git = {
       enable = true;
