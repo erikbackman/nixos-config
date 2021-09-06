@@ -63,11 +63,13 @@
 
         bifrost = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = { inherit inputs pkgs; };
           modules = pkgs.lib.lists.flatten [ 
             ./hosts/base
             ./hosts/bifrost/system 
+            # TODO: Hardware config
             myModules
-            nixos-hardware.lenovo-thinkpad-t480
+            nixos-hardware.nixosModules.lenovo-thinkpad-t480
           ];
         };
 
