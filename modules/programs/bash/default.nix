@@ -6,63 +6,67 @@ in {
   options.programs.ebn.bash = {
     enable = mkEnableOption "Enable Bash";
     starship = { enable = mkEnableOption "Enable Starship Prompt"; };
-    direnv = { enable = mkEnableOption "Enable Direnv"; };
   };
 
   config = mkIf cfg.enable {
 
-    fonts.fonts = with pkgs; [ 
-      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-    ];
+    fonts.fonts = 
+      (optionals cfg.starship.enable [ (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) ]);
 
-    environment.systemPackages = 
-      (optionals cfg.direnv.enable [pkgs.direnv pkgs.nix-direnv]);
+    environment.systemPackages = [pkgs.direnv pkgs.nix-direnv pkgs.starship];
 
-    nix.extraOptions = optionalString cfg.direnv.enable ''
+    nix.extraOptions = ''
       keep-outputs = true
       keep-derivations = true
     '';
 
-    environment.pathsToLink = optionals cfg.direnv.enable [
+    environment.pathsToLink = [
       "/share/nix-direnv"
     ];
 
-    nixpkgs.overlays = optionals cfg.direnv.enable [
+    nixpkgs.overlays = [
       (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = false; }; } )
     ];
 
-    environment.etc."starship/starship.toml".source = ./config/starship.toml;
-    environment.sessionVariables = {
-      "STARSHIP_CONFIG" = "/etc/starship/starship.toml";
+    environment.etc."starship.toml".source = ./config/starship.toml;
+    environment.sessionVariables = optionalAttrs cfg.starship.enable {
+      "STARSHIP_CONFIG" = "/etc/starship.toml";
     };
 
-    environment.etc.bashrc.text = ''
-      export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
-      export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
-      export GHREPOS="$HOME/repos/github.com/$GITUSER/"
-      export STARSHIP_CONFIG=/etc/starship/starship.toml
+    environment.etc.bashrc.text = 
+      if !cfg.starship.enable then
+        builtins.readFile ./config/bashrc + ''
+          eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+        ''
+      else ''
+        export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
+        export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
+        export GHREPOS="$HOME/repos/github.com/$GITUSER/"
 
-      alias grep="grep --colour=auto"
-      alias egrep="egrep --colour=auto"
-      alias fgrep="fgrep --colour=auto"
-      alias du="du -h -a --total"
-      alias la="ls -al"
-      alias nb="nix build"
-      alias v="nvim"
-      alias vim="nvim"
-      alias vi="nvim"
-      alias gs="git status"
-      alias ga="git add"
-      alias gc="git commit"
-      alias gp="git push"
+        alias grep="grep --colour=auto"
+        alias egrep="egrep --colour=auto"
+        alias fgrep="fgrep --colour=auto"
+        alias du="du -h -a --total"
+        alias la="ls -al"
+        alias nb="nix build"
+        alias v="nvim"
+        alias vim="nvim"
+        alias vi="nvim"
+        alias gs="git status"
+        alias ga="git add"
+        alias gc="git commit"
+        alias gp="git push"
 
-      p() {
-        cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | fzf)
-      }
-      eval "$(${pkgs.starship}/bin/starship init bash)"
-      eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+        p() {
+          cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | fzf)
+        }
+
+        eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+
+        ${optionalString cfg.starship.enable ''
+          eval "$(${pkgs.starship}/bin/starship init bash)"
+        ''}
     '' ;
-    #+ (optionalString cfg.starship.enable ''eval "$(${pkgs.starship}/bin/starship init bash)"'');
   };
  
 } 

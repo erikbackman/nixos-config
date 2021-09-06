@@ -1,0 +1,124 @@
+# /etc/bash/bashrc
+#
+# This file is sourced by all *interactive* bash shells on startup,
+# including some apparently interactive shells such as scp and rcp
+# that can't tolerate any output.  So make sure this doesn't display
+# anything or bad things will happen !
+
+# Test for an interactive shell.  There is no need to set anything
+# past this point for scp and rcp, and it's important to refrain from
+# outputting anything in those cases.
+if [[ $- != *i* ]]; then
+	# Shell is non-interactive.  Be done now!
+	return
+fi
+
+# Bash won't get SIGWINCH if another process is in the foreground.
+# Enable checkwinsize so that bash will check the terminal size when
+# it regains control.  #65623
+# http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
+shopt -s checkwinsize
+
+# Disable completion when the input buffer is empty.  i.e. Hitting tab
+# and waiting a long time for bash to expand all of $PATH.
+# shopt -s no_empty_cmd_completion
+
+# Enable history appending instead of overwriting when exiting.  #139609
+shopt -s histappend
+
+# Env Vars
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.emacs.d/bin:$PATH"
+
+export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
+export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
+export GHREPOS="$HOME/repos/github.com/$GITUSER/"
+
+alias grep='grep --colour=auto'
+alias egrep='egrep --colour=auto'
+alias fgrep='fgrep --colour=auto'
+alias du='du -h -a --total'
+alias la='ls -al'
+alias dots='cd ${DOTFILES}'
+alias nb='nix build'
+alias v='nvim'
+alias vim='nvim'
+alias vi='nvim'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+
+p() {
+  cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | fzf)
+}
+
+# Prompt
+PROMPT_LONG=70
+PROMPT_MAX=95
+
+__ps1() {
+  local P='λ'
+  local r='\[\e[31m\]'
+  local g='\[\e[30m\]'
+  local y='\[\e[32m\]'
+  local h='\[\e[34m\]'
+  local u='\[\e[33m\]'
+  local p='\[\e[33m\]'
+  local w='\[\e[35m\]'
+  local b='\[\e[36m\]'
+  local x='\[\e[0m\]'
+
+  if test -n "${IN_NIX_SHELL}"; then
+    P='❄'
+  fi
+
+  if test "${EUID}" == 0; then
+    P='#'
+    if test -n "${ZSH_VERSION}"; then
+      u='$F{red}'
+    else
+      u=$r
+    fi
+    p=$u
+  fi
+
+  local dir;
+  if test "$PWD" = "$HOME"; then
+    dir='~'
+  else
+    dir="${PWD##*/}"
+    if test "${dir}" = _; then
+      dir=${PWD#*${PWD%/*/_}}
+      dir=${dir#/}
+    elif test "${dir}" = work; then
+      dir=${PWD#*${PWD%/*/work}}
+      dir=${dir#/}
+    fi
+  fi
+
+  local B=$(git branch --show-current 2>/dev/null)
+  test "$dir" = "$B" && B='.'
+  local countme="$USER@$(hostname):$dir($B)\$ "
+
+  test "$B" = master -o "$B" = main && b=$r
+  test -n "$B" && B="$g($b$B$g)"
+
+  if test -n "${ZSH_VERSION}"; then
+    local short="$g╔ $u%n$g@%m\h$g:$y$dir$B\n$g╚ $p$P$x "
+    local long="$g╔ $u%n$g@%m\h$g:$y$dir\n$g║ $B\n$g╚ $p$P$x "
+  else
+    local short="$g╔ $u\u$g@$h\h$g:$y$dir$B\n$g╚ $w$P$x "
+    local long="$g╔ $u\u$g@$h\h$g:$y$dir\n$g║ $B\n$g╚ $w$P$x "
+  fi
+
+  if test ${#countme} -gt "${PROMPT_MAX}"; then
+    PS1="$double"
+  elif test ${#countme} -gt "${PROMPT_LONG}"; then
+    PS1="$long"
+  else
+    PS1="$short"
+  fi
+}
+
+PROMPT_COMMAND="__ps1"
