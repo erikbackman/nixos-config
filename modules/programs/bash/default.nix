@@ -1,7 +1,8 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-let cfg = config.programs.ebn.bash;
+let 
+  cfg = config.programs.ebn.bash;
 in {
   options.programs.ebn.bash = {
     enable = mkEnableOption "Enable Bash";
@@ -30,7 +31,7 @@ in {
 
     environment.etc."starship.toml".source = ./config/starship.toml;
     environment.sessionVariables = optionalAttrs cfg.starship.enable {
-      "STARSHIP_CONFIG" = "/etc/starship.toml";
+      
     };
 
     environment.etc.bashrc.text = 
@@ -38,35 +39,34 @@ in {
         builtins.readFile ./config/bashrc + ''
           eval "$(${pkgs.direnv}/bin/direnv hook bash)"
         ''
-      else ''
-        export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
-        export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
-        export GHREPOS="$HOME/repos/github.com/$GITUSER/"
+        else ''
+          export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
+          export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
+          export GHREPOS="$HOME/repos/github.com/$GITUSER/"
+          export STARSHIP_CONFIG="/etc/starship.toml"
 
-        alias grep="grep --colour=auto"
-        alias egrep="egrep --colour=auto"
-        alias fgrep="fgrep --colour=auto"
-        alias du="du -h -a --total"
-        alias la="ls -al"
-        alias nb="nix build"
-        alias v="nvim"
-        alias vim="nvim"
-        alias vi="nvim"
-        alias gs="git status"
-        alias ga="git add"
-        alias gc="git commit"
-        alias gp="git push"
+          alias grep="grep --colour=auto"
+          alias egrep="egrep --colour=auto"
+          alias fgrep="fgrep --colour=auto"
+          alias du="du -h -a --total"
+          alias la="ls -al"
+          alias nb="nix build"
+          alias v="nvim"
+          alias vim="nvim"
+          alias vi="nvim"
+          alias gs="git status"
+          alias ga="git add"
+          alias gc="git commit"
+          alias gp="git push"
 
-        p() {
+          p() {
           cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | fzf)
-        }
+          }
 
-        eval "$(${pkgs.direnv}/bin/direnv hook bash)"
-
-        ${optionalString cfg.starship.enable ''
+          eval "$(${pkgs.direnv}/bin/direnv hook bash)"
           eval "$(${pkgs.starship}/bin/starship init bash)"
-        ''}
-    '' ;
+          ${builtins.readFile ./config/completions}
+        '';
   };
  
 } 
