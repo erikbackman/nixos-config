@@ -10,6 +10,13 @@
   programs.ebn.rofi.enable = true;
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
+  programs.ebn.emacs.enable = true;
+  programs.ebn.emacs.version = "emacsGcc";
+
+  #programs.gnupg = {
+  #  agent.enable = true;
+  #  agent.enableSSHSupport = true;
+  #};
 
   windowManager.ebn.xmonad.enable = true;
 
