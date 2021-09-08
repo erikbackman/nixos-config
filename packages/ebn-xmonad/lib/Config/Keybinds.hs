@@ -46,7 +46,8 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
       ((modm, xK_m), windows W.focusDown),
       ((modm, xK_Return), windows W.swapMaster),
       ((modm, xK_f), sendMessage (Toggle NBFULL)),
-      ((modm .|. shiftMask, xK_t), withFocused toggleFloat)
+      ((modm .|. shiftMask, xK_t), withFocused toggleFloat),
+      ((modm, xK_Print), spawn "flameshot full -p $HOME/Pictures/flameshot")
     ]
       <> switchWsById
   where
