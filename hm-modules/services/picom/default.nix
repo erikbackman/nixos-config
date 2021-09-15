@@ -22,11 +22,15 @@ in with lib; {
       shadow = true;
       shadowOpacity = "1"; # def: 0.75
       blur = false;
+      vsync = true;
       extraOptions = ''
         shadow-offset = -14;
         shadow-radius = 20;
         unredir-if-possible = false;
         blur-strength = 12;
+        # https://bbs.archlinux.org/viewtopic.php?id=259288
+        xrender-sync-fence = true;
+        vsync = true;
       '';
     };
   };

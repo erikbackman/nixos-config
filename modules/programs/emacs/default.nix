@@ -71,6 +71,8 @@ in {
       jupyter
 
       gnuplot
+      dot2tex
+      graphviz
     ];
 
   };
