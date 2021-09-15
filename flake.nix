@@ -45,8 +45,8 @@
           specialArgs = { inherit inputs pkgs; };
           modules = pkgs.lib.lists.flatten [
             ./hosts/base
-            ./hosts/desktop/system
-            ./hosts/desktop/system/hardware-configuration.nix
+            ./hosts/desktop
+            ./hosts/desktop/hardware-configuration.nix
             myModules
           ];
         };
@@ -56,7 +56,7 @@
           specialArgs = { inherit inputs pkgs; };
           modules = pkgs.lib.lists.flatten [ 
             ./hosts/base
-            ./hosts/bifrost/system 
+            ./hosts/bifrost
             # TODO: Hardware config
             myModules
             nixos-hardware.nixosModules.lenovo-thinkpad-t480
