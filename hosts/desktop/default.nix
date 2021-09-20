@@ -70,5 +70,6 @@
     taskwarrior
     dstask
     anki
+    sage
   ];
 }
