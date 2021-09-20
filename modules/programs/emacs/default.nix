@@ -5,11 +5,19 @@ let
   cfg = config.programs.ebn.emacs;
   version = config.programs.ebn.emacs.version;
   emacsPackage =
+    let 
+
+    init = pkgs.runCommand "default.el" {} ''
+      mkdir -p $out/share/emacs/site-lisp
+      cp ${pkgs.writeText "default.el" (builtins.readFile ./config/ebn-core.el)} $out/share/emacs/site-lisp/default.el
+      ln -sf ${./early-init.el} $out/share/emacs/site-lisp/early-init.el
+    '';
+    in
     (pkgs.emacsWithPackagesFromUsePackage {
       config = ./config/ebn-core.el;
-      alwaysEnsure = false;
+      alwaysEnsure = true;
       package = pkgs."${version}";
-      extraEmacsPackages = epkgs: with epkgs; [ vterm ];
+      extraEmacsPackages = epkgs: with epkgs; [ vterm init ];
     });
 
 in {
@@ -68,7 +76,7 @@ in {
       xorg.xwininfo
       xclip
       # :org ob-jupyter
-      jupyter
+      (python38.withPackages(ps: [ ps.jupyter]))
 
       gnuplot
       dot2tex
