@@ -3,8 +3,9 @@
 with lib;
 let 
   cfg = config.programs.ebn.rofi;
+  rofiConfig = pkgs.writeText "rofi.rasi" (builtins.readFile ./config/rofi.rasi);
   wrapped = pkgs.writeShellScriptBin "rofi" ''
-    exec ${pkgs.rofi}/bin/rofi -config /etc/rofi/rofi.rasi $@
+    exec ${pkgs.rofi}/bin/rofi -config ${rofiConfig} $@
   '';
   package = pkgs.symlinkJoin {
     name = "rofi";
@@ -19,7 +20,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.etc."rofi/rofi.rasi".source = ./config/rofi.rasi;
     environment.systemPackages = with pkgs; [
       paper-icon-theme
       font-awesome
