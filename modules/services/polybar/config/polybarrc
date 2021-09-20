@@ -1,0 +1,259 @@
+[layout]
+bar-format = %{T4}%fill%%indicator%%empty%%{F-}%{T-}
+
+[colors]
+background = #0a0d10
+purple = #bd93f9
+white = #e6e8ee
+foreground = #ebdbb2
+foreground-alt = #ebdbb2
+black = #000
+yellow = #ddb566
+alert = ${colors.yellow}
+accent = #604c7e
+gray = #7F7F7F
+bg-dark = #181a23
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
+
+[bar/main]
+enable-ipc = true
+override-redirect = true
+fixed-center = true
+
+background = ${colors.background}
+foreground = ${colors.white}
+
+width = 100%
+height = 35
+offset-x = 0
+offset-y = -1
+bottom = false
+
+overline-size = 0
+overline-color = #f00
+underline-size = 0
+underline-color = #00f
+
+border-bottom-size = 2
+border-top-size = 0
+border-color = ${colors.bg-dark}
+
+padding-left = 2
+padding-right = 2
+module-margin-left = 0
+module-margin-right = 0
+
+font-0 = "JetBrains Mono:style=Medium:size=9;2"
+font-1 = "FontAwesome 5 Brands:size=11;3"
+font-2 = "Material\-Design\-Iconic\-Font:size=13;3"
+font-3 = "FontAwesome:size=10;3"
+font-4 = "Siji:pixelsize=10;3"
+
+modules-left = cpu pad memory pad pulseaudio pad
+modules-center = xmonad
+modules-right = network-up pad network-down pad date
+
+format = <label-state> <label-mode>
+label-padding = 1
+
+label-focused = %icon%
+label-focused-background = ${colors.bg-dark}
+label-focused-foreground = ${colors.foreground}
+; label-focused-underline = ${colors.magenta}
+; label-focused-foreground = ${xrdb:color2}
+label-focused-padding = 1
+
+label-occupied = %icon%
+label-occupied-foreground = ${colors.purple}
+label-occupied-padding = 1
+
+label-urgent-foreground = ${colors.alert}
+label-urgent-padding = 1
+
+label-empty = %icon%
+label-empty-foreground = ${colors.foreground-alt}
+label-empty-padding = 1
+
+[module/date]
+type = internal/date
+interval = 5
+label = %date%  %time%
+date = %A, %h %d
+date-alt = %Y-%m-%d
+time = %I:%M %p
+time-alt = %H:%M:%S
+format-prefix = ""
+format-prefix-padding = 1
+format-prefix-foreground = ${colors.purple}
+
+[module/fs]
+type = internal/fs
+mount-0 = /
+mount-1 = /home
+interval = 30
+; Available tags:
+;   <label-mounted> (default)
+;   <bar-free>
+;   <bar-used>
+;   <ramp-capacity>
+format-mounted = "<bar-used>"
+format-mounted-foreground = ${colors.purple}
+; Available tokens:
+;   %mountpoint%
+;   %type%
+;   %fsname%
+;   %percentage_free%
+;   %percentage_used%
+;   %total%
+;   %free%
+;   %used%
+; Default: %mountpoint% %percentage_free%%
+
+; Available tags:
+;   <label-unmounted> (default)
+format-unmounted =
+label-unmounted =
+label-unmounted-foreground = ${colors.foreground-alt}
+
+bar-used-indicator =
+bar-used-width = 8
+bar-used-foreground-0 = ${colors.foreground}
+bar-used-foreground-1 = ${colors.foreground}
+bar-used-foreground-2 = ${colors.yellow}
+bar-used-foreground-3 = ${colors.alert}
+bar-used-foreground-4 = ${colors.alert}
+bar-used-fill = |
+bar-used-empty = ¦
+bar-used-empty-foreground = ${colors.foreground-alt}
+
+[module/xwindow]
+type = internal/xwindow
+label = %title:0:80:...%
+label-padding-left = 2
+
+[module/mpd]
+type = internal/mpd
+host = localhost
+
+format-online = <label-song> <toggle>
+format-padding = 5
+
+label-song-maxlen = 45
+label-song-ellipsis = true
+
+icon-prev = 
+icon-seekb = 
+icon-stop = 
+icon-play = 
+icon-pause = 
+icon-next = 
+icon-seekf = 
+
+icon-random = 
+icon-repeat = 
+
+toggle-on-foreground = ${colors.foreground}
+toggle-off-foreground = #66
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+format = <bar-load>
+format-prefix = " "
+format-prefix-foreground = ${colors.purple}
+format-foreground = ${colors.white}
+format-padding = 1
+bar-load-indicator =
+bar-load-width = 8
+bar-load-foreground-0 = ${colors.white}
+;bar-load-foreground-1 =
+;bar-load-foreground-2 =
+;bar-load-foreground-3 =
+;bar-load-foreground-4 =
+bar-load-fill = |
+bar-load-empty = ¦
+bar-load-empty-foreground = ${colors.gray}
+
+[module/memory]
+type = internal/memory
+interval = 3
+format = <bar-used>
+format-prefix = " "
+format-prefix-foreground = ${colors.purple}
+format-padding-left = 1
+; Only applies if <bar-used> is used
+bar-used-indicator =
+bar-used-width = 8
+bar-used-foreground-0 = ${colors.white}
+;bar-used-foreground-1 =
+;bar-used-foreground-2 =
+;bar-used-foreground-3 =
+;bar-used-foreground-4 =
+bar-used-fill = |
+bar-used-empty = ¦
+bar-used-empty-foreground = ${colors.gray}
+
+[module/network-up]
+type = internal/network
+interface = eno1
+interval = 4.0
+label-connected = "%upspeed%"
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.purple}
+format-connected-foreground = ${colors.foreground}
+format-connected-background =
+format-connected-underline =
+format-disconnected-prefix-foreground = ${colors.alert}
+format-disconnected-foreground = ${colors.alert}
+
+[module/network-down]
+type = internal/network
+interface = eno1
+interval = 4.0
+label-connected = "%downspeed%"
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.purple}
+format-connected-foreground = ${colors.foreground}
+format-connected-background =
+format-connected-underline =
+format-disconnected-prefix = " "
+format-disconnected-prefix-foreground = ${colors.alert}
+format-disconnected-foreground = ${colors.alert}
+
+[module/pulseaudio]
+type = internal/pulseaudio
+format-volume = <ramp-volume> <bar-volume>
+ramp-volume-foreground = ${colors.purple}
+format-muted-foreground = ${colors.alert}
+label-muted = 
+bar-volume-width = 8
+bar-volume-gradient = false
+bar-volume-indicator = |
+bar-volume-indicator-font = 1
+bar-volume-indicator-foreground = ${colors.purple}
+bar-volume-fill = ─
+bar-volume-fill-font = 1
+bar-volume-empty = ─
+bar-volume-empty-font = 1
+bar-volume-empty-foreground = ${colors.gray}
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+
+[module/ewmh]
+type = internal/xworkspaces
+pin-workspaces = true
+enable-click = true
+enable-scroll = false
+
+[module/pad]
+type = custom/text
+content = "   "
+;content-foreground = ${colors.gray}
+
+[module/logo]
+type = custom/text
+content = " "
