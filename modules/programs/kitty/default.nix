@@ -11,17 +11,14 @@ in {
     fonts.fonts = with pkgs; [
       jetbrains-mono
     ];
-    environment.etc."kitty/kitty.conf".source = ./config/kitty.conf;
-    environment.variables = {
-      "KITTY_CONFIG_DIRECTORY" = "/etc/kitty";
-    };
-    environment.systemPackages = with pkgs; [
-      kitty
-      #(pkgs.writeScriptBin "kitty" ''
-      #  #!${pkgs.runtimeShell}
-      #  exec ${pkgs.kitty}/bin/kitty -c /etc/kitty/kitty.conf
-      #''
-      #)
-    ];
+    environment.systemPackages = 
+      let 
+        config = pkgs.writeText "kitty config" (builtins.readFile ./config/kitty.conf);
+
+        wrapped = pkgs.writeShellScriptBin "kitty" ''
+          exec ${pkgs.kitty}/bin/kitty -c ${config}
+        '';
+      in
+      [ wrapped ];
   };
 }
