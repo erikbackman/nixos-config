@@ -12,6 +12,13 @@
   (interactive)
   (rename-file (buffer-file-name)))
 
+(use-package kaolin-themes
+  :ensure t
+  :config (load-theme 'kaolin-aurora t)
+  (custom-set-faces
+   '(default ((t (:background "#0C0F12" :background "#0C0F12"))))
+   '(fringe  ((t (:background "#0C0F12" :background "#0C0F12"))))))
+
 (use-package which-key
   :ensure t
   :config (which-key-mode 1))
@@ -62,10 +69,6 @@
 (use-package envrc
   :commands 'envrc-global-mode
   :config (envrc-global-mode))
-
-(use-package kaolin-themes
-  :ensure t
-  :config (load-theme 'kaolin-aurora t))
 
 (use-package flycheck
   :commands 'global-flycheck-mode
