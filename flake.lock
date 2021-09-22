@@ -30,27 +30,6 @@
         "type": "github"
       }
     },
-    "home-manager": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1629347633,
-        "narHash": "sha256-FGZJ7lmTAMIkjdrh6dIPck5HuB4KMT2GgDV5ZjiCWoc=",
-        "owner": "rycee",
-        "repo": "home-manager",
-        "rev": "bf6b85136b47ab1a76df4a90ea4850871147494a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "rycee",
-        "ref": "master",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
     "neovim-git": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -137,7 +116,6 @@
     "root": {
       "inputs": {
         "emacs-overlay": "emacs-overlay",
-        "home-manager": "home-manager",
         "neovim-git": "neovim-git",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",

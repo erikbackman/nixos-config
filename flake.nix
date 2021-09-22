@@ -8,15 +8,13 @@
     nixpkgs-unstable.url = "nixpkgs/master";
 
     # Extras
-    home-manager.url = "github:rycee/home-manager/master";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     neovim-git.url = "github:neovim/neovim?dir=contrib";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, emacs-overlay, neovim-git, nixos-hardware, ... }:
+  outputs = inputs@{ self, nixpkgs, emacs-overlay, neovim-git, nixos-hardware, ... }:
     let
       system = "x86_64-linux";
 
