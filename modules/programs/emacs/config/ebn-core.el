@@ -15,9 +15,13 @@
 (use-package kaolin-themes
   :ensure t
   :config (load-theme 'kaolin-aurora t)
-  (custom-set-faces
-   '(default ((t (:background "#0C0F12" :background "#0C0F12"))))
-   '(fringe  ((t (:background "#0C0F12" :background "#0C0F12"))))))
+  ;;(custom-set-faces
+  ;; '(default ((t (:background "#0C0F12" :background "#0C0F12"))))
+  ;; '(fringe  ((t (:background "#0C0F12" :background "#0C0F12")))))
+  )
+
+;(require agda2-mode)
+(add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
 (use-package which-key
   :ensure t

@@ -17,7 +17,7 @@ let
       config = ./config/ebn-core.el;
       alwaysEnsure = true;
       package = pkgs."${version}";
-      extraEmacsPackages = epkgs: with epkgs; [ vterm init ];
+      extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode ];
     });
 
 in {
@@ -81,6 +81,7 @@ in {
       gnuplot
       dot2tex
       graphviz
+      haskellPackages.Agda
     ];
 
   };

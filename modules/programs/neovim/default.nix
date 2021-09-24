@@ -30,6 +30,8 @@ in with lib; {
             vim-nix
             vim-sneak
             vim-startify
+
+            agda-vim
           ];
         };
       };
@@ -37,6 +39,8 @@ in with lib; {
 
     environment.systemPackages = with pkgs; [
       fzf
+      #agda
+      haskellPackages.Agda
     ];
   };
 }
