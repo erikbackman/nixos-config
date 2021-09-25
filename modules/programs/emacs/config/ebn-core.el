@@ -4,6 +4,9 @@
 ;;; Code:
 (require 'use-package)
 
+(load-theme 'modus-operandi t)
+(add-to-list 'load-path (shell-command-to-string "agda-mode locate")) ;agda2-mode
+
 (defun ebn/kill-current-buffer ()
   (interactive)
   (kill-buffer (current-buffer)))
@@ -13,22 +16,18 @@
   (rename-file (buffer-file-name)))
 
 (use-package kaolin-themes
-  :ensure t
-  :config (load-theme 'kaolin-aurora t)
-  ;;(custom-set-faces
-  ;; '(default ((t (:background "#0C0F12" :background "#0C0F12"))))
-  ;; '(fringe  ((t (:background "#0C0F12" :background "#0C0F12")))))
-  )
-
-;(require agda2-mode)
-(add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
+  :ensure t)
 
 (use-package which-key
   :ensure t
   :config (which-key-mode 1))
 
 (use-package counsel
-  :ensure t)
+  :ensure t
+  :config
+  (defun load-theme ()
+    (interactive)
+    (counsel-load-theme)))
 
 (use-package general
   :ensure t
@@ -43,6 +42,7 @@
 
    ;; Basic
    ":"	'(counsel-M-x :which-key "M-x")
+   ";"  '(eval-expression :which-key "Eval expr")
    "qq" '(kill-emacs :which-key "Exit")
 
    ;; File
@@ -106,13 +106,22 @@
 
 (use-package org
   :ensure t
-  ;:hook (org-mode . #'org-toggle-pretty-entities)
+  :commands (my/org-prettify-buffer)
+  :init
+  (defun my/org-prettify-buffer ()
+    (interactive)
+    (when (not org-pretty-entities)
+      (org-toggle-pretty-entities))
+    (org-latex-preview))
+  :hook ((org-mode . my/org-prettify-buffer))
   :config
   (setq org-image-actual-width nil)
   (setq org-return-follows-link t))
 
 (use-package org-roam
   :ensure t
+  :init
+  (setq org-roam-v2-ack t) ;; Disable v2-migration-prompt
   :custom
   (setq org-roam-directory (file-truename "~/org-roam"))
   :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -123,7 +132,6 @@
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today))
   :config
-  (setq org-roam-v2-ack t) ;; Disable v2-migration-prompt
   (org-roam-db-autosync-mode)
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
