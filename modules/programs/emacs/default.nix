@@ -39,7 +39,7 @@ in {
     environment.systemPackages = with pkgs; [
       emacsPackage
 
-      ## Doom dependencies
+      ## Dependencies
       git
       (ripgrep.override { withPCRE2 = true; })
       gnutls # for TLS connectivity
@@ -47,7 +47,6 @@ in {
       coreutils
       binutils
 
-      ## Optional dependencies
       fd # faster projectile indexing
       imagemagick # for image-dired
       zstd # for undo-fu-session/undo-tree compression
@@ -55,32 +54,43 @@ in {
       ## Fonts
       jetbrains-mono
 
-      ## Module dependencies
+      ## Package dependencies
       # :checkers spell
       (aspellWithDicts (ds: with ds; [ en en-computers en-science ]))
+
       # :checkers grammar
       languagetool
-      # :tools editorconfig
-      editorconfig-core-c # per-project style config
-      # :tools lookup & :lang org +roam
-      sqlite
-      # :lang cc
-      ccls
-      # :lang nix
-      nixfmt
-      # :term vterm
-      libtool
-      gnumake
-      libvterm
-      # :app everywhere
-      xorg.xwininfo
-      xclip
-      # :org ob-jupyter
-      (python38.withPackages(ps: [ ps.jupyter]))
 
+      # editorconfig
+      editorconfig-core-c # per-project style config
+
+      # org
       gnuplot
       dot2tex
       graphviz
+
+      # org-roam
+      sqlite
+
+      # cc
+      ccls
+
+      # nix
+      nixfmt
+
+      # vterm
+      libtool
+      gnumake
+      libvterm
+
+      # emacs everywhere
+      xorg.xwininfo
+      xclip
+
+      # ob-jupyter
+      (python38.withPackages(ps: [ ps.jupyter]))
+
+      # agda
       haskellPackages.Agda
     ];
 
