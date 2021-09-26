@@ -4,7 +4,12 @@
 ;;; Code:
 (require 'use-package)
 
+(when window-system (set-frame-size (selected-frame) 90 50))
+(setq-default fill-column 80)
+(setq ring-bell-function 'ignore)
+(setq fancy-startup-text nil)
 (load-theme 'modus-operandi t)
+
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate")) ;agda2-mode
 
 (defun ebn/kill-current-buffer ()
@@ -22,12 +27,18 @@
   :ensure t
   :config (which-key-mode 1))
 
-(use-package counsel
+(use-package vertico
   :ensure t
   :config
-  (defun load-theme ()
-    (interactive)
-    (counsel-load-theme)))
+  (vertico-mode))
+
+(use-package consult :ensure t)
+
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package general
   :ensure t
@@ -41,21 +52,22 @@
    ""	'(nil :which-key "Leader")
 
    ;; Basic
-   ":"	'(counsel-M-x :which-key "M-x")
+   ":"	'(execute-extended-command :which-key "M-x")
    ";"  '(eval-expression :which-key "Eval expr")
    "qq" '(kill-emacs :which-key "Exit")
 
    ;; File
    "f"	'(:ignore t :which-key "File")
-   "ff" '(counsel-find-file :which-key "Find file")
-   "fr" '(counsel-recentf :which-key "Recent files")
+   "ff" '(find-file :which-key "Find file")
+   "fr" '(consult-recent-file :which-key "Recent files")
    "fs" '(save-buffer :which-key "Save file")
    "fR" '(ebn/rename-current-file :which-key "Rename File")
 
    ;; Buffer
    "b"	'(:ignore t :which-key "Buffer")
    "bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
-   "bb" '(counsel-ibuffer :which-key "Switch buffer")
+   "bb" '(consult-buffer :which-key "Switch buffer")
+   "sb" '(consult-ripgrep :which-key "Search buffer")
 
    ;; Notes
    "n"	'(:ignore t :which-key "Notes")
@@ -89,7 +101,11 @@
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   :config
-  (evil-mode 1))
+  (evil-mode 1)
+  :bind (:map evil-motion-state-map ("RET" . nil))
+  ;(with-eval-after-load "evil-maps"
+  ;  (define-key evil-motion-state-map (kbd "RET") nil))
+  )
 
 (use-package company
   :ensure t
@@ -102,7 +118,8 @@
   :after evil
   :ensure t
   :config
-  (evil-collection-init))
+  (evil-collection-init)
+  )
 
 (use-package org
   :ensure t
