@@ -32,7 +32,10 @@
   :config
   (vertico-mode))
 
-(use-package consult :ensure t)
+(use-package consult :ensure t
+  :config
+  (setq consult-preview-key nil)
+  (recentf-mode))
 
 (use-package orderless
   :init
@@ -62,6 +65,7 @@
    "fr" '(consult-recent-file :which-key "Recent files")
    "fs" '(save-buffer :which-key "Save file")
    "fR" '(ebn/rename-current-file :which-key "Rename File")
+   "fd" '(dired-jump :which-key "Find files in dir")
 
    ;; Buffer
    "b"	'(:ignore t :which-key "Buffer")
@@ -103,9 +107,16 @@
   :config
   (evil-mode 1)
   :bind (:map evil-motion-state-map ("RET" . nil))
-  ;(with-eval-after-load "evil-maps"
-  ;  (define-key evil-motion-state-map (kbd "RET") nil))
   )
+
+(use-package evil-collection
+  ;:commands 'company-tng-configure-default
+  :init (setq evil-collection-company-use-tng nil)
+  :after evil
+  :ensure t
+  :config
+  (delete 'dired evil-collection-mode-list)
+  (evil-collection-init))
 
 (use-package company
   :ensure t
@@ -113,13 +124,6 @@
   (add-to-list 'company-backends 'company-capf)
   (global-company-mode))
 
-(use-package evil-collection
-  :commands 'company-tng-configure-default
-  :after evil
-  :ensure t
-  :config
-  (evil-collection-init)
-  )
 
 (use-package org
   :ensure t
