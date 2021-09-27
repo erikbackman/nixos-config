@@ -3,6 +3,8 @@
 ;;; Code:
 (require 'use-package)
 
+(load-theme 'modus-operandi t)
+
 (when window-system (set-frame-size (selected-frame) 90 50))
 (setq-default fill-column 80)
 (setq ring-bell-function 'ignore)
@@ -43,10 +45,6 @@
 	       (kill-buffer cb))))
 
 (use-package kaolin-themes :ensure t)
-
-(use-package modus-themes
-  :ensure nil
-  :config (load-theme 'modus-operandi t))
 
 (use-package which-key
   :ensure t
