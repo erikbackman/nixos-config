@@ -12,8 +12,6 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-(load-theme 'modus-operandi t)
-
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate")) ;agda2-mode
 
 (defun ebn/kill-current-buffer ()
@@ -45,6 +43,10 @@
 	       (kill-buffer cb))))
 
 (use-package kaolin-themes :ensure t)
+
+(use-package modus-themes
+  :ensure nil
+  :config (load-theme 'modus-operandi t))
 
 (use-package which-key
   :ensure t
