@@ -213,4 +213,4 @@
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
 (provide 'ebn-core)
-;;; ebn-core.el ends here
+;;; ebn-init.el ends here
