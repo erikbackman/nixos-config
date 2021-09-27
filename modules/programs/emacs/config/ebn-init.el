@@ -1,5 +1,4 @@
-;; -*-no-byte-compile: t; -*-
-;;; ebn-core.el --- Basic stuff -*- lexical-binding: t -*-
+;;; ebn-init.el --- Basic stuff -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; Commentary:
 ;;; Code:
 (require 'use-package)
@@ -8,20 +7,44 @@
 (setq-default fill-column 80)
 (setq ring-bell-function 'ignore)
 (setq fancy-startup-text nil)
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
 (load-theme 'modus-operandi t)
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate")) ;agda2-mode
 
 (defun ebn/kill-current-buffer ()
+  "Kill current buffer."
   (interactive)
   (kill-buffer (current-buffer)))
 
 (defun ebn/rename-current-file ()
+  "Rename current file to NEWNAME."
   (interactive)
-  (rename-file (buffer-file-name)))
+  (let ((fname (buffer-file-name))
+	(bname (buffer-name)))
+    (if (not (and bname (file-exists-p fname)))
+	(error "Buffer '%s' is not visiting a file" bname)
+      (let ((new-name (read-file-name "New name: " fname)))
+	(if (get-buffer new-name)
+	    (error "Buffer with name %s already exists" new-name)
+	  (rename-file fname new-name t)
+	  (rename-buffer new-name)
+	  (set-visited-file-name new-name)
+	  (set-buffer-modified-p nil)
+	  (message "File renamed to %s" new-name))))))
 
-(use-package kaolin-themes
-  :ensure t)
+(defun ebn/dired-up-directory ()
+  "Up directory - killing current buffer."
+  (interactive)
+  (let ((cb (current-buffer)))
+	(progn (dired-up-directory)
+	       (kill-buffer cb))))
+
+(use-package kaolin-themes :ensure t)
 
 (use-package which-key
   :ensure t
@@ -49,6 +72,19 @@
   (general-evil-setup t)
 
   (general-define-key
+   :states 'normal
+   :keymaps 'dired-mode-map
+
+   "m" '(dired-mark :which-key "Dired mark")
+   "D" '(dired-do-delete :which-key "Dired delete")
+   "c" '(dired-do-copy :which-key "Dired copy")
+   "C" '(dired-do-compress :which-key "Dired compress")
+   "r" '(dired-do-rename :which-key "Dired rename")
+   "u" '(dired-unmark :which-key "Dired unmark")
+   "U" '(dired-unmark-all-marks :which-key "Dired umkark all")
+   "-" '(ebn/dired-up-directory :which-key "Dired up directory"))
+
+  (general-define-key
    :keymaps 'normal
    :prefix "SPC"
    :non-normal-prefix "C-SPC"
@@ -71,11 +107,7 @@
    "b"	'(:ignore t :which-key "Buffer")
    "bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
    "bb" '(consult-buffer :which-key "Switch buffer")
-   "sb" '(consult-ripgrep :which-key "Search buffer")
-
-   ;; Notes
-   "n"	'(:ignore t :which-key "Notes")
-   ;"na" '(org-agenda :which-key "Agenda")
+   "sb" '(consult-ripgrep :which-key "Ripgrep")
 
    ;; Window
    "w"	'(:ignore t :which-key "Window")
@@ -84,6 +116,9 @@
    "wo" '(delete-other-windows :which-key "Delete other windows")
    "ws" '(split-window-below :which-key "Split window below")
    "wv" '(split-window-right :which-key "Split window right")
+
+   ;; Other
+   "z" '(org-capture :which-key "Org capture")
    ))
 
 (use-package envrc
@@ -94,28 +129,26 @@
   :commands 'global-flycheck-mode
   :config (global-flycheck-mode))
 
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
 (use-package evil
   :ensure t
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-respect-visual-line-mode t)
   :config
   (evil-mode 1)
-  :bind (:map evil-motion-state-map ("RET" . nil))
-  )
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal)
+  :bind (:map evil-motion-state-map ("RET" . nil)))
 
 (use-package evil-collection
-  ;:commands 'company-tng-configure-default
+  :ensure t
+  :commands 'company-tng-configure-default
   :init (setq evil-collection-company-use-tng nil)
   :after evil
-  :ensure t
   :config
-  (delete 'dired evil-collection-mode-list)
   (evil-collection-init))
 
 (use-package company
@@ -124,6 +157,8 @@
   (add-to-list 'company-backends 'company-capf)
   (global-company-mode))
 
+(use-package dired
+  :ensure nil)
 
 (use-package org
   :ensure t

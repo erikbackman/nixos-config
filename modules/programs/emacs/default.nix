@@ -9,12 +9,12 @@ let
 
     init = pkgs.runCommand "default.el" {} ''
       mkdir -p $out/share/emacs/site-lisp
-      cp ${pkgs.writeText "default.el" (builtins.readFile ./config/ebn-core.el)} $out/share/emacs/site-lisp/default.el
+      cp ${pkgs.writeText "default.el" (builtins.readFile ./config/ebn-init.el)} $out/share/emacs/site-lisp/default.el
     '';
     # ln -sf ${./early-init.el} $out/share/emacs/site-lisp/early-init.el
     in
     (pkgs.emacsWithPackagesFromUsePackage {
-      config = ./config/ebn-core.el;
+      config = ./config/ebn-init.el;
       alwaysEnsure = true;
       package = pkgs."${version}";
       extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode ];
