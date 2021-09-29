@@ -11,22 +11,34 @@ in {
     fonts.fonts = with pkgs; [
       jetbrains-mono
     ];
+
+    hardware.nvidia.modesetting.enable = true;
+    hardware.opengl.enable = true;
+
     services.xserver = {
       enable = true;
       layout = "se";
-      displayManager.gdm.enable = true;
-      displayManager.gdm.wayland = true;
-      displayManager.gdm.nvidiaWayland = true;
+      videoDrivers = ["nvidia"];
+      displayManager.gdm = {
+        enable = true;
+        nvidiaWayland = true;
+        autoSuspend = false;
+      };
       desktopManager.gnome.enable = true;
-
     };
+
+    environment.etc."/egl/egl_external_platform.d/nvidia_wayland.json".text = ''
+      "file_format_version" : "1.0.0",
+      "ICD" : {
+          "library_path" : "/run/opengl-driver/lib/libnvidia-egl-wayland.so"
+      }
+    '';
 
     services.dbus.packages = [ pkgs.gnome3.dconf ];
     services.udev.packages = [ pkgs.gnome3.gnome-settings-daemon ];
 
-    hardware.nvidia.modesetting.enable = true;
-
     programs.xwayland.enable = true;
+    programs.xwayland.package = pkgs.xwayland;
     environment.gnome.excludePackages = [ 
       pkgs.gnome.cheese pkgs.gnome-photos pkgs.gnome.gnome-music 
       #pkgs.gnome.gnome-terminal 
@@ -35,6 +47,14 @@ in {
     ];
 
     programs.dconf.enable = true;
-    environment.systemPackages = with pkgs; [ gnome.adwaita-icon-theme gnome.gnome-tweaks ];
+    environment.systemPackages = with pkgs; [ 
+      gnome.adwaita-icon-theme gnome.gnome-tweaks xwayland
+      materia-theme
+      orchis-theme
+      nordic
+      flat-remix-gnome
+      flat-remix-icon-theme
+      flat-remix-gtk
+    ];
   };
 }

@@ -11,22 +11,21 @@
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
   programs.ebn.emacs.enable = true;
-  programs.ebn.emacs.version = "emacsGcc";
+  programs.ebn.emacs.version = "emacsPgtkGcc";
 
-  #programs.gnupg = {
-  #  agent.enable = true;
-  #  agent.enableSSHSupport = true;
-  #};
+  # Xmonad
+  windowManager.ebn.xmonad.enable = false;
+  services.ebn.polybar.enable = false;
+  #services.xserver.displayManager.sessionCommands = ''
+  #  xrandr --output DP-0 --mode 3440x1440 --rate 99.98
+  #'';
 
-  windowManager.ebn.xmonad.enable = true;
+  # Gnome
+  desktopEnvironment.ebn.gnome.enable = true;
 
-  services.ebn.polybar.enable = true;
   services.ebn.pulseeffects.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.layout = "se";
-  services.xserver.displayManager.sessionCommands = ''
-    xrandr --output DP-0 --mode 3440x1440 --rate 99.98
-  '';
   services.dbus = {
     enable = true;
     packages = [ pkgs.gnome3.dconf ];
@@ -36,8 +35,7 @@
     etBook
     google-fonts
     hack-font
-    iosevka
-    jetbrains-mono
+    iosevka jetbrains-mono
     oldstandard
     siji
   ];
