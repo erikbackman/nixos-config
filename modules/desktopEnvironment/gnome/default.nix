@@ -2,6 +2,7 @@
 
 with lib;
 let cfg = config.desktopEnvironment.ebn.gnome;
+    usesNvidia = lib.lists.elem "nvidia" config.services.xserver.videoDrivers;
 in {
   options.desktopEnvironment.ebn.gnome = {
     enable = mkEnableOption "Enable Gnome";
@@ -12,16 +13,15 @@ in {
       jetbrains-mono
     ];
 
-    hardware.nvidia.modesetting.enable = true;
+    hardware.nvidia.modesetting.enable = usesNvidia;
     hardware.opengl.enable = true;
 
     services.xserver = {
       enable = true;
       layout = "se";
-      videoDrivers = ["nvidia"];
       displayManager.gdm = {
         enable = true;
-        nvidiaWayland = true;
+        nvidiaWayland = usesNvidia;
         autoSuspend = false;
       };
       desktopManager.gnome.enable = true;
@@ -48,13 +48,16 @@ in {
 
     programs.dconf.enable = true;
     environment.systemPackages = with pkgs; [ 
-      gnome.adwaita-icon-theme gnome.gnome-tweaks xwayland
+      gnome.adwaita-icon-theme 
+      gnome.gnome-tweaks 
+      xwayland
+
       materia-theme
       orchis-theme
       nordic
-      flat-remix-gnome
-      flat-remix-icon-theme
-      flat-remix-gtk
+      papirus-icon-theme
+      gnome-breeze
+      maia-icon-theme
     ];
   };
 }
