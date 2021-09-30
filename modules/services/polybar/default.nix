@@ -23,6 +23,11 @@ in with lib; {
     environment.systemPackages = [ package ];
     fonts.fonts = with pkgs; [ font-awesome siji jetbrains-mono ];
 
+    services.dbus = {
+      enable = true;
+      packages = [ pkgs.gnome3.dconf ];
+    };
+
     environment.etc."polybar/polybarrc".text = polybarCfg;
 
     systemd.user.services.polybar = {

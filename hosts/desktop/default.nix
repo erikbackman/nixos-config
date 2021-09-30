@@ -26,10 +26,6 @@
   services.ebn.pulseeffects.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.layout = "se";
-  services.dbus = {
-    enable = true;
-    packages = [ pkgs.gnome3.dconf ];
-  };
 
   fonts.fonts = with pkgs; [
     etBook
