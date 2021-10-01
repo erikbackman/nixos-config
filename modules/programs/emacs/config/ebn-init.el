@@ -3,19 +3,28 @@
 ;;; Code:
 (require 'use-package)
 
-(load-theme 'modus-operandi t)
-
-(when window-system (set-frame-size (selected-frame) 90 50))
-(setq-default fill-column 80)
-(setq ring-bell-function 'ignore)
-(setq fancy-startup-text nil)
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate")) ;agda2-mode
 
+;; Basic
+(setq-default fill-column 80)
+(setq ring-bell-function 'ignore)
+(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
+;; Looks
+(when (member "JetBrains Mono" (font-family-list))
+  (set-frame-font "JetBrains Mono-11" t t))
+
+(use-package modus-themes
+  :ensure t
+  :init
+  :config
+  (modus-themes-load-operandi)
+  (when window-system (set-frame-size (selected-frame) 90 50))
+  (setq fancy-startup-text nil)
+  )
+
+;; Functions
 (defun ebn/kill-current-buffer ()
   "Kill current buffer."
   (interactive)
@@ -44,8 +53,7 @@
 	(progn (dired-up-directory)
 	       (kill-buffer cb))))
 
-(use-package kaolin-themes :ensure t)
-
+;; Packages
 (use-package which-key
   :ensure t
   :config (which-key-mode 1))
@@ -172,7 +180,10 @@
   :hook ((org-mode . my/org-prettify-buffer))
   :config
   (setq org-image-actual-width nil)
-  (setq org-return-follows-link t))
+  (setq org-return-follows-link t)
+  (setq org-hide-emphasis-markers t)
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+  )
 
 (use-package org-roam
   :ensure t
