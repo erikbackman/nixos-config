@@ -21,8 +21,7 @@
   :config
   (modus-themes-load-operandi)
   (when window-system (set-frame-size (selected-frame) 90 50))
-  (setq fancy-startup-text nil)
-  )
+  (setq fancy-startup-text nil))
 
 ;; Functions
 (defun ebn/kill-current-buffer ()
@@ -115,7 +114,16 @@
    "b"	'(:ignore t :which-key "Buffer")
    "bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
    "bb" '(consult-buffer :which-key "Switch buffer")
-   "sb" '(consult-ripgrep :which-key "Ripgrep")
+   "sb" '(consult-ripgrep :which-key "Ripgrep dir")
+
+   ;; Tab
+   "t" '(:ignore t :which-key "Tab")
+   "tt" '(tab-new :which-key "New tab")
+   "tn" '(tab-next :which-key "Next tab")
+   "tp" '(tab-previous :which-key "Previous tab")
+   "tl" '(tab-list :which-key "Tab list")
+   "td" '(tab-close :which-key "Tab delete")
+   "to" '(tab-close-other :which-key "Tab delete other")
 
    ;; Window
    "w"	'(:ignore t :which-key "Window")
@@ -166,7 +174,10 @@
   (global-company-mode))
 
 (use-package dired
-  :ensure nil)
+  :ensure nil
+  :config
+  (setq dired-recursive-copies t
+	dired-recursive-deletes t))
 
 (use-package org
   :ensure t
@@ -182,7 +193,7 @@
   (setq org-image-actual-width nil)
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1))
   )
 
 (use-package org-roam
