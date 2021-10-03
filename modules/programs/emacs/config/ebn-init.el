@@ -3,6 +3,9 @@
 ;;; Code:
 (require 'use-package)
 
+; Setting this lower after early-init for shorter gc-pauses
+(setq gc-cons-threshold (* 2 1000 1000)) 
+
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate")) ;agda2-mode
 
 ;; Basic
@@ -18,7 +21,9 @@
 (use-package modus-themes
   :ensure t
   :init
+  (show-paren-mode 1)
   :config
+  (setq modus-themes-paren-match '(bold intense))
   (modus-themes-load-operandi)
   (when window-system (set-frame-size (selected-frame) 90 50))
   (setq fancy-startup-text nil))
@@ -52,10 +57,20 @@
 	(progn (dired-up-directory)
 	       (kill-buffer cb))))
 
+(defun ebn/display-startup-time ()
+  (message "Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                   (time-subtract after-init-time before-init-time)))
+           gcs-done))
+
+(add-hook 'emacs-startup-hook #'ebn/display-startup-time)
+
 ;; Packages
 (use-package which-key
   :ensure t
-  :config (which-key-mode 1))
+  :config
+  (which-key-mode 1))
 
 (use-package vertico
   :ensure t
@@ -193,15 +208,15 @@
   (setq org-image-actual-width nil)
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1))
-  )
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1)))
 
 (use-package org-roam
   :ensure t
   :init
   (setq org-roam-v2-ack t) ;; Disable v2-migration-prompt
   :custom
-  (setq org-roam-directory (file-truename "~/org-roam"))
+  (org-roam-directory "~/org-roam")
+  (org-roam-completion-everywhere t)
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
