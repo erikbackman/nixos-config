@@ -1,32 +1,30 @@
-;;; ebn-init.el --- Basic stuff -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; ebn-init.el --- Basic stuff -*- lexical-binding: t; no-byte-compile: nil; -*-
 ;;; Commentary:
 ;;; Code:
 (require 'use-package)
 
-; Setting this lower after early-init for shorter gc-pauses
-(setq gc-cons-threshold (* 2 1000 1000)) 
-
-(add-to-list 'load-path (shell-command-to-string "agda-mode locate")) ;agda2-mode
+(defun ebn/display-startup-time ()
+  "Message startup time."
+  (message "Emacs loaded in %s with %d garbage collections."
+	   (format "%.2f seconds"
+		   (float-time
+		    (time-subtract after-init-time before-init-time)))
+	   gcs-done))
 
 ;; Basic
+;Setting this lower after early-init for shorter gc-pauses
 (setq-default fill-column 80)
-(setq ring-bell-function 'ignore)
-(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(setq gc-cons-threshold (* 2 1000 1000)
+      ring-bell-function 'ignore
+      backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(add-hook 'after-init-hook #'ebn/display-startup-time)
 
 ;; Looks
 (when (member "JetBrains Mono" (font-family-list))
   (set-frame-font "JetBrains Mono-11" t t))
 
-(use-package modus-themes
-  :ensure t
-  :init
-  (show-paren-mode 1)
-  :config
-  (setq modus-themes-paren-match '(bold intense))
-  (modus-themes-load-operandi)
-  (when window-system (set-frame-size (selected-frame) 90 50))
-  (setq fancy-startup-text nil))
+(add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
 ;; Functions
 (defun ebn/kill-current-buffer ()
@@ -54,17 +52,23 @@
   "Up directory - killing current buffer."
   (interactive)
   (let ((cb (current-buffer)))
-	(progn (dired-up-directory)
-	       (kill-buffer cb))))
+    (progn (dired-up-directory)
+	   (kill-buffer cb))))
 
-(defun ebn/display-startup-time ()
-  (message "Emacs loaded in %s with %d garbage collections."
-           (format "%.2f seconds"
-                   (float-time
-                   (time-subtract after-init-time before-init-time)))
-           gcs-done))
+(use-package modus-themes
+  :ensure t
+  :init
+  (show-paren-mode 1)
+  :config
+  (setq modus-themes-paren-match '(bold intense))
+  (modus-themes-load-operandi)
+  (when window-system (set-frame-size (selected-frame) 90 50))
+  (setq fancy-startup-text nil))
 
-(add-hook 'emacs-startup-hook #'ebn/display-startup-time)
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode 1))
 
 ;; Packages
 (use-package which-key
@@ -156,9 +160,9 @@
   :commands 'envrc-global-mode
   :config (envrc-global-mode))
 
-(use-package flycheck
-  :commands 'global-flycheck-mode
-  :config (global-flycheck-mode))
+;(use-package flycheck
+;  :commands 'global-flycheck-mode
+;  :config (global-flycheck-mode))
 
 (use-package evil
   :ensure t
@@ -184,15 +188,25 @@
 
 (use-package company
   :ensure t
+  :custom
+  (company-idle-delay 0.1)
+  (company-minimum-prefix-length 2)
   :config
   (add-to-list 'company-backends 'company-capf)
-  (global-company-mode))
+  (add-to-list 'company-backends 'company-elisp)
+  :hook ((after-init . global-company-mode)))
 
 (use-package dired
   :ensure nil
   :config
   (setq dired-recursive-copies t
 	dired-recursive-deletes t))
+
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+         "* TODO %?\n  %i\n  %a")
+        ("j" "Journal" entry (file+datetree "~/org/journal.org")
+         "* %?\nEntered on %U\n  %i\n  %a")))
 
 (use-package org
   :ensure t
@@ -203,12 +217,17 @@
     (when (not org-pretty-entities)
       (org-toggle-pretty-entities))
     (org-latex-preview))
-  :hook ((org-mode . my/org-prettify-buffer))
-  :config
+  :config 
+  (setq org-capture-templates
+	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+	   "* TODO %?\n  %i\n  %a")
+	  ("j" "Journal" entry (file+datetree "~/org/journal.org")
+	   "* %?\nEntered on %U\n  %i\n  %a")
+	  ("r" "Roam node" function #'org-roam-capture)))
   (setq org-image-actual-width nil)
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1)))
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2)))
 
 (use-package org-roam
   :ensure t
@@ -217,6 +236,11 @@
   :custom
   (org-roam-directory "~/org-roam")
   (org-roam-completion-everywhere t)
+  (org-roam-capture-templates
+    '(("d" "default" plain "%?" :if-new
+       (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+		  "#+title: ${title}\n#+startup: latexpreview\n#+startup: entitiespretty")
+       :unnarrowed t)))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -249,5 +273,4 @@
   ;; Show images after evaluating code blocks.
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
-(provide 'ebn-core)
 ;;; ebn-init.el ends here

@@ -6,19 +6,18 @@ let
   version = config.programs.ebn.emacs.version;
   emacsPackage =
     let 
-
-    init = pkgs.runCommand "default.el" {} ''
-      mkdir -p $out/share/emacs/site-lisp
-      cp ${pkgs.writeText "default.el" (builtins.readFile ./config/ebn-init.el)} $out/share/emacs/site-lisp/default.el
-    '';
+      init = pkgs.runCommand "default.el" {} ''
+        mkdir -p $out/share/emacs/site-lisp
+        cp ${pkgs.writeText "default.el" (builtins.readFile ./config/ebn-init.el)} $out/share/emacs/site-lisp/default.el
+      '';
     # ln -sf ${./early-init.el} $out/share/emacs/site-lisp/early-init.el
     in
-    (pkgs.emacsWithPackagesFromUsePackage {
-      config = ./config/ebn-init.el;
-      alwaysEnsure = true;
-      package = pkgs."${version}";
-      extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode ];
-    });
+      (pkgs.emacsWithPackagesFromUsePackage {
+        config = ./config/ebn-init.el;
+        alwaysEnsure = true;
+        package = pkgs."${version}";
+        extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode ];
+      });
 
 in {
   options = {
