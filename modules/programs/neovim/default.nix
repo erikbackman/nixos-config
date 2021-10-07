@@ -1,6 +1,7 @@
 { config, lib, pkgs, inputs, ... }:
 let
   cfg = config.programs.ebn.nvim;
+  ebn = import ./config/plugin.nix pkgs;
 in with lib; {
   options.programs.ebn.nvim = {
     enable = mkEnableOption "Enable ebn nvim";
@@ -19,6 +20,7 @@ in with lib; {
         customRC = builtins.readFile ./config/init.vim;
         packages.myVimPackage = with pkgs.vimPlugins; {
           start = [
+            ebn 
             completion-nvim
             fennel-vim
             #aniseed
