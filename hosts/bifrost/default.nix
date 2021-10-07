@@ -5,7 +5,14 @@
   nixpkgs.config.allowUnfree = true;
   programs.ebn.nvim.enable = true;
   programs.ebn.kitty.enable = true;
-  windowManager.ebn.xmonad.enable = true;
+  programs.ebn.bash.enable = true;
+  programs.ebn.bash.starship.enable = true;
+  programs.ebn.emacs.enable = true;
+  programs.ebn.emacs.version = "emacsPgtkGcc";
+
+  # Gnome
+  desktopEnvironment.ebn.gnome.enable = true;
+  services.fstrim.enable = true;
 
   services.xserver.layout = "se";
   services.dbus = {
