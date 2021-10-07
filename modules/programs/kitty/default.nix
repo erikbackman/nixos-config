@@ -11,6 +11,7 @@ in {
     fonts.fonts = with pkgs; [
       jetbrains-mono
     ];
+
     environment.systemPackages = 
       let 
         config = pkgs.writeText "kitty config" (builtins.readFile ./config/kitty.conf);
@@ -18,7 +19,17 @@ in {
         wrapped = pkgs.writeShellScriptBin "kitty" ''
           exec ${pkgs.kitty}/bin/kitty -c ${config}
         '';
+
+        package = pkgs.symlinkJoin {
+          name = "kitty";
+          paths = [
+            wrapped
+            pkgs.kitty
+          ];
+        };
       in
-      [ wrapped ];
+      [ package
+        kittyItem
+      ];
   };
 }
