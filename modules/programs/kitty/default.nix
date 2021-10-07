@@ -28,8 +28,6 @@ in {
           ];
         };
       in
-      [ package
-        kittyItem
-      ];
+      [ package ];
   };
 }
