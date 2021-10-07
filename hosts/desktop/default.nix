@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, config, ... }: {
 
   networking.hostName = "nixos";
 
@@ -26,6 +26,7 @@
   services.ebn.pulseeffects.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.layout = "se";
+  services.fstrim.enable = true;
 
   fonts.fonts = with pkgs; [
     etBook
@@ -47,7 +48,6 @@
     gsettings-desktop-schemas
     gnumake
     obs-studio
-    claws-mail-gtk3
     neofetch
     mpc_cli
     mpv
@@ -65,5 +65,9 @@
     dstask
     anki
     sage
-  ];
+  ] 
+  ++ 
+  lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
+
+  system.stateVersion = "20.03";
 }

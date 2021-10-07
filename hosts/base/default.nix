@@ -70,6 +70,4 @@
       experimental-features = nix-command flakes
     '';
   };
-
-  system.stateVersion = "20.03";
 }
