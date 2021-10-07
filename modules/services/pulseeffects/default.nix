@@ -5,13 +5,17 @@ let
 in with lib; {
   options.services.ebn.pulseeffects = {
     enable = mkEnableOption "Enable PulseEffects";
+    package = mkOption {
+      type = types.package;
+      default = pkgs.pulseeffects-legacy;
+    };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.pulseeffects-legacy pkgs.at-spi2-core ];
+    environment.systemPackages = [ cfg.package pkgs.at-spi2-core ];
 
     systemd.user.services.pulseeffects = {
-      description = "Polybar daemon"; 
+      description = "PulseEffects Daemon"; 
       requires = [ "dbus.service" ];
       wantedBy = [ "graphical-session.target" ];
       after = [ "graphical-session-pre.target" ];
