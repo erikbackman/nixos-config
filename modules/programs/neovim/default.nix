@@ -30,7 +30,7 @@ in with lib; {
             vim-nix
             vim-sneak
             vim-startify
-
+            pkgs.ebn.modus-theme-vim
             agda-vim
           ];
         };
