@@ -1,6 +1,6 @@
 { pkgs, lib, config, ... }: {
 
-  networking.hostName = "nixos";
+  networking.hostName = "yggdrasil";
 
   nixpkgs.config.allowUnfree = true;
 
