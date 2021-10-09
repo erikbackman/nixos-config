@@ -20,16 +20,17 @@ in {
       overrideFolders = true;
 
       devices = {
-        "yggrasil" = { id = "5RLYA4M-B6TJNPG-Z57KRSR-BEGEIZT-4WFPGUX-KQ72XE6-TMTWHZL-2K6PPAH"; };
+        "yggdrasil" = { id = "5RLYA4M-B6TJNPG-Z57KRSR-BEGEIZT-4WFPGUX-KQ72XE6-TMTWHZL-2K6PPAH"; };
+        "bifrost" = { id = "7LCKHMQ-7EJNDGY-CUQK5M3-X5MGEV2-F7FIKL5-VQ3GZUL-MWL4CVN-3VVW2QX"; };
       };
       folders = {
         "roam" = {
           path = "home/ebn/org-roam";
-          devices = [ "yggdrasil" ];
+          devices = [ "yggdrasil" "bifrost" ];
       };
       "lab" = {
         path = "home/ebn/Documents/lab";
-        devices = [ "yggdrasil" ];
+        devices = [ "yggdrasil" "bifrost" ];
         versioning = {
           type = "staggered";
           params = {
