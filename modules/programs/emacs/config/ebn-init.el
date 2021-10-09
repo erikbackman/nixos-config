@@ -55,6 +55,11 @@
     (progn (dired-up-directory)
 	   (kill-buffer cb))))
 
+(defun ebn/project-rg ()
+  "Run ripgrep in current project"
+  (interactive)
+  (call-interactively #'consult-ripgrep (project-root (project-current))))
+
 (use-package modus-themes
   :ensure t
   :init
@@ -152,6 +157,12 @@
    "ws" '(split-window-below :which-key "Split window below")
    "wv" '(split-window-right :which-key "Split window right")
 
+   ;; Project
+   "p"  '(:ignore t :which-key "Project")
+   "pp" '(project-switch-project :which-key "Switch project")
+   "pf" '(project-find-file :which-key "Find project file")
+   "ps" '(ebn/project-rg :which-key "Project rg")
+
    ;; Other
    "z" '(org-capture :which-key "Org capture")
    ))
@@ -159,10 +170,6 @@
 (use-package envrc
   :commands 'envrc-global-mode
   :config (envrc-global-mode))
-
-;(use-package flycheck
-;  :commands 'global-flycheck-mode
-;  :config (global-flycheck-mode))
 
 (use-package evil
   :ensure t
