@@ -202,12 +202,6 @@
   (setq dired-recursive-copies t
 	dired-recursive-deletes t))
 
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
-         "* TODO %?\n  %i\n  %a")
-        ("j" "Journal" entry (file+datetree "~/org/journal.org")
-         "* %?\nEntered on %U\n  %i\n  %a")))
-
 (use-package org
   :ensure t
   :commands (my/org-prettify-buffer)
@@ -228,6 +222,14 @@
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2)))
+
+(use-package evil-org
+  :ensure t
+  :after org
+  :hook (org-mode . evil-org-mode)
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 
 (use-package org-roam
   :ensure t
