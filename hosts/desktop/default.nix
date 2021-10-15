@@ -13,6 +13,11 @@
   programs.ebn.emacs.enable = true;
   programs.ebn.emacs.version = "emacsPgtkGcc";
 
+  services.redshift = {
+    enable = true;
+    inherit (config location);
+  };
+
   # Xmonad
   windowManager.ebn.xmonad.enable = false;
   services.ebn.polybar.enable = false;
