@@ -22,7 +22,10 @@
 
   # Gnome
   desktopEnvironment.ebn.gnome.enable = true;
+  desktopEnvironment.ebn.gnome.withPopShell = true;
 
+
+  services.ebn.syncthing.enable = true;
   services.ebn.pulseeffects.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.layout = "se";

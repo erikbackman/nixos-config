@@ -6,6 +6,7 @@ let cfg = config.desktopEnvironment.ebn.gnome;
 in {
   options.desktopEnvironment.ebn.gnome = {
     enable = mkEnableOption "Enable Gnome";
+    withPopShell = mkEnableOption "Enable Pop-Shell";
   };
 
   config = mkIf cfg.enable {
@@ -47,6 +48,7 @@ in {
     ];
 
     programs.dconf.enable = true;
+
     environment.systemPackages = with pkgs; [ 
       gnome.adwaita-icon-theme 
       gnome.gnome-tweaks 
@@ -58,6 +60,7 @@ in {
       papirus-icon-theme
       gnome-breeze
       maia-icon-theme
-    ];
+
+    ] ++ lib.optionals cfg.withPopShell [ ebn.pop-shell ];
   };
 }
