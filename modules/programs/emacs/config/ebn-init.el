@@ -27,6 +27,15 @@
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
 ;; Functions
+(defun ebn/diary-last-day-of-month (date)
+"Return `t` if DATE is the last day of the month."
+  (let* ((day (calendar-extract-day date))
+         (month (calendar-extract-month date))
+         (year (calendar-extract-year date))
+         (last-day-of-month
+            (calendar-last-day-of-month month year)))
+    (= day last-day-of-month)))
+
 (defun ebn/kill-current-buffer ()
   "Kill current buffer."
   (interactive)
@@ -163,6 +172,10 @@
    "pf" '(project-find-file :which-key "Find project file")
    "ps" '(ebn/project-rg :which-key "Project rg")
 
+   ;; Notes
+   "n"  '(:ignore t :which-key "Notes")
+   "na" '(org-agenda :which-key "Agenda")
+
    ;; Other
    "z" '(org-capture :which-key "Org capture")
    ))
@@ -219,6 +232,7 @@
       (org-toggle-pretty-entities))
     (org-latex-preview))
   :config 
+  (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org"))
   (setq org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
 	   "* TODO %?\n  %i\n  %a")
