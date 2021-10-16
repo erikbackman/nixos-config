@@ -4,7 +4,7 @@
   nixConfig.bash-prompt = "❄ nix-develop $ ";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-unstable.url = "nixpkgs/master";
 
     # Extras
@@ -14,7 +14,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
-  outputs = inputs@{ self, nixpkgs, emacs-overlay, neovim-git, nixos-hardware, ... }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, emacs-overlay, neovim-git, nixos-hardware, ... }:
     let
       system = "x86_64-linux";
 
@@ -25,6 +25,11 @@
           emacs-overlay.overlay
           neovim-git.overlay
           (import ./overlays)
+          (final: prev: { 
+            steam = 
+              let up = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
+              in up.steam;
+          })
         ];
       };
 

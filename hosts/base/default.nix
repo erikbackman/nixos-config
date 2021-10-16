@@ -7,7 +7,7 @@
   };
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_5_13;
+    kernelPackages = pkgs.linuxPackages_5_14;
     loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot.configurationLimit = 10;
