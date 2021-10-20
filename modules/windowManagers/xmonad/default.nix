@@ -1,17 +1,20 @@
-{ config, pkgs, lib, ... }:
+input@{ config, pkgs, lib, ... }:
 
 with lib;
 let
   cfg = config.windowManager.ebn.xmonad;
   ebn-xmonad = pkgs.ebn.ebn-xmonad;
   configDir = "xmonad/xmonad-x86_64-linux";
+  
 in {
+  
+  imports = [ ./xcompmgr.nix ];
+
   options.windowManager.ebn.xmonad = {
     enable = mkEnableOption "Enable ebn xmonad config";
   };
 
   config = mkIf cfg.enable {
-
     environment.variables = {
       "XMONAD_CONFIG_DIR" = "/etc/xmonad";
       "XMONAD_DATA_DIR" = "/etc/xmonad";
@@ -23,7 +26,7 @@ in {
 
     environment.etc."xmonad/build" = {
       text = "# This file stops xmonad from recompiling on restart";
-      mode = "0744";
+      mode = "0774";
     };
 
     environment.systemPackages = with pkgs; [
@@ -34,6 +37,8 @@ in {
       feh
       xorg.xset
       xmonad-log
+      nitrogen
+      xcompmgr
     ];
     
     services = {
@@ -43,7 +48,7 @@ in {
         displayManager = {
           defaultSession = "none+xmonad";
           lightdm.greeters.mini = {
-            enable = true;
+            enable = false;
             user = "ebn";
             extraConfig = ''
               [greeter-theme]
@@ -60,14 +65,11 @@ in {
         displayManager.sessionCommands = ''
           xset r rate 500 33
 
-          if test -e $HOME/wallpaper; then
-             ${pkgs.feh}/bin/feh --no-fehbg --bg-scale $HOME/wallpaper
-          fi
         '';
 
         windowManager.xmonad.enable = true;
       };
+      ebn.xcompmgr.enable = true;
     };
-
   };
 }
