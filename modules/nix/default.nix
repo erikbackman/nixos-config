@@ -6,6 +6,6 @@ let
 in
 {
   options = with lib; with types; {
-    colors = mkOpt attrs themes.aurora;
+    colors = mkOpt attrs themes.modus-operandi;
   };
 }

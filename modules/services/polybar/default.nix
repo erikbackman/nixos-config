@@ -7,8 +7,23 @@ let
     pulseSupport = true;
     mpdSupport = true;
   };
-  polybarCfg = ''
+
+  polybarCfg = with config; ''
     ${builtins.readFile ./config/polybarrc}
+
+    [colors]
+    background = ${colors.background}
+    purple = ${colors.purple}
+    white = ${colors.white}
+    foreground = ${colors.foreground}
+    foreground-alt = ${colors.foreground-alt}
+    black = ${colors.black}    
+    yellow = ${colors.yellow}
+    alert = ${colors.yellow}
+    accent = ${colors.accent}
+    gray = ${colors.gray}
+    bg-dark = ${colors.bg-dark}
+
     [module/xmonad]
     type = custom/script
     exec = ${pkgs.xmonad-log}/bin/xmonad-log

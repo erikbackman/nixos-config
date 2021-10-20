@@ -12,4 +12,38 @@
     gray = "#7F7F7F";
     bg-dark = "#181a23";
   };
+
+  modus-operandi = {
+    foreground = "#000000";
+    foreground-alt = "#1111ee";
+    background = "#f6f2fc";
+    bg-dark = "#000000";
+    ## black
+    black = "#222222";
+    
+    ## red
+    red =  "#b60000";
+    
+    ## green
+    green = "#006800";
+    
+    ## yellow
+    yellow = "#904200";
+    
+    ## blue
+    blue = "#1111ee";
+    
+    ## magenta
+    purple = "#7000e0";
+    
+    ## cyan
+    cyan = "#205b93";
+    
+    ## white
+    white = "#000";
+
+    accent = "#1111ee";
+
+    gray = "#222222";
+  };
 }

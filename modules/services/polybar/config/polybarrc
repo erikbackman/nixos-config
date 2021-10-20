@@ -1,19 +1,6 @@
 [layout]
 bar-format = %{T4}%fill%%indicator%%empty%%{F-}%{T-}
 
-[colors]
-background = #0a0d10
-purple = #bd93f9
-white = #e6e8ee
-foreground = #ebdbb2
-foreground-alt = #ebdbb2
-black = #000
-yellow = #ddb566
-alert = ${colors.yellow}
-accent = #604c7e
-gray = #7F7F7F
-bg-dark = #181a23
-
 [global/wm]
 margin-top = 0
 margin-bottom = 0
