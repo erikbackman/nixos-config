@@ -8,7 +8,7 @@ in with lib; {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ xcompmgr ];
+    environment.systemPackages = [ pkgs.xcompmgr ];
 
     systemd.user.services.xcompmgr = {
       description = "XCompmgr Compositor"; 
