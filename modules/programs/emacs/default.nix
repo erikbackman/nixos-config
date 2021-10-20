@@ -15,26 +15,28 @@ let
       (pkgs.emacsWithPackagesFromUsePackage {
         config = ./config/ebn-init.el;
         alwaysEnsure = true;
-        package = pkgs."${version}";
+        package = cfg.package;
         extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode ];
+        #override = epkgs: epkgs // {
+        #  haskell-mode = epkgs.melpaPackages.haskell-mode.overrideAttrs(old: {
+        #    commit = "8402caa341d90b4236f5c0a802751f9023ccfbe7";
+        #  });
+        #};
       });
-
 in {
+
   options = {
     programs.ebn.emacs = {
       enable = mkEnableOption "Enable Emacs";
-      version = mkOption {
-        type = types.str;
-        default = "emacsGit";
+      package = mkOption {
+        type = lib.types.package;
+        default = pkgs.emacsGit;
       };
     };
   };
 
   config = mkIf cfg.enable {
     
-    services.emacs.enable = true;
-    services.emacs.package = emacsPackage;
-
     environment.systemPackages = with pkgs; [
       emacsPackage
 
@@ -92,6 +94,5 @@ in {
       # agda
       haskellPackages.Agda
     ];
-
   };
 }

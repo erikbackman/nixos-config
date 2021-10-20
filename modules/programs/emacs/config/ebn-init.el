@@ -1,4 +1,4 @@
-;;; ebn-init.el --- Basic stuff -*- lexical-binding: t; no-byte-compile: nil; -*-
+;;; ebn-init.el --- init -*- lexical-binding: t; no-byte-compile: nil; -*-
 ;;; Commentary:
 ;;; Code:
 (require 'use-package)
@@ -20,22 +20,16 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 (add-hook 'after-init-hook #'ebn/display-startup-time)
 
-;; Looks
+;;; Looks
 (when (member "JetBrains Mono" (font-family-list))
   (set-frame-font "JetBrains Mono-11" t t))
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
-;; Functions
-(defun ebn/diary-last-day-of-month (date)
-"Return `t` if DATE is the last day of the month."
-  (let* ((day (calendar-extract-day date))
-         (month (calendar-extract-month date))
-         (year (calendar-extract-year date))
-         (last-day-of-month
-            (calendar-last-day-of-month month year)))
-    (= day last-day-of-month)))
+;;; Vars
+(defvar ebn/formatter nil)
 
+;;; Functions
 (defun ebn/kill-current-buffer ()
   "Kill current buffer."
   (interactive)
@@ -69,6 +63,121 @@
   (interactive)
   (call-interactively #'consult-ripgrep (project-root (project-current))))
 
+;;; Packages
+(use-package emacs
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+
+  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete)
+  :delight
+  (auto-fill-function " AF")
+  (visual-line-mode)
+
+  :hook (emacs-lisp-mode . (lambda () (setq-local lisp-indent-function #'common-lisp-indent-function))))
+
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-respect-visual-line-mode t)
+  :config
+  (evil-mode 1)
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal)
+  :bind (:map evil-motion-state-map ("RET" . nil)))
+
+(use-package evil-collection
+  :ensure t
+  :after evil
+  :config
+  (evil-collection-init))
+
+(use-package general
+    :after evil
+    :ensure t
+    :config
+    ;(general-auto-unbind-keys)
+    (general-evil-setup t)
+    (general-setq evil-want-Y-yank-to-eol)
+
+    (general-create-definer ebn/leader-key-def
+	:keymaps '(normal insert visual emacs)
+	:prefix "SPC"
+	:global-prefix "C-SPC")
+
+    (general-define-key
+     :states 'normal :keymaps 'dired-mode-map
+     "m" '(dired-mark :which-key "Dired mark")
+     "D" '(dired-do-delete :which-key "Dired delete")
+     "c" '(dired-do-copy :which-key "Dired copy")
+     "C" '(dired-do-compress :which-key "Dired compress")
+     "r" '(dired-do-rename :which-key "Dired rename")
+     "u" '(dired-unmark :which-key "Dired unmark")
+     "U" '(dired-unmark-all-marks :which-key "Dired umkark all")
+     "-" '(ebn/dired-up-directory :which-key "Dired up directory"))
+
+    (ebn/leader-key-def
+	"" '(nil :which-key "Leader")
+
+	;; Basic
+	":"  '(execute-extended-command :which-key "M-x")
+	";"  '(eval-expression :which-key "Eval expr")
+	"qq" '(kill-emacs :which-key "Exit")
+
+	;; File
+	"f"  '(:ignore t :which-key "File")
+	"ff" '(find-file :which-key "Find file")
+	"fs" '(save-buffer :which-key "Save file")
+	"fR" '(ebn/rename-current-file :which-key "Rename File")
+	"fd" '(dired-jump :which-key "Find files in dir")
+	"sb" '(consult-ripgrep :which-key "Ripgrep Files")
+	"fr" '(consult-recent-file :which-key "Recent file")
+
+	;; Buffer
+	"b"  '(:ignore t :which-key "Buffer")
+	"bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
+	"bb" '(consult-buffer :which-key "Buffers")
+
+	;; Tab
+	"t"  '(:ignore t :which-key "Tab")
+	"tt" '(tab-new :which-key "New tab")
+	"tn" '(tab-next :which-key "Next tab")
+	"tp" '(tab-previous :which-key "Previous tab")
+	"tl" '(tab-list :which-key "Tab list")
+	"td" '(tab-close :which-key "Tab delete")
+	"to" '(tab-close-other :which-key "Tab delete other")
+
+	;; Window
+	"w"  '(:ignore t :which-key "Window")
+	"ww" '(other-window :which-key "Other window")
+	"wd" '(delete-window :which-key "Delete window")
+	"wo" '(delete-other-windows :which-key "Delete other windows")
+	"ws" '(split-window-below :which-key "Split window below")
+	"wv" '(split-window-right :which-key "Split window right")
+
+	;; Project
+	"p"  '(:ignore t :which-key "Project")
+	"pp" '(project-switch-project :which-key "Switch project")
+	"pf" '(project-find-file :which-key "Find project file")
+	"ps" '(ebn/project-rg :which-key "Project rg")
+
+	;; Other
+	"o" '(:ignore t :which-key "Toggle")
+	"oo" '(outline-cycle :which-key "Outline cycle")
+	"oO" '(outline-cycle-buffer :which-key "Outline cycle")
+	))
+
 (use-package modus-themes
   :ensure t
   :init
@@ -91,14 +200,15 @@
   (which-key-mode 1))
 
 (use-package vertico
-  :ensure t
-  :config
-  (vertico-mode))
+    :ensure t
+    :config
+    (vertico-mode))
 
-(use-package consult :ensure t
-  :config
-  (setq consult-preview-key nil)
-  (recentf-mode))
+(use-package consult
+    :ensure t
+    :config
+    (setq consult-preview-key nil)
+    (recentf-mode))
 
 (use-package orderless
   :init
@@ -106,115 +216,11 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
-(use-package general
-  :ensure t
-  :config
-  (general-evil-setup t)
-
-  (general-define-key
-   :states 'normal
-   :keymaps 'dired-mode-map
-
-   "m" '(dired-mark :which-key "Dired mark")
-   "D" '(dired-do-delete :which-key "Dired delete")
-   "c" '(dired-do-copy :which-key "Dired copy")
-   "C" '(dired-do-compress :which-key "Dired compress")
-   "r" '(dired-do-rename :which-key "Dired rename")
-   "u" '(dired-unmark :which-key "Dired unmark")
-   "U" '(dired-unmark-all-marks :which-key "Dired umkark all")
-   "-" '(ebn/dired-up-directory :which-key "Dired up directory"))
-
-  (general-define-key
-   :keymaps 'normal
-   :prefix "SPC"
-   :non-normal-prefix "C-SPC"
-   ""	'(nil :which-key "Leader")
-
-   ;; Basic
-   ":"	'(execute-extended-command :which-key "M-x")
-   ";"  '(eval-expression :which-key "Eval expr")
-   "qq" '(kill-emacs :which-key "Exit")
-
-   ;; File
-   "f"	'(:ignore t :which-key "File")
-   "ff" '(find-file :which-key "Find file")
-   "fr" '(consult-recent-file :which-key "Recent files")
-   "fs" '(save-buffer :which-key "Save file")
-   "fR" '(ebn/rename-current-file :which-key "Rename File")
-   "fd" '(dired-jump :which-key "Find files in dir")
-
-   ;; Buffer
-   "b"	'(:ignore t :which-key "Buffer")
-   "bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
-   "bb" '(consult-buffer :which-key "Switch buffer")
-   "sb" '(consult-ripgrep :which-key "Ripgrep dir")
-
-   ;; Tab
-   "t" '(:ignore t :which-key "Tab")
-   "tt" '(tab-new :which-key "New tab")
-   "tn" '(tab-next :which-key "Next tab")
-   "tp" '(tab-previous :which-key "Previous tab")
-   "tl" '(tab-list :which-key "Tab list")
-   "td" '(tab-close :which-key "Tab delete")
-   "to" '(tab-close-other :which-key "Tab delete other")
-
-   ;; Window
-   "w"	'(:ignore t :which-key "Window")
-   "ww" '(other-window :which-key "Other window")
-   "wd" '(delete-window :which-key "Delete window")
-   "wo" '(delete-other-windows :which-key "Delete other windows")
-   "ws" '(split-window-below :which-key "Split window below")
-   "wv" '(split-window-right :which-key "Split window right")
-
-   ;; Project
-   "p"  '(:ignore t :which-key "Project")
-   "pp" '(project-switch-project :which-key "Switch project")
-   "pf" '(project-find-file :which-key "Find project file")
-   "ps" '(ebn/project-rg :which-key "Project rg")
-
-   ;; Notes
-   "n"  '(:ignore t :which-key "Notes")
-   "na" '(org-agenda :which-key "Agenda")
-
-   ;; Other
-   "z" '(org-capture :which-key "Org capture")
-   ))
 
 (use-package envrc
   :commands 'envrc-global-mode
   :config (envrc-global-mode))
 
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-  (setq evil-respect-visual-line-mode t)
-  :config
-  (evil-mode 1)
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal)
-  :bind (:map evil-motion-state-map ("RET" . nil)))
-
-(use-package evil-collection
-  :ensure t
-  :commands 'company-tng-configure-default
-  :init (setq evil-collection-company-use-tng nil)
-  :after evil
-  :config
-  (evil-collection-init))
-
-(use-package company
-  :ensure t
-  :custom
-  (company-idle-delay 0.1)
-  (company-minimum-prefix-length 2)
-  :config
-  (add-to-list 'company-backends 'company-capf)
-  (add-to-list 'company-backends 'company-elisp)
-  :hook ((after-init . global-company-mode)))
 
 (use-package dired
   :ensure nil
@@ -231,7 +237,22 @@
     (when (not org-pretty-entities)
       (org-toggle-pretty-entities))
     (org-latex-preview))
+  (defun ebn/diary-last-day-of-month (date)
+    "Return `t` if DATE is the last day of the month."
+    (let* ((day (calendar-extract-day date))
+	   (month (calendar-extract-month date))
+	   (year (calendar-extract-year date))
+	   (last-day-of-month
+	    (calendar-last-day-of-month month year)))
+      (= day last-day-of-month)))
   :config 
+  (general-define-key
+   :states 'normal
+   :prefix "SPC"
+   "n"  '(:ignore t :which-key "Notes")
+   "na" '(org-agenda :which-key "Agenda")
+   "o"  '(org-capture))
+
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org"))
   (setq org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
@@ -259,11 +280,10 @@
   :custom
   (org-roam-directory "~/org-roam")
   (org-roam-completion-everywhere t)
-  (org-roam-capture-templates
-    '(("d" "default" plain "%?" :if-new
-       (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-		  "#+title: ${title}\n#+startup: latexpreview\n#+startup: entitiespretty")
-       :unnarrowed t)))
+  (org-roam-capture-templates '(("d" "default" plain "%?" :if-new
+				 (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+				  "#+title: ${title}\n#+startup: latexpreview\n#+startup: entitiespretty")
+				 :unnarrowed t)))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -296,4 +316,90 @@
   ;; Show images after evaluating code blocks.
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
+(use-package haskell-mode
+    :ensure t
+    :commands (haskell-mode) 
+    :after evil
+    :mode ("\\.hs\\'" . haskell-mode)
+    :init
+    (defun +haskell/evil-open-above ()
+      "Opens a line above the current mode"
+      (interactive)
+      (evil-digit-argument-or-evil-beginning-of-line)
+      (haskell-indentation-newline-and-indent)
+      (evil-previous-line)
+      (haskell-indentation-indent-line)
+      (evil-append-line nil))
+
+    (defun +haskell/evil-open-below ()
+      "Opens a line below the current mode"
+      (interactive)
+      (evil-append-line nil)
+      (haskell-indentation-newline-and-indent))
+
+    (defun haskell-mode-after-save-handler ())
+    (defun ebn/haskell-format-buffer ()
+      "Format Haskell buffer using Ormolu."
+      (interactive)
+      (when-let ((ormolu-path
+		  (seq-find (lambda (x) (string-match-p (regexp-quote "ormolu") x))
+			    exec-path)))
+	(make-process
+	 :name "ormolu"
+	 :buffer "*ormolu-log*"
+	 :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
+	 :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
+    :custom
+    (haskell-process-type 'cabal-repl)
+    (haskell-process-load-or-reload-prompt t)
+    (haskell-process-auto-import-loaded-modules t)
+    (haskell-process-log t)
+    :config
+    
+    (defun haskell-mode-setup ()
+      (haskell-indentation-mode -1)
+      ;(interactive-haskell-mode)
+      (setq-local tab-stop-list '(2 4))
+      (setq indent-line-function 'indent-relative)
+      (setq tab-width 2)
+      (setq-local evil-shift-width 2))
+
+    (general-nmap :keymaps 'haskell-mode-map "o" '+haskell/evil-open-below)
+
+    (add-hook 'haskell-mode-hook 'haskell-mode-setup)
+
+    :bind
+    (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
+
+(use-package eglot
+  :ensure t
+  :hook (haskell-mode . eglot-ensure)
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-autoreconnect nil)
+  (eldoc-idle-delay 1)
+  :bind (:map eglot-mode-map ("C-c C-a" . eglot-code-actions)))
+
+(use-package envrc
+ :config
+ (envrc-global-mode))
+
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-auto-delay 0.2)
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-commit-predicate nil)   ;; Do not commit selected candidates on next input
+  (corfu-quit-at-boundary t)     ;; Automatically quit at word boundary
+  (corfu-quit-no-match t)        ;; Automatically quit if there is no match
+  (corfu-echo-documentation nil) ;; Do not show documentation in the echo area
+  :hook ((haskell-mode . corfu-mode)
+	 (emacs-lisp-mode . corfu-mode)
+         (eshell-mode . corfu-mode)))
+
+(use-package nix-mode
+    :defer t
+    :mode "\\.nix\\'"
+    :ensure t)
 ;;; ebn-init.el ends here
