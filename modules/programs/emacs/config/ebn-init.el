@@ -251,7 +251,7 @@
    :prefix "SPC"
    "n"  '(:ignore t :which-key "Notes")
    "na" '(org-agenda :which-key "Agenda")
-   "o"  '(org-capture))
+   "no"  '(org-capture))
 
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org"))
   (setq org-capture-templates
@@ -319,9 +319,10 @@
 (use-package haskell-mode
     :ensure t
     :commands (haskell-mode) 
-    :after evil
+    ;:after evil
     :mode ("\\.hs\\'" . haskell-mode)
     :init
+    (load-library "haskell-interactive-mode")
     (defun +haskell/evil-open-above ()
       "Opens a line above the current mode"
       (interactive)
@@ -357,8 +358,7 @@
     :config
     
     (defun haskell-mode-setup ()
-      (haskell-indentation-mode -1)
-      ;(interactive-haskell-mode)
+      (haskell-indentation-mode)
       (setq-local tab-stop-list '(2 4))
       (setq indent-line-function 'indent-relative)
       (setq tab-width 2)
