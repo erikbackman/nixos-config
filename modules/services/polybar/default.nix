@@ -11,18 +11,7 @@ let
   polybarCfg = with config; ''
     ${builtins.readFile ./config/polybarrc}
 
-    [colors]
-    background = ${colors.background}
-    purple = ${colors.purple}
-    white = ${colors.white}
-    foreground = ${colors.foreground}
-    foreground-alt = ${colors.foreground-alt}
-    black = ${colors.black}    
-    yellow = ${colors.yellow}
-    alert = ${colors.yellow}
-    accent = ${colors.accent}
-    gray = ${colors.gray}
-    bg-dark = ${colors.bg-dark}
+    ${cfg.extraConfig}
 
     [module/xmonad]
     type = custom/script
@@ -32,6 +21,10 @@ let
 in with lib; {
   options.services.ebn.polybar = {
     enable = mkEnableOption "Enable polybar";
+    extraConfig = mkOption {
+      type = lib.types.lines;
+      default = '''';
+    };
   };
 
   config = mkIf cfg.enable {

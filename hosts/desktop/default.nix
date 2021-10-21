@@ -1,5 +1,6 @@
-{ pkgs, lib, config, ... }: {
-
+{ pkgs, lib, config, ... }:
+let theme = import ./theme.nix { inherit config lib; };
+in {
   networking.hostName = "yggdrasil";
 
   nixpkgs.config.allowUnfree = true;
@@ -7,6 +8,7 @@
   programs.steam.enable = true;
   programs.ebn.nvim.enable = true;
   programs.ebn.kitty.enable = true;
+  programs.ebn.kitty.extraConfig = theme.kitty;
   programs.ebn.rofi.enable = true;
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
@@ -21,6 +23,7 @@
   # Xmonad
   windowManager.ebn.xmonad.enable = true;
   services.ebn.polybar.enable = true;
+  services.ebn.polybar.extraConfig = theme.polybar;
   services.xserver.displayManager.sessionCommands = ''
     xrandr --output DP-0 --mode 3440x1440 --rate 99.98
   '';
