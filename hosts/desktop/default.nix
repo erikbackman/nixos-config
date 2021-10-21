@@ -11,7 +11,7 @@
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
   programs.ebn.emacs.enable = true;
-  programs.ebn.emacs.version = "emacsPgtkGcc";
+  programs.ebn.emacs.package = pkgs.emacsGcc;
 
   services.redshift = {
     enable = true;
@@ -19,16 +19,15 @@
   };
 
   # Xmonad
-  windowManager.ebn.xmonad.enable = false;
-  services.ebn.polybar.enable = false;
-  #services.xserver.displayManager.sessionCommands = ''
-  #  xrandr --output DP-0 --mode 3440x1440 --rate 99.98
-  #'';
+  windowManager.ebn.xmonad.enable = true;
+  services.ebn.polybar.enable = true;
+  services.xserver.displayManager.sessionCommands = ''
+    xrandr --output DP-0 --mode 3440x1440 --rate 99.98
+  '';
 
   # Gnome
-  desktopEnvironment.ebn.gnome.enable = true;
+  desktopEnvironment.ebn.gnome.enable = false;
   desktopEnvironment.ebn.gnome.withPopShell = true;
-
 
   services.ebn.syncthing.enable = true;
   services.ebn.pulseeffects.enable = true;
@@ -44,6 +43,14 @@
     oldstandard
     siji
   ];
+
+  fonts.fontconfig = {
+    enable = true;
+    antialias = true;
+    hinting = {
+      enable = true;
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     zathura
