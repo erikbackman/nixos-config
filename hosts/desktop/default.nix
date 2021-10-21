@@ -8,7 +8,7 @@ in {
   programs.steam.enable = true;
   programs.ebn.nvim.enable = true;
   programs.ebn.kitty.enable = true;
-  programs.ebn.kitty.extraConfig = theme.kitty;
+  programs.ebn.kitty.extraConfig = theme.kittyLight;
   programs.ebn.rofi.enable = true;
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
