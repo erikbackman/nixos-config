@@ -16,7 +16,7 @@ let
         config = ./config/ebn-init.el;
         alwaysEnsure = true;
         package = cfg.package;
-        extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode ];
+        extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode use-package ];
         #override = epkgs: epkgs // {
         #  haskell-mode = epkgs.melpaPackages.haskell-mode.overrideAttrs(old: {
         #    commit = "8402caa341d90b4236f5c0a802751f9023ccfbe7";

@@ -84,7 +84,6 @@
   :hook (emacs-lisp-mode . (lambda () (setq-local lisp-indent-function #'common-lisp-indent-function))))
 
 (use-package evil
-  :ensure t
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -98,14 +97,11 @@
   :bind (:map evil-motion-state-map ("RET" . nil)))
 
 (use-package evil-collection
-  :ensure t
   :after evil
   :config
   (evil-collection-init))
 
 (use-package general
-    :after evil
-    :ensure t
     :config
     ;(general-auto-unbind-keys)
     (general-evil-setup t)
@@ -189,23 +185,19 @@
   (setq fancy-startup-text nil))
 
 (use-package yasnippet
-  :ensure t
   :config
   (yas-global-mode 1))
 
 ;; Packages
 (use-package which-key
-  :ensure t
-  :config
-  (which-key-mode 1))
+    :config
+    (which-key-mode 1))
 
 (use-package vertico
-    :ensure t
     :config
     (vertico-mode))
 
 (use-package consult
-    :ensure t
     :config
     (setq consult-preview-key nil)
     (recentf-mode))
@@ -229,8 +221,8 @@
 	dired-recursive-deletes t))
 
 (use-package org
-  :ensure t
-  :commands (my/org-prettify-buffer)
+  :defer t
+  :commands (my/org-prettify-buffer org-agenda org-capture)
   :init
   (defun my/org-prettify-buffer ()
     (interactive)
@@ -266,7 +258,6 @@
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2)))
 
 (use-package evil-org
-  :ensure t
   :after org
   :hook (org-mode . evil-org-mode)
   :config
@@ -274,7 +265,6 @@
   (evil-org-agenda-set-keys))
 
 (use-package org-roam
-  :ensure t
   :init
   (setq org-roam-v2-ack t) ;; Disable v2-migration-prompt
   :custom
@@ -297,8 +287,7 @@
   (require 'org-roam-protocol))
 
 (use-package sage-shell-mode
-  :ensure t)
-
+    :ensure t)
 (use-package ob-sagemath
   :ensure t
   :config
@@ -317,12 +306,16 @@
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
 (use-package haskell-mode
-    :ensure t
+    :defer t
     :commands (haskell-mode) 
     ;:after evil
     :mode ("\\.hs\\'" . haskell-mode)
-    :init
-    (load-library "haskell-interactive-mode")
+    :custom
+    (haskell-process-type 'cabal-repl)
+    (haskell-process-load-or-reload-prompt t)
+    (haskell-process-auto-import-loaded-modules t)
+    (haskell-process-log t)
+    :config
     (defun +haskell/evil-open-above ()
       "Opens a line above the current mode"
       (interactive)
@@ -350,13 +343,6 @@
 	 :buffer "*ormolu-log*"
 	 :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
 	 :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
-    :custom
-    (haskell-process-type 'cabal-repl)
-    (haskell-process-load-or-reload-prompt t)
-    (haskell-process-auto-import-loaded-modules t)
-    (haskell-process-log t)
-    :config
-    
     (defun haskell-mode-setup ()
       (haskell-indentation-mode)
       (setq-local tab-stop-list '(2 4))
@@ -372,7 +358,7 @@
     (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
 
 (use-package eglot
-  :ensure t
+  :defer t
   :hook (haskell-mode . eglot-ensure)
   :custom
   (eglot-autoshutdown t)
@@ -385,7 +371,7 @@
  (envrc-global-mode))
 
 (use-package corfu
-  :ensure t
+  :defer t
   :custom
   (corfu-auto-delay 0.2)
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
