@@ -77,6 +77,7 @@
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
   (setq tab-always-indent 'complete)
+
   :delight
   (auto-fill-function " AF")
   (visual-line-mode)
@@ -243,7 +244,7 @@
    :prefix "SPC"
    "n"  '(:ignore t :which-key "Notes")
    "na" '(org-agenda :which-key "Agenda")
-   "no"  '(org-capture))
+   "no"  '(org-capture :which-key "Capture"))
 
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org"))
   (setq org-capture-templates
