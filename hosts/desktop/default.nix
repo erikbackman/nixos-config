@@ -79,10 +79,9 @@ in {
     cowsay
     ncspot
     pavucontrol
-    taskwarrior
-    dstask
     anki
     sage
+    geogebra6
   ] 
   ++ 
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
