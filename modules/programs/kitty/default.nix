@@ -9,10 +9,6 @@ in {
       type = lib.types.lines;
       default = '''';
     };
-    theme = mkOption {
-      type = lib.types.str;
-      default = "dark";
-    };
   };
 
   config = mkIf cfg.enable {
@@ -24,9 +20,6 @@ in {
       let 
         config = pkgs.writeText "kitty config" (
           (builtins.readFile ./config/kitty.conf) +
-          (builtins.readFile
-            (if cfg.theme == "dark" then ./config/dark-theme.conf
-             else ./config/light-theme.conf)) +
           cfg.extraConfig
         );
 
