@@ -375,6 +375,7 @@
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
+  (eglot-confirm-server-initiated-edits nil)
   (eldoc-idle-delay 1)
   :bind (:map eglot-mode-map ("C-c C-a" . eglot-code-actions)))
 
