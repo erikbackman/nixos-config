@@ -210,7 +210,6 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
-
 (use-package envrc
   :commands 'envrc-global-mode
   :config (envrc-global-mode))
@@ -314,6 +313,7 @@
 (use-package haskell-mode
     :defer t
     :commands (haskell-mode) 
+    :init (autoload 'haskell-mode-hook "haskell-mode-autoloads" nil t)
     :mode (("\\.hs\\'" . haskell-mode)
 	   ("\\.cabal\\'" . haskell-cabal-mode))
     :custom
@@ -350,6 +350,7 @@
 	 :buffer "*ormolu-log*"
 	 :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
 	 :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
+
     (defun haskell-mode-setup ()
       (haskell-indentation-mode)
       (autoload 'haskell-doc-current-info "haskell-doc")
@@ -363,7 +364,8 @@
 
     (general-nmap :keymaps 'haskell-mode-map "o" '+haskell/evil-open-below)
 
-    :hook ((haskell-mode . haskell-mode-setup))
+    :hook ((haskell-mode . haskell-mode-setup)
+	   (haskell-mode . interactive-haskell-mode))
     :bind
     (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
 
