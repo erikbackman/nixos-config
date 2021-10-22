@@ -44,6 +44,6 @@
 
     accent = "#1111ee";
 
-    gray = "#222222";
+    gray = "#eeeeee";
   };
 }
