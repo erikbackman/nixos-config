@@ -130,6 +130,7 @@ applyPos wksp rect = do
   let stack = W.stack wksp
   let l = W.layout wksp 
   let ws = W.integrate' stack
+--  dol' wksp stack rect
   case (ws, stack) of
     ([], Just s) -> doLayout l rect s
     ([w], Just s) -> doLayout l (center' (1/2) 1 rect) s
@@ -145,6 +146,7 @@ dol' wsp stack rect = case (ws, stack) of
     (w:ws, s) -> tile3 True (3/7) rect 1 (length ws)
     where ws = W.integrate stack
           l  = W.layout wsp
+          
 center' :: Float -> Float -> Rectangle -> Rectangle
 center' rx ry (Rectangle sx sy sw sh) = Rectangle x y w h
   where w = round (fromIntegral sw * rx)
@@ -197,3 +199,7 @@ split3HorizontallyBy middle f (Rectangle sx sy sw sh) =
         where r1w = ceiling $ fromIntegral sw * f
               r2w = ceiling ( (sw - r1w) % 2 )
               r3w = sw - r1w - r2w
+
+
+f :: a -> a
+f = _
