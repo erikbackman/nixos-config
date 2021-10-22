@@ -134,10 +134,11 @@
 
 	;; File
 	"f"  '(:ignore t :which-key "File")
-	"ff" '(find-file :which-key "Find file")
+	"ff" '(find-file-other-window :which-key "Find file other-win")
+	"fF" '(find-file :which-key "Find file")
 	"fs" '(save-buffer :which-key "Save file")
 	"fR" '(ebn/rename-current-file :which-key "Rename File")
-	"fd" '(dired-jump :which-key "Find files in dir")
+	"fd" '(dired-jump-other-window :which-key "Find files in dir")
 	"sb" '(consult-ripgrep :which-key "Ripgrep Files")
 	"fr" '(consult-recent-file :which-key "Recent file")
 
@@ -187,7 +188,7 @@
 
 (use-package yasnippet
   :config
-  (yas-global-mode 1))
+  (yas-global-mode -1))
 
 ;; Packages
 (use-package which-key
@@ -219,7 +220,8 @@
   :ensure nil
   :config
   (setq dired-recursive-copies t
-	dired-recursive-deletes t))
+	dired-recursive-deletes t
+	dired-dwim-target t))
 
 (use-package org
   :defer t
@@ -259,6 +261,7 @@
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2)))
 
 (use-package evil-org
+  :defer t
   :after org
   :hook (org-mode . evil-org-mode)
   :config
@@ -266,6 +269,8 @@
   (evil-org-agenda-set-keys))
 
 (use-package org-roam
+  :defer t
+  :commands (org-roam-node-find org-roam-capture)
   :init
   (setq org-roam-v2-ack t) ;; Disable v2-migration-prompt
   :custom
@@ -309,14 +314,15 @@
 (use-package haskell-mode
     :defer t
     :commands (haskell-mode) 
-    ;:after evil
-    :mode ("\\.hs\\'" . haskell-mode)
+    :mode (("\\.hs\\'" . haskell-mode)
+	   ("\\.cabal\\'" . haskell-cabal-mode))
     :custom
-    (haskell-process-type 'cabal-repl)
+    (haskell-process-type 'cabal-new-repl)
     (haskell-process-load-or-reload-prompt t)
     (haskell-process-auto-import-loaded-modules t)
     (haskell-process-log t)
     :config
+    (require 'haskell-interactive-mode)
     (defun +haskell/evil-open-above ()
       "Opens a line above the current mode"
       (interactive)
@@ -346,15 +352,18 @@
 	 :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
     (defun haskell-mode-setup ()
       (haskell-indentation-mode)
+      (autoload 'haskell-doc-current-info "haskell-doc")
+      (setq-local eldoc-documentation-function
+		  'haskell-doc-current-info)
       (setq-local tab-stop-list '(2 4))
+      (setq-local haskell-process-path-cabal "cabal")
       (setq indent-line-function 'indent-relative)
       (setq tab-width 2)
       (setq-local evil-shift-width 2))
 
     (general-nmap :keymaps 'haskell-mode-map "o" '+haskell/evil-open-below)
 
-    (add-hook 'haskell-mode-hook 'haskell-mode-setup)
-
+    :hook ((haskell-mode . haskell-mode-setup))
     :bind
     (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
 
@@ -387,6 +396,5 @@
 
 (use-package nix-mode
     :defer t
-    :mode "\\.nix\\'"
-    :ensure t)
+    :mode ("\\.nix\\'" . nix-mode))
 ;;; ebn-init.el ends here
