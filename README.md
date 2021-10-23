@@ -9,7 +9,7 @@
 ![](../assets/2021-10-23_22-02_1.png)
 ![](../assets/2021-10-23_22-02.png)
 
-*Old screenshots*
+**Old screenshots**
 ![](./screenshots/busy2.png)
 ![](./screenshots/clean2.png)
 
@@ -23,4 +23,4 @@
 | *Editor*   | Emacs          |
 | *Top*      | Bottom         |
 
-Visit [[https://nixos.wiki/wiki/Flakes]] for more information about Flakes.
+Visit ![](https://nixos.wiki/wiki/Flakes) for more information about Flakes.
