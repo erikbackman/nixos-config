@@ -1,134 +1,130 @@
-/* -*- mode: css; -*- */
-/* vim: set syntax=css: */
 configuration {
-  icon-theme:       "Paper";
-  cycle:            true;
-  disable-history:  false;
-
-  /* Vim-esque C-j/C-k as up/down in rofi */
-  kb-accept-entry: "Return,Control+m,KP_Enter";
-  kb-row-down: "Down,Control+n,Control+j";
-  kb-remove-to-eol: "";
-  kb-row-up: "Up,Control+p,Control+k";
-}
-
-@theme "/dev/null"
-* {
-  accent:   #bd93f9;
-  bg:       #1E2029FA;
-  bg-light: #1c1c1c;
-  bg-focus: #282a36;
-  bg-dark:  #181a23;
-  fg:       #bbc2cf;
-  fg-list:  #bbc2cf;
-  on:       #8BD49C;
-  off:      #cc6666;
-
-  magenta: #bd93f9;
-  blue:    #61bfff;
-
   text-font:      "Roboto Mono 12";
   text-mono-font: "Roboto Mono 12";
   icon-font:      "FontAwesome 20";
-
-  background-color: transparent;
-  text-color: @fg-list;
-  font: @text-font;
-  border-color: @bg-dark;
+    show-icons:                     true;
+	icon-theme: 					"Paper";
+	display-drun: 					"";
+    drun-display-format:            "{name}";
+    disable-history:                false;
+	sidebar-mode: 					false;
 }
 
-/**** Layout ****/
+@theme "/dev/null"
+
+* {
+  al:  #eeeeeeff;
+  bg:  #eeeeeeff;
+  se:  #e0e0e0ff;
+  fg:  #101010ff;
+  ac:  #eeeeeeff;
+}
+
 window {
-  width:    1000px;
-  anchor:   north;
-  location: center;
-  border: 1px;
-  border-radius: 6px 6px 0 0;
-  children: [ inputbar, listview ];
+    transparency:                   "real";
+    background-color:               @bg;
+    text-color:                     @fg;
+	border:							0px;
+	border-color:					@ac;
+    border-radius:                  12px;
+	width:							35%;
+    location:                       center;
+    x-offset:                       0;
+    y-offset:                       0;
+}
+
+prompt {
+    enabled: 						true;
+	padding: 						0.30% 1% 0% -0.5%;
+	background-color: 				@ac;
+	text-color: 					#7000e0;
+	font:							"FontAwesome 12";
+}
+
+entry {
+    background-color:               @al;
+    text-color:                     @fg;
+    placeholder-color:              @fg;
+    expand:                         true;
+    horizontal-align:               0;
+    placeholder:                    " Search";
+    padding:                        0.10% 0% 0% 0%;
+    blink:                          true;
+}
+
+inputbar {
+	children: 						[ prompt, entry ];
+    background-color:               @ac;
+    text-color:                     @fg;
+    expand:                         false;
+	border:							0% 0% 0% 0%;
+    border-radius:                  0px;
+	border-color:					@ac;
+    margin:                         0% 0% 0% 0%;
+    padding:                        1.5%;
 }
 
 listview {
-  lines: 12;
-  fixed-height: false;
-  /* reverse: true; */
-  columns: 1;
-  scrollbar: true;
-  spacing: 1px;
-  /* Remove strange gap between listview and inputbar */
-  margin: -2px 0 0;
+    background-color:               @al;
+    padding:                        10px;
+    columns:                        5;
+    lines:                          3;
+    spacing:                        0%;
+    cycle:                          false;
+    dynamic:                        true;
+    layout:                         vertical;
 }
 
-/*
-  TODO Not supported in stable branch of rofi
-  @media only (max-height: 1080px) {
-    window {
-      y-offset: -30%;
-    }
-    listview {
-      lines: 14;
-    }
-  }
-*/
-
-scrollbar {
-  handle-width: 1px;
-}
-inputbar {
-  children: [ textbox-icon, prompt, entry ];
-  border: 0 0 0;
-}
-textbox-icon, prompt {
-  padding: 11px;
-  expand: false;
-  border: 0 1px 0 0;
-  margin: 0 -2px 0 0;
-}
-textbox-icon {
-  padding: 7px 4px 0;
-}
-entry, element {
-  padding: 10px 13px;
-}
-textbox {
-  padding: 24px;
-  margin: 20px;
-}
-
-
-/**** Looks ****/
-scrollbar {
-  background-color: @bg-dark;
-  handle-color: @accent;
-  border-color: @bg-dark;
-}
-listview, inputbar {
-  background-color: @bg-dark;
-}
-textbox-icon, prompt, entry {
-  text-color: @accent;
-}
-prompt, entry {
-  background-color: @bg-focus;
-}
-textbox-icon, prompt {
-  background-color: #2f313d;
-}
-prompt {
-  background-color: @bg-focus;
-}
-textbox-icon {
-  font: @icon-font;
-}
-entry {
-  font: @text-font-mono;
-  text-color: @fg;
+mainbox {
+    background-color:               @al;
+	border:							0% 0% 0% 0%;
+    border-radius:                  0% 0% 0% 0%;
+	border-color:					@ac;
+    children:                       [ inputbar, listview ];
+    spacing:                       	0%;
+    padding:                        0%;
 }
 
 element {
-  background-color: @bg;
-  text-color: @fg;
+    background-color:               @bg;
+    text-color:                     @fg;
+    orientation:                    vertical;
+    border-radius:                  0%;
+    padding:                        2% 0% 2% 0%;
 }
+
+element-icon {
+    background-color: 				inherit;
+    text-color:       				inherit;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
+    size:                           64px;
+    border:                         0px;
+}
+
+element-text {
+    background-color: 				@al;
+    text-color:       				inherit;
+    expand:                         true;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
+    margin:                         0.5% 0.5% -0.5% 0.5%;
+}
+
+element-text selected {
+    background-color: 				@se;
+    text-color:       				inherit;
+    expand:                         true;
+    horizontal-align:               0.5;
+    vertical-align:                 0.5;
+    margin:                         0.5% 0.5% -0.5% 0.5%;
+
+}
+
 element selected {
-  background-color: @bg-dark;
-  text-color: @accent;
+    background-color:               @se;
+    text-color:                     @fg;
+	border:							0% 0% 0% 0%;
+    border-radius:                  12px;
+    border-color:                  	@bg;
 }
