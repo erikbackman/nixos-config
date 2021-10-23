@@ -22,5 +22,3 @@
 | *Font*     | JetBrains Mono |
 | *Editor*   | Emacs          |
 | *Top*      | Bottom         |
-
-Visit ![](https://nixos.wiki/wiki/Flakes) for more information about Flakes.
