@@ -11,6 +11,7 @@ library
       Config.Applications
       Config.Polybar
       Config.Dbus
+      Config.Layout
   build-depends:
       base,
       xmonad,
