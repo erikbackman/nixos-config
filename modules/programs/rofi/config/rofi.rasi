@@ -12,6 +12,7 @@ configuration {
   kb-row-up: "Up,Control+p,Control+k";
 }
 
+@theme "/dev/null"
 * {
   accent:   #bd93f9;
   bg:       #1E2029FA;
