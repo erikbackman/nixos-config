@@ -33,7 +33,7 @@ padding-right = 2
 module-margin-left = 0
 module-margin-right = 0
 
-font-0 = "JetBrains Mono:style=Medium:size=9;2"
+font-0 = "JetBrains Mono:style=Medium:size=10;2"
 font-1 = "FontAwesome 5 Brands:size=11;3"
 font-2 = "Material\-Design\-Iconic\-Font:size=13;3"
 font-3 = "FontAwesome:size=10;3"
@@ -188,7 +188,7 @@ type = internal/network
 interface = eno1
 interval = 4.0
 label-connected = "%upspeed%"
-format-connected-prefix = " "
+format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.purple}
 format-connected-foreground = ${colors.foreground}
 format-connected-background =
@@ -201,7 +201,7 @@ type = internal/network
 interface = eno1
 interval = 4.0
 label-connected = "%downspeed%"
-format-connected-prefix = " "
+format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.purple}
 format-connected-foreground = ${colors.foreground}
 format-connected-background =
