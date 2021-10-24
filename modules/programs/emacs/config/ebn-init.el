@@ -313,7 +313,8 @@
 (use-package haskell-mode
     :defer t
     :commands (haskell-mode) 
-    :init (autoload 'haskell-mode-hook "haskell-mode-autoloads" nil t)
+    :init
+    (load-library "haskell-mode-autoloads")
     :mode (("\\.hs\\'" . haskell-mode)
 	   ("\\.cabal\\'" . haskell-cabal-mode))
     :custom
