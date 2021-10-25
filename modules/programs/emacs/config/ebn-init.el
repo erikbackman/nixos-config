@@ -61,7 +61,7 @@
 (defun ebn/project-rg ()
   "Run ripgrep in current project"
   (interactive)
-  (call-interactively #'consult-ripgrep (project-root (project-current))))
+  (funcall-interactively #'consult-ripgrep (project-root (project-current))))
 
 ;;; Packages
 (use-package emacs
@@ -92,6 +92,7 @@
   (setq evil-want-C-i-jump nil)
   (setq evil-respect-visual-line-mode t)
   :config
+  (require 'project)
   (evil-mode 1)
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
@@ -174,7 +175,9 @@
 	"o" '(:ignore t :which-key "Toggle")
 	"oo" '(outline-cycle :which-key "Outline cycle")
 	"oO" '(outline-cycle-buffer :which-key "Outline cycle")
-	))
+
+	"e" '(:ignore t :which-key "Eval")
+	"ef" '(eval-defun :which-key "Eval-defun")))
 
 (use-package modus-themes
   :ensure t
