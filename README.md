@@ -10,8 +10,8 @@
 ![](../assets/2021-10-23_22-02.png)
 
 **Old screenshots**
-![](./screenshots/busy2.png)
-![](./screenshots/clean2.png)
+![](../assets/busy2.png)
+![](../assets/clean2.png)
 
 |            |                |
 |------------|----------------|
