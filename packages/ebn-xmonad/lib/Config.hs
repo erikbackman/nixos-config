@@ -7,7 +7,6 @@ module Config where
 
 import Data.Maybe (fromMaybe)
 import XMonad
-import XMonad.Actions.DynamicProjects
 import XMonad.Actions.MessageFeedback
 import XMonad.Actions.SpawnOn (manageSpawn)
 import XMonad.Hooks.DynamicLog
@@ -23,15 +22,13 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.WindowNavigation (windowNavigation)
 import XMonad.Util.Cursor (setDefaultCursor)
-
-import Config.Applications (AppConfig, defaultAppConfig)
+import Config.Applications (defaultAppConfig)
 import Config.Keybinds (KeybindConfig (..), keybinds)
 import Config.Polybar (polybar, polybarHook)
-import Control.Monad (replicateM_)
 import qualified Config.Applications as App
 
 main :: IO ()
-main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< polybar
+main = xmonad . ewmh . docks . cfg =<< polybar
   where
     cfg dbus =
       def
@@ -40,7 +37,7 @@ main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< polybar
           startupHook = myStartupHook,
           terminal = fromMaybe "xterm" $ App.terminal apps,
           modMask = mod4Mask,
-          borderWidth = 1,
+          borderWidth = 2,
           keys = keybinds . KeybindConfig apps,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,
@@ -61,58 +58,20 @@ main = xmonad . dynamicProjects (projects apps) . ewmh . docks . cfg =<< polybar
       setDefaultCursor xC_left_ptr
 
 -- Workspaces ---------------------------------------------------------------
-webWs = "web"
+webWs = "I"
 
-devWs = "dev"
+devWs = "II"
 
-comWs = "com"
+comWs = "III"
 
-wrkWs = "wrk"
+wrkWs = "IV"
 
-sysWs = "sys"
+sysWs = "V"
 
-etcWs = "etc"
+etcWs = "VI"
 
 myWS :: [WorkspaceId]
 myWS = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
-
--- Dynamic Projects ----------------------------------------------------------
-projects :: AppConfig -> [Project]
-projects apps =
-  [ Project
-      { projectName = webWs,
-        projectDirectory = "~/",
-        projectStartHook = Just $ spawn "chromium-browser"
-      },
-    Project
-      { projectName = devWs,
-        projectDirectory = "~/repos/github.com/erikbackman",
-        projectStartHook = Just $ replicateM_ 3 (App.maybeSpawn $ App.terminal apps)
-      },
-    Project
-      { projectName = comWs,
-        projectDirectory = "~/",
-        projectStartHook =
-          Just $
-            App.maybeSpawn (App.mailClient apps)
-              >> spawn "discord"
-      },
-    Project
-      { projectName = wrkWs,
-        projectDirectory = "~/",
-        projectStartHook = Nothing
-      },
-    Project
-      { projectName = sysWs,
-        projectDirectory = "~/repos/github.com/erikbackman/nixos-config",
-        projectStartHook = Just $ App.maybeSpawn (App.terminal apps)
-      },
-    Project
-      { projectName = etcWs,
-        projectDirectory = "~/",
-        projectStartHook = Nothing
-      }
-  ]
 
 myLayouts =
   avoidStruts
