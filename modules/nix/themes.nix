@@ -40,10 +40,10 @@
     cyan = "#205b93";
     
     ## white
-    white = "#000";
+    white = "#fff";
 
     accent = "#1111ee";
 
-    gray = "#eeeeee";
+    gray = "#7F7F7F";
   };
 }

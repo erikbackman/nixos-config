@@ -64,7 +64,7 @@
 
   polybar = with config; lib.optionalString (lib.hasAttr "colors" config) ''
       [colors]
-      background = ${colors.gray}
+      background = ${colors.background}
       purple = ${colors.purple}
       white = ${colors.white}
       foreground = ${colors.foreground}
@@ -73,7 +73,7 @@
       yellow = ${colors.yellow}
       alert = ${colors.yellow}
       accent = ${colors.accent}
-      gray = ${colors.foreground}
+      gray = ${colors.gray}
       bg-dark = ${colors.bg-dark}
   '';
 }
