@@ -14,6 +14,7 @@
   desktopEnvironment.ebn.gnome.enable = true;
   services.fstrim.enable = true;
 
+  services.ebn.syncthing.enable = true;
   services.xserver.layout = "se";
   services.dbus = {
     enable = true;
