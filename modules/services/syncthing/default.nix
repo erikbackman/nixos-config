@@ -22,15 +22,18 @@ in {
       devices = {
         "yggdrasil" = { id = "5RLYA4M-B6TJNPG-Z57KRSR-BEGEIZT-4WFPGUX-KQ72XE6-TMTWHZL-2K6PPAH"; };
         "bifrost" = { id = "7LCKHMQ-7EJNDGY-CUQK5M3-X5MGEV2-F7FIKL5-VQ3GZUL-MWL4CVN-3VVW2QX"; };
+        "eriksamsung" = { id = "GHO7G3N-4LEGH32-VZPODIB-6AK2P7R-RSQ2CX4-YSMWP3O-56SA7TB-HV7LQA7"; };
+        "erik-20fms1w30f" = { id = "DIULWPT-5JR4WBL-VIHXYI4-2P3KRBY-T4R2SKR-3FSD7LJ-VUBL7HA-VOSQQQ7"; };
       };
       folders = {
         "roam" = {
           path = "home/ebn/org-roam";
           devices = [ "yggdrasil" "bifrost" ];
       };
-      "lab" = {
-        path = "home/ebn/Documents/lab";
-        devices = [ "yggdrasil" "bifrost" ];
+      "labb-grupp7" = {
+        id = "annyx-pi9vs";
+        path = "home/ebn/Documents/labb-grupp7";
+        devices = [ "yggdrasil" "bifrost" "eriksamsung" "erik-20fms1w30f" ];
         versioning = {
           type = "staggered";
           params = {
