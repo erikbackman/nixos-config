@@ -64,8 +64,7 @@ in {
     cowsay
     ncspot
     pavucontrol
-    taskwarrior
-    dstask
     anki
+    gnome.gucharmap
   ];
 }
