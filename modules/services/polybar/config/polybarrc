@@ -17,7 +17,8 @@ width = 99.5%
 height = 27
 offset-x = 0.25%
 offset-y = 0
-radius-bottom = 6
+radius-top = 6
+bottom = true
 
 overline-size = 0
 overline-color = #f00
