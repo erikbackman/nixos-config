@@ -5,9 +5,7 @@
 
 **Current screenshots**
 
-![](../assets/2021-10-23_22-06.png)
-![](../assets/2021-10-23_22-02_1.png)
-![](../assets/2021-10-23_22-02.png)
+![](../assets/v2-semi-clean.png)
 
 **Old screenshots**
 ![](../assets/busy2.png)
