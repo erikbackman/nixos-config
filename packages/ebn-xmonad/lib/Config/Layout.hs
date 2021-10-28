@@ -5,6 +5,8 @@ import XMonad
 import qualified XMonad.StackSet as W
 import GHC.Base (ap)
 import Data.Ratio
+import Control.Monad
+import XMonad.Prompt.Window (WindowPrompt(Goto))
 
 data CenterWork a = CenterWork
   { threeColNMaster' :: !Int,
@@ -16,6 +18,8 @@ data CenterWork a = CenterWork
 instance LayoutClass CenterWork a where
   runLayout = applyPos
   description _ = "CenterWork"
+--  handleMessage m = msum [ fmap f (fromMessage m) ]
+--    where f (Goto w) = _
 
 applyPos :: (LayoutClass l a) => W.Workspace WorkspaceId (l a) a -> Rectangle -> X ([(a, Rectangle)], Maybe (l a))
 applyPos (W.Workspace _ l s) rect = do

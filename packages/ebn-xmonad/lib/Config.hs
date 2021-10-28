@@ -14,17 +14,12 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.MultiToggle (mkToggle, single)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
-import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.WindowNavigation (windowNavigation)
 import XMonad.Util.Cursor (setDefaultCursor)
-import Config.Applications (defaultAppConfig)
-import Config.Keybinds (KeybindConfig (..), keybinds)
-import Config.Polybar (polybar, polybarHook)
-import qualified Config.Applications as App
 import Config.Layout (CenterWork(CenterWork))
 
 main :: IO ()
@@ -81,7 +76,6 @@ workspaceIds = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
 myLayouts =
   avoidStruts
     . windowNavigation
-    . smartBorders
     . fullScreenToggle
     . comLayout
     . devLayout

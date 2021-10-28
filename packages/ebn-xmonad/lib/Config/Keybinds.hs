@@ -6,6 +6,7 @@ module Config.Keybinds where
 
 import Config.Applications (AppConfig (..), maybeSpawn, isInstance, App, appCommand)
 import Data.Map (Map)
+import qualified Data.Map as M
 import Graphics.X11
 import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.), kill)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
