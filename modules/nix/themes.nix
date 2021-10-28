@@ -16,7 +16,7 @@
   modus-operandi = {
     foreground = "#000000";
     foreground-alt = "#1111ee";
-    background = "#eeeeee";
+    background = "#f6f8fa";
     bg-dark = "#000000";
     ## black
     black = "#222222";
