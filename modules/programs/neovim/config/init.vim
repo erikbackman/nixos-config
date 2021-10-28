@@ -7,7 +7,7 @@ if exists('+termguicolors')
     set termguicolors
 endif
 
-colorscheme aurora
+colorscheme modus-vivendi
 
 set termguicolors
 set relativenumber
