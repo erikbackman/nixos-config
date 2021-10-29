@@ -5,5 +5,6 @@ final: prev: {
     aurora-vim = import ../packages/aurora-vim final;
     modus-theme-vim = import ../packages/modus-theme-vim final;
     pop-shell = import ../packages/pop-shell final;
+    material-design-iconic = prev.callPackage ../packages/material-design-iconic {};
   };
 }

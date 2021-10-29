@@ -29,7 +29,9 @@ in with lib; {
 
   config = mkIf cfg.enable {
     environment.systemPackages = [ package ];
-    fonts.fonts = with pkgs; [ font-awesome siji jetbrains-mono ];
+    fonts.fonts = with pkgs; [
+      font-awesome siji jetbrains-mono ebn.material-design-iconic
+    ];
 
     services.dbus = {
       enable = true;
