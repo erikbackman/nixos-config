@@ -24,7 +24,7 @@
         overlays = [ 
           emacs-overlay.overlay
           neovim-git.overlay
-          (import ./overlays)
+          (import ./packages)
           (final: prev: { 
             steam = 
               let up = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };

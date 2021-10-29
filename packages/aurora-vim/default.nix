@@ -1,4 +1,4 @@
-pkgs:
+{ pkgs, ... }:
 
 pkgs.vimUtils.buildVimPluginFrom2Nix {
     pname = "aurora-vim";
