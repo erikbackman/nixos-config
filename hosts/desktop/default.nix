@@ -28,10 +28,6 @@ in {
     xrandr --output DP-0 --mode 3440x1440 --rate 99.98
   '';
 
-  # Gnome
-  desktopEnvironment.ebn.gnome.enable = false;
-  desktopEnvironment.ebn.gnome.withPopShell = true;
-
   services.ebn.syncthing.enable = true;
   services.ebn.pulseeffects.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -42,7 +38,9 @@ in {
     etBook
     google-fonts
     hack-font
-    iosevka jetbrains-mono
+    iosevka
+    jetbrains-mono
+    victor-mono
     oldstandard
     siji
   ];
