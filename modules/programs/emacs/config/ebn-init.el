@@ -78,6 +78,9 @@
   ;; `completion-at-point' is often bound to M-TAB.
   (setq tab-always-indent 'complete)
 
+  :custom
+  (delete-by-moving-to-trash t)
+
   :delight
   (auto-fill-function " AF")
   (visual-line-mode)
@@ -146,7 +149,8 @@
 	;; Buffer
 	"b"  '(:ignore t :which-key "Buffer")
 	"bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
-	"bb" '(consult-buffer :which-key "Buffers")
+	"bb" '(project-switch-to-buffer :which-key "Project buffers")
+	"bB" '(consult-buffer :which-key "Buffers")
 
 	;; Tab
 	"t"  '(:ignore t :which-key "Tab")
