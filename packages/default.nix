@@ -6,4 +6,5 @@ final: prev: {
     pop-shell = prev.callPackage ./pop-shell {};
     material-design-iconic = prev.callPackage ./material-design-iconic {};
   };
+  zathura = prev.callPackage ./zathura { pkgs = prev; };
 }
