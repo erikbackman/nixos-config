@@ -65,7 +65,7 @@ in {
 
           eval "$(${pkgs.direnv}/bin/direnv hook bash)"
           eval "$(${pkgs.starship}/bin/starship init bash)"
-          ${builtins.readFile ./config/completions}
+          source ${./config/completions}
         '';
   };
  
