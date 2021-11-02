@@ -8,7 +8,7 @@
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
   programs.ebn.emacs.enable = true;
-  programs.ebn.emacs.version = "emacsPgtkGcc";
+  programs.ebn.emacs.package = pkgs.emacsGcc;
 
   # Gnome
   desktopEnvironment.ebn.gnome.enable = true;
