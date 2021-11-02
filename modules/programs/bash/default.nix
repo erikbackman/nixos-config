@@ -29,11 +29,6 @@ in {
       (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = false; }; } )
     ];
 
-    environment.etc."starship.toml".source = ./config/starship.toml;
-    environment.sessionVariables = optionalAttrs cfg.starship.enable {
-      
-    };
-
     environment.etc.bashrc.text = 
       if !cfg.starship.enable then
         builtins.readFile ./config/bashrc + ''
@@ -43,7 +38,7 @@ in {
           export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
           export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
           export GHREPOS="$HOME/repos/github.com/$GITUSER/"
-          export STARSHIP_CONFIG="/etc/starship.toml"
+          export STARSHIP_CONFIG=${pkgs.writeText "starship.toml" (builtins.readFile ./config/starship.toml)};
 
           alias grep="grep --colour=auto"
           alias egrep="egrep --colour=auto"
