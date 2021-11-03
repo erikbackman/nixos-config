@@ -10,18 +10,16 @@ let
         mkdir -p $out/share/emacs/site-lisp
         cp ${pkgs.writeText "default.el" (builtins.readFile ./config/ebn-init.el)} $out/share/emacs/site-lisp/default.el
       '';
-    # ln -sf ${./early-init.el} $out/share/emacs/site-lisp/early-init.el
+      
+      package = cfg.package.override {
+        siteStart = pkgs.writeText "site-start.el" (builtins.readFile ./config/site-start.el);
+      };
     in
       (pkgs.emacsWithPackagesFromUsePackage {
         config = ./config/ebn-init.el;
         alwaysEnsure = true;
-        package = cfg.package;
+        package = package; 
         extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode use-package ];
-        #override = epkgs: epkgs // {
-        #  haskell-mode = epkgs.melpaPackages.haskell-mode.overrideAttrs(old: {
-        #    commit = "8402caa341d90b4236f5c0a802751f9023ccfbe7";
-        #  });
-        #};
       });
 in {
 
