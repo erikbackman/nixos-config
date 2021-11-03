@@ -37,6 +37,11 @@
       myModules = myLib.listModulesRec ./modules;
 
     in {
+
+      # Output pkgs and myLib so I can access them via builtins.getFlake in a nix repl
+      inherit pkgs;
+      inherit myLib;
+
       devShell.${system} = import ./shell.nix { inherit pkgs; };
 
       packages.${system} = { ebn-xmonad = pkgs.ebn.ebn-xmonad; };
