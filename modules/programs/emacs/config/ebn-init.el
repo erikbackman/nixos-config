@@ -20,9 +20,11 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 (add-hook 'after-init-hook #'ebn/display-startup-time)
 
-;;; Looks
-(when (member "JetBrains Mono" (font-family-list))
-  (set-frame-font "JetBrains Mono-11" t t))
+;(when (member "JetBrains Mono" (font-family-list))
+;  (set-frame-font (font-spec :name "JetBrains Mono" :size 15) t t))
+
+(when (member "Iosevka" (font-family-list))
+  (set-frame-font (font-spec :name "Iosevka" :size 20) t t))
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
@@ -183,15 +185,20 @@
 	"e" '(:ignore t :which-key "Eval")
 	"ef" '(eval-defun :which-key "Eval-defun")))
 
-(use-package modus-themes
-  :ensure t
-  :init
-  (show-paren-mode 1)
-  :config
-  (setq modus-themes-paren-match '(bold intense))
-  (modus-themes-load-operandi)
-  (when window-system (set-frame-size (selected-frame) 90 50))
-  (setq fancy-startup-text nil))
+;(use-package modus-themes
+;  :ensure t
+;  :init
+;  (show-paren-mode 1)
+;  :config
+;  (setq modus-themes-paren-match '(bold intense))
+;  ;(modus-themes-load-operandi)
+;  (modus-themes-load-vivendi)
+;  (when window-system (set-frame-size (selected-frame) 90 50))
+;  (setq fancy-startup-text nil))
+
+(use-package kaolin-themes
+    :config
+    (load-theme 'kaolin-aurora t nil))
 
 (use-package yasnippet
   :config
@@ -264,7 +271,7 @@
   (setq org-image-actual-width nil)
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2)))
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2))
 
 (use-package evil-org
   :defer t
@@ -408,4 +415,5 @@
 (use-package nix-mode
     :defer t
     :mode ("\\.nix\\'" . nix-mode))
+
 ;;; ebn-init.el ends here

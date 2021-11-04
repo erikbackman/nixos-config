@@ -1,14 +1,16 @@
-{ pkgs, lib, config, ... }:
-let theme = import ./theme.nix { inherit config lib; };
-in {
+{ pkgs, lib, config, ... }: {
   networking.hostName = "yggdrasil";
 
   nixpkgs.config.allowUnfree = true;
 
+  ebn.themes = {
+    enable = true;
+    palette = "aurora";
+  };
+
   programs.steam.enable = true;
   programs.ebn.nvim.enable = true;
   programs.ebn.kitty.enable = true;
-  programs.ebn.kitty.extraConfig = theme.kittyLight;
   programs.ebn.rofi.enable = true;
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
@@ -23,7 +25,6 @@ in {
   # Xmonad
   windowManager.ebn.xmonad.enable = true;
   services.ebn.polybar.enable = true;
-  services.ebn.polybar.extraConfig = theme.polybar;
   services.xserver.displayManager.sessionCommands = ''
     xrandr --output DP-0 --mode 3440x1440 --rate 99.98
   '';
@@ -80,6 +81,7 @@ in {
     anki
     sage
     geogebra6
+    jekyll
   ] 
   ++ 
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
