@@ -271,7 +271,7 @@
   (setq org-image-actual-width nil)
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2))
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2)))
 
 (use-package evil-org
   :defer t
