@@ -1,11 +1,11 @@
 module Config.Polybar where
 
-import qualified DBus.Client as D
-import XMonad.Hooks.DynamicLog (PP(..), wrap)
-import XMonad.Util.NamedScratchpad (namedScratchpadFilterOutWorkspacePP)
-import Config.Dbus (mkDbusClient, dbusOutput, SignalConfig(..))
-import XMonad (def)
+import Config.Dbus (SignalConfig (..), dbusOutput, mkDbusClient)
 import DBus.Client (Client)
+import qualified DBus.Client as D
+import XMonad (def)
+import XMonad.Hooks.DynamicLog (PP (..), wrap)
+import XMonad.Util.NamedScratchpad (namedScratchpadFilterOutWorkspacePP)
 
 polybar :: IO Client
 polybar = mkDbusClient "org.xmonad.log"
@@ -24,18 +24,19 @@ polybarHook dbus =
         ppTitle = const ""
       }
   where
-    signalConfig = SignalConfig
-      { sObjectPath = "/org/xmonad/Log",
-        sInterfaceName = "org.xmonad.Log",
-        sMemberName = "Update"
-      }
+    signalConfig =
+      SignalConfig
+        { sObjectPath = "/org/xmonad/Log",
+          sInterfaceName = "org.xmonad.Log",
+          sMemberName = "Update"
+        }
 
     wrapper c s = wrap ("%{F" <> c <> "} ") " %{F-}" s
     blue = "#2E9AFE"
     gray = "#7F7F7F"
     orange = "#ea4300"
-    purple = "#7000e0"
-    focusedFg = "#7000e0"
+    purple = "#bd93f9"
+    focusedFg = "#bd93f9"
     fg = "#ebdbb2"
     bg = "#282828"
     bg1 = "#3c3836"
