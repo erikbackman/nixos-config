@@ -48,13 +48,13 @@
 
       nixosConfigurations = {
 
-        nixos = nixpkgs.lib.nixosSystem {
+        yggdrasil = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs pkgs; };
           modules = pkgs.lib.lists.flatten [
             ./hosts/base
-            ./hosts/desktop
-            ./hosts/desktop/hardware-configuration.nix
+            ./hosts/yggdrasil
+            ./hosts/yggdrasil/hardware-configuration.nix
             myModules
           ];
         };
