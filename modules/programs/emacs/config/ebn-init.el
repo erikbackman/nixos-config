@@ -19,51 +19,7 @@
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 (add-hook 'after-init-hook #'ebn/display-startup-time)
-
-;(when (member "JetBrains Mono" (font-family-list))
-;  (set-frame-font (font-spec :name "JetBrains Mono" :size 15) t t))
-
-(when (member "Iosevka" (font-family-list))
-  (set-frame-font (font-spec :name "Iosevka" :size 20) t t))
-
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
-
-;;; Vars
-(defvar ebn/formatter nil)
-
-;;; Functions
-(defun ebn/kill-current-buffer ()
-  "Kill current buffer."
-  (interactive)
-  (kill-buffer (current-buffer)))
-
-(defun ebn/rename-current-file ()
-  "Rename current file to NEWNAME."
-  (interactive)
-  (let ((fname (buffer-file-name))
-	(bname (buffer-name)))
-    (if (not (and bname (file-exists-p fname)))
-	(error "Buffer '%s' is not visiting a file" bname)
-      (let ((new-name (read-file-name "New name: " fname)))
-	(if (get-buffer new-name)
-	    (error "Buffer with name %s already exists" new-name)
-	  (rename-file fname new-name t)
-	  (rename-buffer new-name)
-	  (set-visited-file-name new-name)
-	  (set-buffer-modified-p nil)
-	  (message "File renamed to %s" new-name))))))
-
-(defun ebn/dired-up-directory ()
-  "Up directory - killing current buffer."
-  (interactive)
-  (let ((cb (current-buffer)))
-    (progn (dired-up-directory)
-	   (kill-buffer cb))))
-
-(defun ebn/project-rg ()
-  "Run ripgrep in current project"
-  (interactive)
-  (funcall-interactively #'consult-ripgrep (project-root (project-current))))
 
 ;;; Packages
 (use-package emacs
@@ -85,9 +41,12 @@
 
   :delight
   (auto-fill-function " AF")
-  (visual-line-mode)
+  (visual-line-mode))
 
-  :hook (emacs-lisp-mode . (lambda () (setq-local lisp-indent-function #'common-lisp-indent-function))))
+(use-package ebn-core
+  :ensure nil
+  :config
+  (ebn/font :name "JetBrains Mono" :size 15))
 
 (use-package evil
   :init

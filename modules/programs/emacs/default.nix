@@ -19,7 +19,7 @@ let
         config = ./config/ebn-init.el;
         alwaysEnsure = true;
         package = package; 
-        extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode use-package ];
+        extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode use-package pkgs.ebn.ebn-core-el ];
       });
 in {
 
