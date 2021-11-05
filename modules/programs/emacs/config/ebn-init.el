@@ -12,7 +12,7 @@
 	   gcs-done))
 
 ;; Basic
-;Setting this lower after early-init for shorter gc-pauses
+;; Setting this lower after early-init for shorter gc-pauses
 (setq-default fill-column 80)
 (setq gc-cons-threshold (* 2 1000 1000)
       ring-bell-function 'ignore
@@ -30,11 +30,14 @@
   ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
   ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
   (setq read-extended-command-predicate
-        #'command-completion-default-include-p)
+	#'command-completion-default-include-p)
 
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
   (setq tab-always-indent 'complete)
+
+  (setq tab-bar-close-button nil)
+  (setq tab-bar-new-button nil)
 
   :custom
   (delete-by-moving-to-trash t)
@@ -46,7 +49,7 @@
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "JetBrains Mono" :size 15))
+  (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal))
 
 (use-package evil
   :init
@@ -68,81 +71,80 @@
   (evil-collection-init))
 
 (use-package general
-    :config
-    ;(general-auto-unbind-keys)
-    (general-evil-setup t)
-    (general-setq evil-want-Y-yank-to-eol)
+  :config
+  (general-evil-setup t)
+  (general-setq evil-want-Y-yank-to-eol)
 
-    (general-create-definer ebn/leader-key-def
-	:keymaps '(normal insert visual emacs)
-	:prefix "SPC"
-	:global-prefix "C-SPC")
+  (general-create-definer ebn/leader-key-def
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
 
-    (general-define-key
-     :states 'normal :keymaps 'dired-mode-map
-     "m" '(dired-mark :which-key "Dired mark")
-     "D" '(dired-do-delete :which-key "Dired delete")
-     "c" '(dired-do-copy :which-key "Dired copy")
-     "C" '(dired-do-compress :which-key "Dired compress")
-     "r" '(dired-do-rename :which-key "Dired rename")
-     "u" '(dired-unmark :which-key "Dired unmark")
-     "U" '(dired-unmark-all-marks :which-key "Dired umkark all")
-     "-" '(ebn/dired-up-directory :which-key "Dired up directory"))
+  (general-define-key
+   :states 'normal :keymaps 'dired-mode-map
+   "m" '(dired-mark :which-key "Dired mark")
+   "D" '(dired-do-delete :which-key "Dired delete")
+   "c" '(dired-do-copy :which-key "Dired copy")
+   "C" '(dired-do-compress :which-key "Dired compress")
+   "r" '(dired-do-rename :which-key "Dired rename")
+   "u" '(dired-unmark :which-key "Dired unmark")
+   "U" '(dired-unmark-all-marks :which-key "Dired umkark all")
+   "-" '(ebn/dired-up-directory :which-key "Dired up directory"))
 
-    (ebn/leader-key-def
-	"" '(nil :which-key "Leader")
+  (ebn/leader-key-def
+    "" '(nil :which-key "Leader")
 
-	;; Basic
-	":"  '(execute-extended-command :which-key "M-x")
-	";"  '(eval-expression :which-key "Eval expr")
-	"qq" '(kill-emacs :which-key "Exit")
+    ;; Basic
+    ":"  '(execute-extended-command :which-key "M-x")
+    ";"  '(eval-expression :which-key "Eval expr")
+    "qq" '(kill-emacs :which-key "Exit")
 
-	;; File
-	"f"  '(:ignore t :which-key "File")
-	"ff" '(find-file-other-window :which-key "Find file other-win")
-	"fF" '(find-file :which-key "Find file")
-	"fs" '(save-buffer :which-key "Save file")
-	"fR" '(ebn/rename-current-file :which-key "Rename File")
-	"fd" '(dired-jump-other-window :which-key "Find files in dir")
-	"sb" '(consult-ripgrep :which-key "Ripgrep Files")
-	"fr" '(consult-recent-file :which-key "Recent file")
+    ;; File
+    "f"  '(:ignore t :which-key "File")
+    "ff" '(find-file-other-window :which-key "Find file other-win")
+    "fF" '(find-file :which-key "Find file")
+    "fs" '(save-buffer :which-key "Save file")
+    "fR" '(ebn/rename-current-file :which-key "Rename File")
+    "fd" '(dired-jump-other-window :which-key "Find files in dir")
+    "sb" '(consult-ripgrep :which-key "Ripgrep Files")
+    "fr" '(consult-recent-file :which-key "Recent file")
 
-	;; Buffer
-	"b"  '(:ignore t :which-key "Buffer")
-	"bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
-	"bb" '(project-switch-to-buffer :which-key "Project buffers")
-	"bB" '(consult-buffer :which-key "Buffers")
+    ;; Buffer
+    "b"  '(:ignore t :which-key "Buffer")
+    "bk" '(ebn/kill-current-buffer :which-key "Kill buffer")
+    "bb" '(project-switch-to-buffer :which-key "Project buffers")
+    "bB" '(consult-buffer :which-key "Buffers")
 
-	;; Tab
-	"t"  '(:ignore t :which-key "Tab")
-	"tt" '(tab-new :which-key "New tab")
-	"tn" '(tab-next :which-key "Next tab")
-	"tp" '(tab-previous :which-key "Previous tab")
-	"tl" '(tab-list :which-key "Tab list")
-	"td" '(tab-close :which-key "Tab delete")
-	"to" '(tab-close-other :which-key "Tab delete other")
+    ;; Tab
+    "t"  '(:ignore t :which-key "Tab")
+    "tt" '(tab-new :which-key "New tab")
+    "tn" '(tab-next :which-key "Next tab")
+    "tp" '(tab-previous :which-key "Previous tab")
+    "tl" '(tab-list :which-key "Tab list")
+    "td" '(tab-close :which-key "Tab delete")
+    "to" '(tab-close-other :which-key "Tab delete other")
 
-	;; Window
-	"w"  '(:ignore t :which-key "Window")
-	"ww" '(other-window :which-key "Other window")
-	"wd" '(delete-window :which-key "Delete window")
-	"wo" '(delete-other-windows :which-key "Delete other windows")
-	"ws" '(split-window-below :which-key "Split window below")
-	"wv" '(split-window-right :which-key "Split window right")
+    ;; Window
+    "w"  '(:ignore t :which-key "Window")
+    "ww" '(other-window :which-key "Other window")
+    "wd" '(delete-window :which-key "Delete window")
+    "wo" '(delete-other-windows :which-key "Delete other windows")
+    "ws" '(split-window-below :which-key "Split window below")
+    "wv" '(split-window-right :which-key "Split window right")
 
-	;; Project
-	"p"  '(:ignore t :which-key "Project")
-	"pp" '(project-switch-project :which-key "Switch project")
-	"pf" '(project-find-file :which-key "Find project file")
-	"ps" '(ebn/project-rg :which-key "Project rg")
+    ;; Project
+    "p"  '(:ignore t :which-key "Project")
+    "pp" '(project-switch-project :which-key "Switch project")
+    "pf" '(project-find-file :which-key "Find project file")
+    "ps" '(ebn/project-rg :which-key "Project rg")
 
-	;; Other
-	"o" '(:ignore t :which-key "Toggle")
-	"oo" '(outline-cycle :which-key "Outline cycle")
-	"oO" '(outline-cycle-buffer :which-key "Outline cycle")
+    ;; Other
+    "o" '(:ignore t :which-key "Toggle")
+    "oo" '(outline-cycle :which-key "Outline cycle")
+    "oO" '(outline-cycle-buffer :which-key "Outline cycle")
 
-	"e" '(:ignore t :which-key "Eval")
-	"ef" '(eval-defun :which-key "Eval-defun")))
+    "e" '(:ignore t :which-key "Eval")
+    "ef" '(eval-defun :which-key "Eval-defun")))
 
 ;(use-package modus-themes
 ;  :ensure t
@@ -156,37 +158,35 @@
 ;  (setq fancy-startup-text nil))
 
 (use-package kaolin-themes
-    :config
-    (load-theme 'kaolin-aurora t nil))
+  :config
+  (load-theme 'kaolin-aurora t nil))
 
 (use-package yasnippet
   :config
   (yas-global-mode -1))
 
-;; Packages
 (use-package which-key
-    :config
-    (which-key-mode 1))
+  :config
+  (which-key-mode 1))
 
 (use-package vertico
-    :config
-    (vertico-mode))
+  :config
+  (vertico-mode))
 
 (use-package consult
-    :config
-    (setq consult-preview-key nil)
-    (recentf-mode))
+  :config
+  (setq consult-preview-key nil)
+  (recentf-mode))
 
 (use-package orderless
   :init
   (setq completion-styles '(orderless)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+	completion-category-defaults nil
+	completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package envrc
   :commands 'envrc-global-mode
   :config (envrc-global-mode))
-
 
 (use-package dired
   :ensure nil
@@ -243,105 +243,104 @@
 (use-package org-roam
   :defer t
   :commands (org-roam-node-find org-roam-capture)
+
   :init
   (setq org-roam-v2-ack t) ;; Disable v2-migration-prompt
+
   :custom
   (org-roam-directory "~/org-roam")
   (org-roam-completion-everywhere t)
-  (org-roam-capture-templates '(("d" "default" plain "%?" :if-new
-				 (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-				  "#+title: ${title}\n#+startup: latexpreview\n#+startup: entitiespretty")
-				 :unnarrowed t)))
+  (org-roam-capture-templates
+   '(("d" "default" plain "%?"
+      :if-new (file+head
+	       "%<%Y%m%d%H%M%S>-${slug}.org"
+	       "#+title: ${title}\n#+startup: latexpreview\n#+startup: entitiespretty")
+      :unnarrowed t))
+   )
+
   :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
+	 ("C-c n f" . org-roam-node-find)
+	 ("C-c n g" . org-roam-graph)
+	 ("C-c n i" . org-roam-node-insert)
+	 ("C-c n c" . org-roam-capture)
+	 ("C-c n j" . org-roam-dailies-capture-today))
   :config
   (org-roam-db-autosync-mode)
-  ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
-(use-package sage-shell-mode
-    :ensure t)
+(use-package sage-shell-mode :ensure t)
+
 (use-package ob-sagemath
   :ensure t
   :config
   (setq org-babel-default-header-args:sage '((:session . t)
-                                             (:results . "output")))
-  ;; C-c c for asynchronous evaluating (only for SageMath code blocks).
+					     (:results . "output")))
   (with-eval-after-load "org"
     (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
-  ;; Do not confirm before evaluation
   (setq org-confirm-babel-evaluate nil)
-  ;; Do not evaluate code blocks when exporting.
   (setq org-export-babel-evaluate nil)
-  ;; Show images when opening a file.
   (setq org-startup-with-inline-images t)
-  ;; Show images after evaluating code blocks.
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
 (use-package haskell-mode
-    :defer t
-    :commands (haskell-mode) 
-    :init
-    (load-library "haskell-mode-autoloads")
-    :mode (("\\.hs\\'" . haskell-mode)
-	   ("\\.cabal\\'" . haskell-cabal-mode))
-    :custom
-    (haskell-process-type 'cabal-new-repl)
-    (haskell-process-load-or-reload-prompt t)
-    (haskell-process-auto-import-loaded-modules t)
-    (haskell-process-log t)
-    :config
-    (require 'haskell-interactive-mode)
-    (defun +haskell/evil-open-above ()
-      "Opens a line above the current mode"
-      (interactive)
-      (evil-digit-argument-or-evil-beginning-of-line)
-      (haskell-indentation-newline-and-indent)
-      (evil-previous-line)
-      (haskell-indentation-indent-line)
-      (evil-append-line nil))
+  :defer t
+  :commands (haskell-mode) 
+  :init
+  (load-library "haskell-mode-autoloads")
+  :mode (("\\.hs\\'" . haskell-mode)
+	 ("\\.cabal\\'" . haskell-cabal-mode))
+  :custom
+  (haskell-process-type 'cabal-new-repl)
+  (haskell-process-load-or-reload-prompt t)
+  (haskell-process-auto-import-loaded-modules t)
+  (haskell-process-log t)
+  :config
+  (require 'haskell-interactive-mode)
+  (defun +haskell/evil-open-above ()
+    "Opens a line above the current mode"
+    (interactive)
+    (evil-digit-argument-or-evil-beginning-of-line)
+    (haskell-indentation-newline-and-indent)
+    (evil-previous-line)
+    (haskell-indentation-indent-line)
+    (evil-append-line nil))
 
-    (defun +haskell/evil-open-below ()
-      "Opens a line below the current mode"
-      (interactive)
-      (evil-append-line nil)
-      (haskell-indentation-newline-and-indent))
+  (defun +haskell/evil-open-below ()
+    "Opens a line below the current mode"
+    (interactive)
+    (evil-append-line nil)
+    (haskell-indentation-newline-and-indent))
 
-    (defun haskell-mode-after-save-handler ())
-    (defun ebn/haskell-format-buffer ()
-      "Format Haskell buffer using Ormolu."
-      (interactive)
-      (when-let ((ormolu-path
-		  (seq-find (lambda (x) (string-match-p (regexp-quote "ormolu") x))
-			    exec-path)))
-	(make-process
-	 :name "ormolu"
-	 :buffer "*ormolu-log*"
-	 :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
-	 :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
+  (defun haskell-mode-after-save-handler ())
+  (defun ebn/haskell-format-buffer ()
+    "Format Haskell buffer using Ormolu."
+    (interactive)
+    (when-let ((ormolu-path
+		(seq-find (lambda (x) (string-match-p (regexp-quote "ormolu") x))
+			  exec-path)))
+      (make-process
+       :name "ormolu"
+       :buffer "*ormolu-log*"
+       :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
+       :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
 
-    (defun haskell-mode-setup ()
-      (haskell-indentation-mode)
-      (autoload 'haskell-doc-current-info "haskell-doc")
-      (setq-local eldoc-documentation-function
-		  'haskell-doc-current-info)
-      (setq-local tab-stop-list '(2 4))
-      (setq-local haskell-process-path-cabal "cabal")
-      (setq indent-line-function 'indent-relative)
-      (setq tab-width 2)
-      (setq-local evil-shift-width 2))
+  (defun haskell-mode-setup ()
+    (haskell-indentation-mode)
+    (autoload 'haskell-doc-current-info "haskell-doc")
+    (setq-local eldoc-documentation-function
+		'haskell-doc-current-info)
+    (setq-local tab-stop-list '(2 4))
+    (setq-local haskell-process-path-cabal "cabal")
+    (setq indent-line-function 'indent-relative)
+    (setq tab-width 2)
+    (setq-local evil-shift-width 2))
 
-    (general-nmap :keymaps 'haskell-mode-map "o" '+haskell/evil-open-below)
+  (general-nmap :keymaps 'haskell-mode-map "o" '+haskell/evil-open-below)
 
-    :hook ((haskell-mode . haskell-mode-setup)
-	   (haskell-mode . interactive-haskell-mode))
-    :bind
-    (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
+  :hook ((haskell-mode . haskell-mode-setup)
+	 (haskell-mode . interactive-haskell-mode))
+  :bind
+  (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
 
 (use-package eglot
   :defer t
@@ -354,25 +353,25 @@
   :bind (:map eglot-mode-map ("C-c C-a" . eglot-code-actions)))
 
 (use-package envrc
- :config
- (envrc-global-mode))
+  :config
+  (envrc-global-mode))
 
 (use-package corfu
   :defer t
   :custom
   (corfu-auto-delay 0.2)
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
-  (corfu-commit-predicate nil)   ;; Do not commit selected candidates on next input
-  (corfu-quit-at-boundary t)     ;; Automatically quit at word boundary
-  (corfu-quit-no-match t)        ;; Automatically quit if there is no match
-  (corfu-echo-documentation nil) ;; Do not show documentation in the echo area
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-commit-predicate nil)
+  (corfu-quit-at-boundary t)
+  (corfu-quit-no-match t)
+  (corfu-echo-documentation nil)
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
-         (eshell-mode . corfu-mode)))
+	 (eshell-mode . corfu-mode)))
 
 (use-package nix-mode
-    :defer t
-    :mode ("\\.nix\\'" . nix-mode))
+  :defer t
+  :mode ("\\.nix\\'" . nix-mode))
 
 ;;; ebn-init.el ends here
