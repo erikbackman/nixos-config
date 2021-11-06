@@ -158,6 +158,14 @@
 ;  (setq fancy-startup-text nil))
 
 (use-package kaolin-themes
+  :custom-face
+  (default ((t (:background "#0C0F12"))))
+  (fringe ((t (:background "#0C0F12"))))
+  (mode-line ((t (:background "#0C0F12"))))
+ ; (font-lock-keyword-face ((t (:foreground "#bd93f9"))))
+ ; (font-lock-builtin-face ((t (:foreground "#bd93f9"))))
+ ; (font-lock-constant-face ((t (:foreground "#00c9c7"))))
+
   :config
   (load-theme 'kaolin-aurora t nil))
 
