@@ -5,6 +5,7 @@
 
 **Current screenshots**
 ![](../assets/v3-clean.png)
+![](../assets/v3-busy.png)
 
 **Old screenshots**
 ![](../assets/v2-semi-clean.png)
