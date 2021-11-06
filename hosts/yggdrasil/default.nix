@@ -19,10 +19,10 @@
 
   services.redshift = {
     enable = true;
+    temperature.night = 4000;
     inherit (config location);
   };
 
-  # Xmonad
   windowManager.ebn.xmonad.enable = true;
   services.ebn.polybar.enable = true;
   services.xserver.displayManager.sessionCommands = ''
