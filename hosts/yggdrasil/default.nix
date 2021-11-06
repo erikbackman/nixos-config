@@ -39,7 +39,22 @@
     etBook
     google-fonts
     hack-font
-    iosevka
+    (iosevka.override {
+      privateBuildPlan = ''
+        [buildPlans.iosevka-custom]
+        family = "Iosevka Custom"
+        spacing = "normal"
+        serifs = "sans"
+        no-cv-ss = true
+
+        [buildPlans.iosevka-custom.variants]
+        inherits = "ss08"
+
+        [buildPlans.iosevka-custom.ligations]
+        inherits = "haskell"
+      '';
+      set = "custom";
+    })
     jetbrains-mono
     victor-mono
     oldstandard
