@@ -21,6 +21,7 @@
 (add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
+
 ;;; Packages
 (use-package emacs
   :init
@@ -49,7 +50,9 @@
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal))
+  (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal)
+  ;(ebn/font :name "Iosevka Custom" :size 22 :weight 'normal)
+  )
 
 (use-package evil
   :init
@@ -162,10 +165,6 @@
   (default ((t (:background "#0C0F12"))))
   (fringe ((t (:background "#0C0F12"))))
   (mode-line ((t (:background "#0C0F12"))))
- ; (font-lock-keyword-face ((t (:foreground "#bd93f9"))))
- ; (font-lock-builtin-face ((t (:foreground "#bd93f9"))))
- ; (font-lock-constant-face ((t (:foreground "#00c9c7"))))
-
   :config
   (load-theme 'kaolin-aurora t nil))
 
@@ -238,7 +237,15 @@
   (setq org-image-actual-width nil)
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.2)))
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.4))
+
+  (setq org-latex-listings 'minted
+	org-latex-packages-alist '(("" "minted"))
+	org-latex-pdf-process
+	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
+	org-latex-tables-centered t))
 
 (use-package evil-org
   :defer t
@@ -276,7 +283,10 @@
   (org-roam-db-autosync-mode)
   (require 'org-roam-protocol))
 
-(use-package sage-shell-mode :ensure t)
+(use-package sage-shell-mode
+  :ensure t
+  :config
+  (setq sage-shell:set-ipython-version-on-startup nil)
 
 (use-package ob-sagemath
   :ensure t
@@ -302,6 +312,7 @@
   (haskell-process-load-or-reload-prompt t)
   (haskell-process-auto-import-loaded-modules t)
   (haskell-process-log t)
+  (haskell-font-lock-symbols t)
   :config
   (require 'haskell-interactive-mode)
   (defun +haskell/evil-open-above ()
@@ -381,5 +392,8 @@
 (use-package nix-mode
   :defer t
   :mode ("\\.nix\\'" . nix-mode))
+
+(use-package vterm
+  :bind ("C-c C-t" . vterm-other-window))
 
 ;;; ebn-init.el ends here
