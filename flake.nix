@@ -26,9 +26,12 @@
           neovim-git.overlay
           (import ./packages)
           (final: prev: { 
-            steam = 
-              let up = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
-              in up.steam;
+            steam =
+              let unstable = import nixpkgs-unstable {
+                    inherit system;
+                    config.allowUnfree = true;
+                  };
+              in unstable.steam;
           })
         ];
       };
