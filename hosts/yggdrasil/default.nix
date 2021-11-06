@@ -60,7 +60,7 @@
     wxmaxima
     texlive.combined.scheme-full
     libreoffice
-    chromium
+    firefox
     playerctl
     gsettings-desktop-schemas
     gnumake
