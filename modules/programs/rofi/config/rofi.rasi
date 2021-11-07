@@ -4,7 +4,7 @@ configuration {
     icon-font: "FontAwesome 20";
     show-icons: true;
     icon-theme: "Paper";
-    display-drun: "";
+    display-drun: "";
     drun-display-format: "{name}";
     disable-history: false;
     sidebar-mode: false;
@@ -38,7 +38,7 @@ prompt {
     padding: 0.30% 1% 0% -0.5%;
     background-color: @ac;
     text-color: #7000e0;
-    font: "FontAwesome 12";
+    font: "Material\-Design\-Iconic\-Font 12";
  }
 
 entry {
