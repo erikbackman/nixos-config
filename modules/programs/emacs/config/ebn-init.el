@@ -286,7 +286,7 @@
 (use-package sage-shell-mode
   :ensure t
   :config
-  (setq sage-shell:set-ipython-version-on-startup nil)
+  (setq sage-shell:set-ipython-version-on-startup nil))
 
 (use-package ob-sagemath
   :ensure t
