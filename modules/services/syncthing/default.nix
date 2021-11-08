@@ -29,19 +29,19 @@ in {
         "roam" = {
           path = "home/ebn/org-roam";
           devices = [ "yggdrasil" "bifrost" ];
-      };
-      "labb-grupp7" = {
-        id = "annyx-pi9vs";
-        path = "home/ebn/Documents/labb-grupp7";
-        devices = [ "yggdrasil" "bifrost" "eriksamsung" "erik-20fms1w30f" ];
-        versioning = {
-          type = "staggered";
-          params = {
-            cleanInterval = "3600"; # 1 hour in seconds
-            maxAge = "15552000"; # 180 days in seconds
+        };
+        "labb-grupp7" = {
+          id = "annyx-pi9vs";
+          path = "home/ebn/Documents/labb-grupp7";
+          devices = [ "yggdrasil" "bifrost" "eriksamsung" "erik-20fms1w30f" ];
+          versioning = {
+            type = "staggered";
+            params = {
+              cleanInterval = "3600"; # 1 hour in seconds
+              maxAge = "15552000"; # 180 days in seconds
+            };
           };
         };
-      };
     };
   };
 };
