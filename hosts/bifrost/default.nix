@@ -72,5 +72,6 @@
     anki
     gnome.gucharmap
     wpa_supplicant
+    man-pages
   ];
 }

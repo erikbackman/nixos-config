@@ -97,6 +97,7 @@
     sage
     geogebra6
     jekyll
+    man-pages
   ] 
   ++ 
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
