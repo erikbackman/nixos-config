@@ -12,8 +12,14 @@ in with lib; {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ cfg.package pkgs.at-spi2-core ];
+    environment.systemPackages = [
+      cfg.package
+      pkgs.at-spi2-core
+      pkgs.gdk-pixbuf
+    ];
 
+    programs.dconf.enable = true;
+    services.gnome.at-spi2-core.enable = true;
     systemd.user.services.pulseeffects = {
       description = "PulseEffects Daemon"; 
       requires = [ "dbus.service" ];
