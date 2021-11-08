@@ -14,8 +14,7 @@ expiration_symbol = 'X'
 [aws.region_aliases]
 
 [battery]
-threshold = 10
-style = 'red bold'
+disabled = true
 
 [character]
 format = '$symbol '
