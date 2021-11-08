@@ -13,11 +13,11 @@ configuration {
 @theme "/dev/null"
 
 * {
-    al:  #eeeeeeff;
-    bg:  #eeeeeeff;
-    se:  #e0e0e0ff;
-    fg:  #101010ff;
-    ac:  #eeeeeeff;
+    al:  #121212ff;
+    bg:  #121212ff;
+    se:  #2f3135ff;
+    fg:  #ffffffff;
+    ac:  #121212ff;
 }
 
 window {
@@ -37,8 +37,8 @@ prompt {
     enabled: true;
     padding: 0.30% 1% 0% -0.5%;
     background-color: @ac;
-    text-color: #7000e0;
-    font: "Material\-Design\-Iconic\-Font 12";
+    text-color: #9d81ba;
+    font: "Material\-Design\-Iconic\-Font 15";
  }
 
 entry {
