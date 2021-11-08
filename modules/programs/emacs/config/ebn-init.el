@@ -202,9 +202,19 @@
 	dired-recursive-deletes t
 	dired-dwim-target t))
 
+(use-package cdlatex
+  :defer t)
+
+(use-package auctex
+  :defer t)
+
 (use-package org
   :defer t
-  :commands (my/org-prettify-buffer org-agenda org-capture)
+  :commands (my/org-prettify-buffer
+	     org-agenda
+	     org-capture
+	     org-cdlatex-mode)
+  ;:hook (org-mode . org-cdlatex-mode)
   :init
   (defun my/org-prettify-buffer ()
     (interactive)
