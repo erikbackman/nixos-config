@@ -1,13 +1,19 @@
 { pkgs, lib, config, ... }: 
-let theme = import ./theme.nix { inherit config lib; };
-in {
-
+{
   networking.hostName = "bifrost";
+  networking.wireless = {
+    enable = true;
+    userControlled.enable = true;
+  };
+
+  ebn.themes = {
+    enable = true;
+    palette = "aurora";
+  };
 
   nixpkgs.config.allowUnfree = true;
   programs.ebn.nvim.enable = true;
   programs.ebn.kitty.enable = true;
-  programs.ebn.kitty.extraConfig = theme.kittyLight;
   programs.ebn.rofi.enable = true;
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
@@ -23,7 +29,6 @@ in {
   windowManager.ebn.xmonad.enable = true;
 
   services.ebn.polybar.enable = true;
-  services.ebn.polybar.extraConfig = theme.polybar;
   services.fstrim.enable = true;
 
   services.ebn.syncthing.enable = true;
@@ -54,7 +59,7 @@ in {
     zathura
     texlive.combined.scheme-full
     libreoffice
-    chromium
+    firefox
     playerctl
     gsettings-desktop-schemas
     gnumake
@@ -66,5 +71,6 @@ in {
     pavucontrol
     anki
     gnome.gucharmap
+    wpa_supplicant
   ];
 }
