@@ -91,6 +91,10 @@ in {
 
       # agda
       haskellPackages.Agda
+
+      # cc
+      gcc
+      ccls
     ];
   };
 }

@@ -373,7 +373,8 @@
 
 (use-package eglot
   :defer t
-  :hook (haskell-mode . eglot-ensure)
+  :hook ((haskell-mode . eglot-ensure)
+	 (c-mode . eglot-ensure))
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
@@ -397,7 +398,9 @@
   (corfu-echo-documentation nil)
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
-	 (eshell-mode . corfu-mode)))
+	 (eshell-mode . corfu-mode)
+	 (c-mode . corfu-mode)
+	 ))
 
 (use-package nix-mode
   :defer t
