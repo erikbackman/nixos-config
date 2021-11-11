@@ -51,7 +51,7 @@
   :ensure nil
   :config
   (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal)
-  ;(ebn/font :name "Iosevka Custom" :size 22 :weight 'normal)
+  ;(ebn/font :name "Iosevka Custom" :size 18 :weight 'normal)
   )
 
 (use-package evil
@@ -380,6 +380,7 @@
   (eglot-autoreconnect nil)
   (eglot-confirm-server-initiated-edits nil)
   (eldoc-idle-delay 1)
+  :config
   :bind (:map eglot-mode-map ("C-c C-a" . eglot-code-actions)))
 
 (use-package envrc
@@ -408,5 +409,14 @@
 
 (use-package vterm
   :bind ("C-c C-t" . vterm-other-window))
+
+(use-package project
+  :config
+  (defun ebn/project-compile ()
+    (interactive)
+    (if compile-history
+	(recompile)
+      (compile)))
+  :bind ("C-x p c" . ebn/project-compile))
 
 ;;; ebn-init.el ends here
