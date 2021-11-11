@@ -13,11 +13,13 @@ configuration {
 @theme "/dev/null"
 
 * {
-    al:  #121212ff;
-    bg:  #121212ff;
-    se:  #2f3135ff;
+    al:  #1E2029FA;
+    bg:  #1E2029FA;
+    se:  #282a36;
     fg:  #ffffffff;
-    ac:  #121212ff;
+    ac:  #1E2029FA;
+
+    background-color: transparent;
 }
 
 window {
