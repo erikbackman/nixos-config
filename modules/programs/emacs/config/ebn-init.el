@@ -45,13 +45,20 @@
 
   :delight
   (auto-fill-function " AF")
-  (visual-line-mode))
+  (visual-line-mode)
+
+  :config
+  (setq gdb-many-windows t
+	gdb-show-main t)
+  )
 
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal)
-  ;(ebn/font :name "Iosevka Custom" :size 18 :weight 'normal)
+  (ebn/font :name "JetBrains Mono" :size 17 :weight 'normal :ttf '(latn nil nil (liga)))
+  ;(ebn/font :name "Fantasque Sans Mono" :size 15 :weight 'normal  :ttf '(latn nil nil (liga)))
+  ;(ebn/font :name "Inconsolata" :size 18 :weight 'normal)
+  ;(ebn/font :name "Iosevka Custom" :size 16 :weight 'normal)
   )
 
 (use-package evil
@@ -66,12 +73,17 @@
   (evil-mode 1)
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
-  :bind (:map evil-motion-state-map ("RET" . nil)))
+  :bind
+  (:map evil-motion-state-map ("RET" . nil))
+  (:map evil-normal-state-map ("gd" . #'xref-find-definitions-other-window)))
 
 (use-package evil-collection
   :after evil
   :config
-  (evil-collection-init))
+  (evil-collection-init)
+  :bind
+  (:map evil-normal-state-map ("S-<down>" . evil-forward-section-begin)
+  (:map evil-normal-state-map ("S-<up>" . evil-backward-section-begin))))
 
 (use-package general
   :config
@@ -140,6 +152,7 @@
     "pp" '(project-switch-project :which-key "Switch project")
     "pf" '(project-find-file :which-key "Find project file")
     "ps" '(ebn/project-rg :which-key "Project rg")
+    "pt" '(gtags-find-tag :which-key "Find project tag")
 
     ;; Other
     "o" '(:ignore t :which-key "Toggle")
@@ -162,11 +175,14 @@
 
 (use-package kaolin-themes
   :custom-face
-  (default ((t (:background "#0C0F12"))))
+  (default ((t (:background "#0C0F12" :foreground "#fff"))))
   (fringe ((t (:background "#0C0F12"))))
   (mode-line ((t (:background "#0C0F12"))))
+  (font-lock-keyword-face ((t (:weight normal))))
   :config
   (load-theme 'kaolin-aurora t nil))
+
+(use-package gruber-darker-theme)
 
 (use-package yasnippet
   :config
@@ -416,7 +432,25 @@
     (interactive)
     (if compile-history
 	(recompile)
-      (compile)))
+      (call-interactively 'project-compile)))
   :bind ("C-x p c" . ebn/project-compile))
+
+(use-package cc-mode
+  :ensure nil
+  :config
+  (setq c-default-style "cc-mode"))
+
+(use-package god-mode
+  :bind
+  ("<escape>" . god-local-mode)
+  :config
+  ;(define-key god-local-mode-map (kbd ".") #'repeat)
+  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+  (define-key god-local-mode-map (kbd "<right>") #'forward-word)
+  (define-key god-local-mode-map (kbd "<left>") #'backward-word))
+
+(use-package gtags
+  :ensure nil)
 
 ;;; ebn-init.el ends here
