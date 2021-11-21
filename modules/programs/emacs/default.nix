@@ -95,6 +95,7 @@ in {
       # cc
       gcc
       ccls
+      global
     ];
   };
 }
