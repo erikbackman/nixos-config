@@ -7,7 +7,9 @@ let
   emacsPackage =
     let 
       configTxt = (builtins.readFile ./config/ebn-init.el) +
-                  (if cfg.evilEnabled then (builtins.readFile ./config/ebn-evil.el) else "");
+                  (if cfg.evilEnabled
+                   then (builtins.readFile ./config/ebn-evil.el)
+                   else (builtins.readFile ./config/ebn-modalka.el));
 
       init = pkgs.runCommand "default.el" {} ''
         mkdir -p $out/share/emacs/site-lisp
