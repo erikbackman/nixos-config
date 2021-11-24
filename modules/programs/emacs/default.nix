@@ -6,17 +6,21 @@ let
   version = config.programs.ebn.emacs.version;
   emacsPackage =
     let 
+      configTxt = (builtins.readFile ./config/ebn-init.el) +
+                  (if cfg.evilEnabled then (builtins.readFile ./config/ebn-evil.el) else "");
+
       init = pkgs.runCommand "default.el" {} ''
         mkdir -p $out/share/emacs/site-lisp
-        cp ${pkgs.writeText "default.el" (builtins.readFile ./config/ebn-init.el)} $out/share/emacs/site-lisp/default.el
+        cp ${pkgs.writeText "default.el" configTxt} $out/share/emacs/site-lisp/default.el
       '';
       
       package = cfg.package.override {
         siteStart = pkgs.writeText "site-start.el" (builtins.readFile ./config/site-start.el);
       };
+
     in
       (pkgs.emacsWithPackagesFromUsePackage {
-        config = ./config/ebn-init.el;
+        config = configTxt;
         alwaysEnsure = true;
         package = package; 
         extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode use-package pkgs.ebn.ebn-core-el ];
@@ -30,6 +34,7 @@ in {
         type = lib.types.package;
         default = pkgs.emacsGit;
       };
+      evilEnabled = mkEnableOption "Enable evil";
     };
   };
 

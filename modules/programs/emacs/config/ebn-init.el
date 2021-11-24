@@ -21,8 +21,8 @@
 (add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
+(defvar-local use-evil t)
 
-;;; Packages
 (use-package emacs
   :init
   ;; TAB cycle if there are only few candidates
@@ -42,59 +42,35 @@
 
   :custom
   (delete-by-moving-to-trash t)
+  (gdb-many-windows t)
+  (gdb-show-main t)
 
   :delight
   (auto-fill-function " AF")
   (visual-line-mode)
 
+  :hook (prog-mode . superword-mode)
+
   :config
-  (setq gdb-many-windows t
-	gdb-show-main t)
-  )
+  :bind ("C-j" . join-line))
 
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "JetBrains Mono" :size 17 :weight 'normal :ttf '(latn nil nil (liga)))
-  ;(ebn/font :name "Fantasque Sans Mono" :size 15 :weight 'normal  :ttf '(latn nil nil (liga)))
-  ;(ebn/font :name "Inconsolata" :size 18 :weight 'normal)
-  ;(ebn/font :name "Iosevka Custom" :size 16 :weight 'normal)
-  )
-
-(use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-  (setq evil-respect-visual-line-mode t)
-  :config
-  (require 'project)
-  (evil-mode 1)
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal)
-  :bind
-  (:map evil-motion-state-map ("RET" . nil))
-  (:map evil-normal-state-map ("gd" . #'xref-find-definitions-other-window)))
-
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init)
-  :bind
-  (:map evil-normal-state-map ("S-<down>" . evil-forward-section-begin)
-  (:map evil-normal-state-map ("S-<up>" . evil-backward-section-begin))))
+  ;(ebn/font :name "JetBrains Mono" :size 15 :weight 'regular :ttf '(latn nil nil (liga)))
+  (ebn/font :name "Iosevka Custom" :size 20 :weight 'normal))
 
 (use-package general
   :config
-  (general-evil-setup t)
-  (general-setq evil-want-Y-yank-to-eol)
+  (when (featurep 'evil)
+    (general-evil-setup t)
+    (general-setq evil-want-Y-yank-to-eol))
 
   (general-create-definer ebn/leader-key-def
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
-
+		      
   (general-define-key
    :states 'normal :keymaps 'dired-mode-map
    "m" '(dired-mark :which-key "Dired mark")
@@ -153,6 +129,7 @@
     "pf" '(project-find-file :which-key "Find project file")
     "ps" '(ebn/project-rg :which-key "Project rg")
     "pt" '(gtags-find-tag :which-key "Find project tag")
+    "pc" '(project-compile :which-key "Compile project")
 
     ;; Other
     "o" '(:ignore t :which-key "Toggle")
@@ -164,7 +141,7 @@
 
 ;(use-package modus-themes
 ;  :ensure t
-;  :init
+					;  :init
 ;  (show-paren-mode 1)
 ;  :config
 ;  (setq modus-themes-paren-match '(bold intense))
@@ -177,12 +154,18 @@
   :custom-face
   (default ((t (:background "#0C0F12" :foreground "#fff"))))
   (fringe ((t (:background "#0C0F12"))))
-  (mode-line ((t (:background "#0C0F12"))))
   (font-lock-keyword-face ((t (:weight normal))))
+  (mode-line ((t (box: (:line-width -1 :style released-button)))))
   :config
-  (load-theme 'kaolin-aurora t nil))
+  ;(load-theme 'kaolin-aurora t nil)
+  )
 
-(use-package gruber-darker-theme)
+(use-package gruber-darker-theme
+  :custom-face
+  (default ((t (:background "#0C0F12" :foreground "#fff"))))
+  (fringe ((t (:background "#0C0F12"))))
+  :config
+  (load-theme 'gruber-darker t nil))
 
 (use-package yasnippet
   :config
@@ -199,7 +182,10 @@
 (use-package consult
   :config
   (setq consult-preview-key nil)
-  (recentf-mode))
+  (recentf-mode)
+  :bind
+  ("C-c r" . consult-recent-file)
+  ("C-c t" . gtags-find-tag))
 
 (use-package orderless
   :init
@@ -433,24 +419,78 @@
     (if compile-history
 	(recompile)
       (call-interactively 'project-compile)))
-  :bind ("C-x p c" . ebn/project-compile))
+  (general-define-key
+   :prefix "C-c"
+   "p" '(:ignore)
+   "pc" '(ebn/project-compile :which-key "Compile")
+   "pt" '(gtags-find-tag :which-key "gtags-find")
+   "pp" '(project-switch-project :which-key "Switch project")
+   ;"pb" '(project-switch-buffer :which-key "Switch project buffer")
+   "pf" '(project-find-file :which-key "Find project file")))
 
 (use-package cc-mode
   :ensure nil
   :config
-  (setq c-default-style "cc-mode"))
-
-(use-package god-mode
+  (setq c-default-style "cc-mode")
   :bind
-  ("<escape>" . god-local-mode)
+  (:map c-mode-map
+	("C-c o" . ff-find-other-file)
+	("C-c c" . project-compile)
+	("C-c C-c" . comment-or-uncomment-region)))
+
+(use-package modalka
+  :unless (featurep 'evil)
   :config
-  ;(define-key god-local-mode-map (kbd ".") #'repeat)
-  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
-  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
-  (define-key god-local-mode-map (kbd "<right>") #'forward-word)
-  (define-key god-local-mode-map (kbd "<left>") #'backward-word))
+  (modalka-define-kbd "W" "M-w")
+  (modalka-define-kbd "Y" "M-y")
+  (modalka-define-kbd "a" "C-a")
+  (modalka-define-kbd "b" "M-b")
+  (modalka-define-kbd "e" "C-e")
+  (modalka-define-kbd "f" "M-f")
+  (modalka-define-kbd "g" "C-g")
+  (modalka-define-kbd "n" "C-n")
+  (modalka-define-kbd "p" "C-p")
+  (modalka-define-kbd "y" "C-y")
+  (modalka-define-kbd "d" "M-d")
+  (modalka-define-kbd "m" "M->")
+  (modalka-define-kbd "M" "M-<")
+  (modalka-define-kbd "s" "C-x C-s")
+  (modalka-define-kbd "SPC" "C-SPC")
+  (modalka-define-kbd "o" "C-x o")
+  (modalka-define-kbd "1" "C-x 1")
+  (modalka-define-kbd "2" "C-x 2")
+  (modalka-define-kbd "3" "C-x 3")
+  (global-set-key (kbd "<escape>") #'modalka-mode))
 
 (use-package gtags
   :ensure nil)
+
+(use-package avy
+  :ensure t
+  :defer t
+  :commands 'avy-goto-char-timer
+  :config
+  :bind
+  ("ö" . avy-goto-char-timer))
+
+;; (use-package multiple-cursors
+;;   :ensure t
+;;   :bind
+;;   (:map global-map
+;; 	;("RET" . newline)
+        
+;; 	("C-m" . mc/mark-next-like-this)
+;; 	("C-," . mc/mark-previous-like-this)
+;; 	("C--" . mc/mark-all-like-this-dwim)
+;; 	)
+;;   (:map prog-mode-map
+;; 	("<return>" . newline))
+;;   )
+
+(use-package expand-region
+  :ensure t
+  :defer t
+  :commands 'er/expand-region
+  :bind ("C-ö" . er/expand-region))
 
 ;;; ebn-init.el ends here
