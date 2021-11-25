@@ -16,7 +16,6 @@
   programs.ebn.bash.starship.enable = true;
   programs.ebn.emacs.enable = true;
   programs.ebn.emacs.package = pkgs.emacsGcc;
-  programs.ebn.emacs.evilEnabled = true;
 
   services.redshift = {
     enable = true;
@@ -37,7 +36,7 @@
   services.fstrim.enable = true;
 
   services.interception-tools = {
-    enable = false;
+    enable = true;
     plugins = with pkgs.interception-tools-plugins;
       [ dual-function-keys ];
     udevmonConfig =
@@ -51,10 +50,6 @@
               - KEY: KEY_ENTER
                 TAP: KEY_ENTER
                 HOLD: KEY_LEFTALT
-
-              - KEY: KEY_SPACE
-                TAP: KEY_SPACE
-                HOLD: KEY_RIGHTCTRL
             '';
           uinput = "${pkgs.interception-tools}/bin/uinput";
           intercept = "${pkgs.interception-tools}/bin/intercept";
@@ -63,7 +58,8 @@
          - JOB: "${intercept} -g $DEVNODE | ${dual-function-keys} -c ${mappings} | ${uinput} -d $DEVNODE"
            DEVICE: 
              EVENTS:
-               EV_KEY: [KEY_ENTER, KEY_SPACE]
+               EV_KEY: [KEY_ENTER]
+             LINK: .*-event-kbd
       '';
   };
 
@@ -72,22 +68,7 @@
     etBook
     google-fonts
     hack-font
-    (iosevka.override {
-      privateBuildPlan = ''
-        [buildPlans.iosevka-custom]
-        family = "Iosevka Custom"
-        spacing = "normal"
-        serifs = "sans"
-        no-cv-ss = true
-
-        [buildPlans.iosevka-custom.variants]
-        inherits = "ss08"
-
-        [buildPlans.iosevka-custom.ligations]
-        inherits = "haskell"
-      '';
-      set = "custom";
-    })
+    ebn.iosevka-custom
     jetbrains-mono
     victor-mono
     oldstandard

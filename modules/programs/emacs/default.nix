@@ -6,10 +6,7 @@ let
   version = config.programs.ebn.emacs.version;
   emacsPackage =
     let 
-      configTxt = (builtins.readFile ./config/ebn-init.el) +
-                  (if cfg.evilEnabled
-                   then (builtins.readFile ./config/ebn-evil.el)
-                   else (builtins.readFile ./config/ebn-modalka.el));
+      configTxt = (builtins.readFile ./config/ebn-init.el);
 
       init = pkgs.runCommand "default.el" {} ''
         mkdir -p $out/share/emacs/site-lisp
@@ -17,7 +14,9 @@ let
       '';
       
       package = cfg.package.override {
-        siteStart = pkgs.writeText "site-start.el" (builtins.readFile ./config/site-start.el);
+        siteStart = pkgs.writeText "site-start.el" (
+          builtins.readFile ./config/site-start.el
+        );
       };
 
     in
@@ -36,7 +35,6 @@ in {
         type = lib.types.package;
         default = pkgs.emacsGit;
       };
-      evilEnabled = mkEnableOption "Enable evil";
     };
   };
 

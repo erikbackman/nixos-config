@@ -11,6 +11,8 @@
 		    (time-subtract after-init-time before-init-time)))
 	   gcs-done))
 
+
+(defun ebn/use-evil() nil)
 ;; Basic
 ;; Setting this lower after early-init for shorter gc-pauses
 (setq-default fill-column 80)
@@ -20,8 +22,6 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 (add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
-
-(defvar-local use-evil t)
 
 (use-package emacs
   :init
@@ -60,9 +60,37 @@
   ;(ebn/font :name "JetBrains Mono" :size 15 :weight 'regular :ttf '(latn nil nil (liga)))
   (ebn/font :name "Iosevka Custom" :size 20 :weight 'normal))
 
+(use-package evil
+  :if (ebn/use-evil)
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-respect-visual-line-mode t)
+  :config
+  (require 'project)
+  (evil-mode 1)
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal)
+  (setcdr evil-insert-state-map nil)
+  :bind
+  (:map evil-motion-state-map ("RET" . nil))
+  (:map evil-normal-state-map ("gd" . #'xref-find-definitions-other-window))
+  (:map evil-insert-state-map ("<ESC>" . #'evil-normal-state)))
+
+(use-package evil-collection
+  :if (ebn/use-evil)
+  :after evil
+  :config
+  (evil-collection-init)
+  :bind
+  (:map evil-normal-state-map ("S-<down>" . evil-forward-section-begin)
+  (:map evil-normal-state-map ("S-<up>" . evil-backward-section-begin))))
+
 (use-package general
   :config
-  (when (featurep 'evil)
+  (when (ebn/use-evil)
     (general-evil-setup t)
     (general-setq evil-want-Y-yank-to-eol))
 
