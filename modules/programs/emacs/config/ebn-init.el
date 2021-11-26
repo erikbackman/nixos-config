@@ -494,6 +494,7 @@
   :config
   :bind
   ("M-g g" . avy-goto-line)
+  ("M-g c" . avy-goto-char-in-line)
   ("M-s" . avy-goto-char-in-line)
   ("ö" . avy-goto-char-timer))
 
@@ -522,6 +523,7 @@
 (use-package paredit
   :ensure t
   :defer t
+  :diminish
   :mode ("\\.el\\'" . emacs-lisp-mode)
   :hook (emacs-lisp-mode . enable-paredit-mode))
 
