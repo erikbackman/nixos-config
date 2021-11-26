@@ -519,4 +519,10 @@
   :bind
   ("C-." . dot-mode-execute))
 
+(use-package paredit
+  :ensure t
+  :defer t
+  :mode ("\\.el\\'" . emacs-lisp-mode)
+  :hook (emacs-lisp-mode . enable-paredit-mode))
+
 ;;; ebn-init.el ends here
