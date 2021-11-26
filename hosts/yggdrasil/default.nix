@@ -27,6 +27,7 @@
   services.ebn.polybar.enable = true;
   services.xserver.displayManager.sessionCommands = ''
     xrandr --output DP-0 --mode 3440x1440 --rate 99.98
+    xset r rate 150 255
   '';
 
   services.ebn.syncthing.enable = true;
