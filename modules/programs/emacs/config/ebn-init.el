@@ -3,15 +3,8 @@
 ;;; Code:
 (require 'use-package)
 
-(defun ebn/display-startup-time ()
-  "Message startup time."
-  (message "Emacs loaded in %s with %d garbage collections."
-	   (format "%.2f seconds"
-		   (float-time
-		    (time-subtract after-init-time before-init-time)))
-	   gcs-done))
-
 (defun ebn/use-evil() nil)
+
 ;; Basic
 ;; Setting this lower after early-init for shorter gc-pauses
 (setq-default fill-column 80)
@@ -22,17 +15,7 @@
 (add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
-(defun ebn/open-line-below ()
-  (interactive)
-  (move-end-of-line nil)
-  (newline-and-indent))
-
-(defun ebn/open-line-above ()
-  (interactive)
-  (previous-line)
-  (move-end-of-line nil)
-  (newline-and-indent))
-
+;; Packages
 (use-package emacs
   :init
   ;; TAB cycle if there are only few candidates

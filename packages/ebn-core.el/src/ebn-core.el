@@ -43,5 +43,24 @@
   (interactive)
   (funcall-interactively #'consult-ripgrep (project-root (project-current))))
 
+(defun ebn/display-startup-time ()
+  "Message startup time."
+  (message "Emacs loaded in %s with %d garbage collections."
+	   (format "%.2f seconds"
+		   (float-time
+		    (time-subtract after-init-time before-init-time)))
+	   gcs-done))
+
+(defun ebn/open-line-below ()
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(defun ebn/open-line-above ()
+  (interactive)
+  (previous-line)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
 (provide 'ebn-core)
 ;;; ebn-core.el ends here
