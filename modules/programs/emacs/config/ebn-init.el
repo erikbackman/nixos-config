@@ -11,7 +11,6 @@
 		    (time-subtract after-init-time before-init-time)))
 	   gcs-done))
 
-
 (defun ebn/use-evil() nil)
 ;; Basic
 ;; Setting this lower after early-init for shorter gc-pauses
@@ -22,6 +21,17 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 (add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
+
+(defun ebn/open-line-below ()
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(defun ebn/open-line-above ()
+  (interactive)
+  (previous-line)
+  (move-end-of-line nil)
+  (newline-and-indent))
 
 (use-package emacs
   :init
@@ -44,15 +54,22 @@
   (delete-by-moving-to-trash t)
   (gdb-many-windows t)
   (gdb-show-main t)
-
+  (delete-selection-mode t)
+  (auto-save-visited-mode t)
+  (save-place-mode t)
+  
   :delight
   (auto-fill-function " AF")
   (visual-line-mode)
 
-  :hook (prog-mode . superword-mode)
-
-  :config
-  :bind ("C-j" . join-line))
+  :bind
+  ("C-j" . join-line)
+  ("C-x k" . ebn/kill-current-buffer)
+  ("C-o" . ebn/open-line-below)
+  ("M-o" . ebn/open-line-above)
+  ("M-§" . end-of-buffer)
+  ("<f7>" . call-last-kbd-macro)
+  ("M-z" . zap-up-to-char))
 
 (use-package ebn-core
   :ensure nil
@@ -87,6 +104,10 @@
   :bind
   (:map evil-normal-state-map ("S-<down>" . evil-forward-section-begin)
   (:map evil-normal-state-map ("S-<up>" . evil-backward-section-begin))))
+
+(use-package which-key
+  :ensure nil
+  :diminish)
 
 (use-package general
   :config
@@ -195,6 +216,9 @@
   :config
   (load-theme 'gruber-darker t nil))
 
+(use-package diminish
+  :ensure t)
+
 (use-package yasnippet
   :config
   (yas-global-mode -1))
@@ -213,6 +237,7 @@
   (recentf-mode)
   :bind
   ("C-c r" . consult-recent-file)
+  ("C-c f" . consult-ripgrep) 
   ("C-c t" . gtags-find-tag))
 
 (use-package orderless
@@ -220,6 +245,10 @@
   (setq completion-styles '(orderless)
 	completion-category-defaults nil
 	completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package eldoc
+  :ensure nil
+  :diminish)
 
 (use-package envrc
   :commands 'envrc-global-mode
@@ -475,26 +504,29 @@
   :commands 'avy-goto-char-timer
   :config
   :bind
+  ("M-s" . avy-goto-char-in-line)
   ("ö" . avy-goto-char-timer))
 
 ;; (use-package multiple-cursors
 ;;   :ensure t
 ;;   :bind
 ;;   (:map global-map
-;; 	;("RET" . newline)
-        
 ;; 	("C-m" . mc/mark-next-like-this)
 ;; 	("C-," . mc/mark-previous-like-this)
-;; 	("C--" . mc/mark-all-like-this-dwim)
-;; 	)
-;;   (:map prog-mode-map
-;; 	("<return>" . newline))
-;;   )
+;; 	("C--" . mc/mark-all-like-this-dwim))
+;;   (:map prog-mode-map ("<return>" . newline)))
 
 (use-package expand-region
   :ensure t
   :defer t
   :commands 'er/expand-region
   :bind ("C-ö" . er/expand-region))
+
+(use-package dot-mode
+  :unless (ebn/use-evil)
+  :ensure t
+  :diminish
+  :bind
+  ("C-." . dot-mode-execute))
 
 ;;; ebn-init.el ends here
