@@ -99,7 +99,7 @@
     mpv
     streamlink
     feh
-    discord
+    #discord
     gnome.gucharmap
     gimp
     rofi-pass
@@ -107,9 +107,9 @@
     cowsay
     ncspot
     pavucontrol
-    anki
+    #anki
     sage
-    geogebra6
+    #geogebra6
     jekyll
     man-pages
     brave

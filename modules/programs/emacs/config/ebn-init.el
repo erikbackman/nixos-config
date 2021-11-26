@@ -341,6 +341,15 @@
   (org-roam-db-autosync-mode)
   (require 'org-roam-protocol))
 
+(use-package org-roam-ui
+  :defer t
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+	org-roam-ui-follow t
+	org-roam-ui-update-on-save t
+	org-roam-ui-open-on-start nil))
+
 (use-package sage-shell-mode
   :ensure t
   :config
