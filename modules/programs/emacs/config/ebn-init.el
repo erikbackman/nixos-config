@@ -62,6 +62,8 @@
   (auto-fill-function " AF")
   (visual-line-mode)
 
+  :hook (prog-mode . superword-mode)
+  
   :bind
   ("C-j" . join-line)
   ("C-x k" . ebn/kill-current-buffer)
