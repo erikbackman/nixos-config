@@ -193,6 +193,7 @@
   (font-lock-keyword-face ((t (:weight normal))))
   (mode-line ((t (box: (:line-width -1 :style released-button)))))
   :config
+  
   ;(load-theme 'kaolin-aurora t nil)
   )
 
@@ -304,6 +305,7 @@
 	org-latex-tables-centered t))
 
 (use-package evil-org
+  :when (ebn/use-evil)
   :defer t
   :after org
   :hook (org-mode . evil-org-mode)
@@ -491,6 +493,7 @@
   :commands 'avy-goto-char-timer
   :config
   :bind
+  ("M-g g" . avy-goto-line)
   ("M-s" . avy-goto-char-in-line)
   ("ö" . avy-goto-char-timer))
 
