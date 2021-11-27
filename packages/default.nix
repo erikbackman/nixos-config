@@ -7,6 +7,7 @@ final: prev: {
     material-design-iconic = prev.callPackage ./material-design-iconic {};
     ebn-core-el = prev.callPackage ./ebn-core.el { trivialBuild = prev.emacsPackages.trivialBuild; };
     iosevka-custom = prev.callPackage ./iosevka-custom {};
+    kaolin-themes = prev.callPackage ./emacs-kaolin-themes { trivialBuild = prev.emacsPackages.trivialBuild; };
   };
   zathura = prev.callPackage ./zathura { pkgs = prev; };
 }
