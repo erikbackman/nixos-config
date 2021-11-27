@@ -59,7 +59,6 @@
 (use-package ebn-core
   :ensure nil
   :config
-  ;(ebn/font :name "JetBrains Mono" :size 15 :weight 'regular :ttf '(latn nil nil (liga)))
   (ebn/font :name "Iosevka Custom" :size 20 :weight 'normal))
 
 (use-package evil
@@ -373,30 +372,36 @@
   :commands (haskell-mode) 
   :init
   (load-library "haskell-mode-autoloads")
-  :mode (("\\.hs\\'" . haskell-mode)
-	 ("\\.cabal\\'" . haskell-cabal-mode))
+  
+  :mode
+  (("\\.hs\\'" . haskell-mode)
+   ("\\.cabal\\'" . haskell-cabal-mode))
+  
   :custom
   (haskell-process-type 'cabal-new-repl)
   (haskell-process-load-or-reload-prompt t)
   (haskell-process-auto-import-loaded-modules t)
   (haskell-process-log t)
   (haskell-font-lock-symbols t)
+  
   :config
   (require 'haskell-interactive-mode)
-  (defun +haskell/evil-open-above ()
-    "Opens a line above the current mode"
-    (interactive)
-    (evil-digit-argument-or-evil-beginning-of-line)
-    (haskell-indentation-newline-and-indent)
-    (evil-previous-line)
-    (haskell-indentation-indent-line)
-    (evil-append-line nil))
 
-  (defun +haskell/evil-open-below ()
-    "Opens a line below the current mode"
-    (interactive)
-    (evil-append-line nil)
-    (haskell-indentation-newline-and-indent))
+  (defun ebn/setup-evil-haskell-mode ()
+    (defun +haskell/evil-open-above ()
+      "Opens a line above the current mode"
+      (interactive)
+      (evil-digit-argument-or-evil-beginning-of-line)
+      (haskell-indentation-newline-and-indent)
+      (evil-previous-line)
+      (haskell-indentation-indent-line)
+      (evil-append-line nil))
+    (defun +haskell/evil-open-below ()
+      "Opens a line below the current mode"
+      (interactive)
+      (evil-append-line nil)
+      (haskell-indentation-newline-and-indent))
+    (general-nmap :keymaps 'haskell-mode-map "o" '+haskell/evil-open-below))
 
   (defun haskell-mode-after-save-handler ())
   (defun ebn/haskell-format-buffer ()
@@ -410,7 +415,7 @@
        :buffer "*ormolu-log*"
        :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
        :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
-
+  
   (defun haskell-mode-setup ()
     (haskell-indentation-mode)
     (autoload 'haskell-doc-current-info "haskell-doc")
@@ -422,10 +427,10 @@
     (setq tab-width 2)
     (setq-local evil-shift-width 2))
 
-  (general-nmap :keymaps 'haskell-mode-map "o" '+haskell/evil-open-below)
-
-  :hook ((haskell-mode . haskell-mode-setup)
-	 (haskell-mode . interactive-haskell-mode))
+  :hook
+  ((haskell-mode . haskell-mode-setup)
+   (haskell-mode . interactive-haskell-mode))
+  
   :bind
   (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
 
@@ -458,8 +463,7 @@
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
 	 (eshell-mode . corfu-mode)
-	 (c-mode . corfu-mode)
-	 ))
+	 (c-mode . corfu-mode)))
 
 (use-package nix-mode
   :defer t
@@ -506,7 +510,7 @@
   ("M-g g" . avy-goto-line)
   ("M-g c" . avy-goto-char-in-line)
   ("M-s" . avy-goto-char-in-line)
-  ("ö" . avy-goto-char-timer))
+  ("C-ö" . avy-goto-char-timer))
 
 ;; (use-package multiple-cursors
 ;;   :ensure t
@@ -521,7 +525,7 @@
   :ensure t
   :defer t
   :commands 'er/expand-region
-  :bind ("C-ö" . er/expand-region))
+  :bind ("C-," . er/expand-region))
 
 (use-package dot-mode
   :unless (ebn/use-evil)
@@ -536,5 +540,15 @@
   :diminish
   :mode ("\\.el\\'" . emacs-lisp-mode)
   :hook (emacs-lisp-mode . enable-paredit-mode))
+
+(use-package hydra
+  :ensure t
+  :config
+  (defhydra move-down (global-map "C-n")
+    "Move down"
+    ("n" next-line))
+  (defhydra move-up (global-map "C-p")
+    "Move up"
+    ("p" previous-line)))
 
 ;;; ebn-init.el ends here
