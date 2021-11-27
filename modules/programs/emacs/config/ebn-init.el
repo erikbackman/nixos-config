@@ -174,34 +174,27 @@
 	   "ef" '(eval-defun :which-key "Eval-defun")))
   )
   
-;(use-package modus-themes
-;  :ensure t
-					;  :init
-;  (show-paren-mode 1)
-;  :config
-;  (setq modus-themes-paren-match '(bold intense))
-;  ;(modus-themes-load-operandi)
-;  (modus-themes-load-vivendi)
-;  (when window-system (set-frame-size (selected-frame) 90 50))
-;  (setq fancy-startup-text nil))
+(use-package modus-themes
+ :ensure t
+ :init
+ (show-paren-mode 1)
+ :config
+ (setq modus-themes-vivendi-color-overrides
+       '((bg-main . "#0C0F12")))
+ (setq modus-themes-paren-match '(bold intense))
+ (when window-system (set-frame-size (selected-frame) 90 50))
+ (modus-themes-load-vivendi))
 
-(use-package kaolin-themes
-  :custom-face
-  (default ((t (:background "#0C0F12" :foreground "#fff"))))
-  (fringe ((t (:background "#0C0F12"))))
-  (font-lock-keyword-face ((t (:weight normal))))
-  (mode-line ((t (box: (:line-width -1 :style released-button)))))
-  :config
-  
-  ;(load-theme 'kaolin-aurora t nil)
-  )
+;; (use-package kaolin-themes
+;;   :custom-face
+;;   (default ((t (:background "#0C0F12" :foreground "#fff"))))
+;;   (fringe ((t (:background "#0C0F12"))))
+;;   (font-lock-keyword-face ((t (:weight normal))))
+;;   (mode-line ((t (box: (:line-width -1 :style released-button)))))
+;;   :config
+;;   (load-theme 'kaolin-aurora t nil))
 
-(use-package gruber-darker-theme
-  :custom-face
-  (default ((t (:background "#0C0F12" :foreground "#fff"))))
-  (fringe ((t (:background "#0C0F12"))))
-  :config
-  (load-theme 'gruber-darker t nil))
+;(use-package gruber-darker-theme)
 
 (use-package diminish
   :ensure t)
