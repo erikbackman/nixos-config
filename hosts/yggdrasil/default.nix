@@ -73,7 +73,12 @@
     jetbrains-mono
     victor-mono
     oldstandard
+    gyre-fonts
+    libre-baskerville
     siji
+    cm_unicode
+    bakoma_ttf
+    lmmath
   ];
 
   fonts.fontconfig = {

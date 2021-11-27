@@ -42,6 +42,12 @@ in {
   };
 
   config = mkIf cfg.enable {
+
+    fonts.fonts = with pkgs; [
+      ebn.iosevka-custom
+      jetbrains-mono
+      cm_unicode
+    ];
     
     environment.systemPackages = with pkgs; [
       emacsPackage
@@ -57,9 +63,6 @@ in {
       fd # faster projectile indexing
       imagemagick # for image-dired
       zstd # for undo-fu-session/undo-tree compression
-
-      ## Fonts
-      jetbrains-mono
 
       ## Package dependencies
       # :checkers spell

@@ -60,7 +60,7 @@
   :ensure nil
   :config
   (ebn/font :name "Iosevka Custom" :size 20)
-  (ebn/font-variable-pitch :name "ETBemo" :size 24 :weight 'thin))
+  (ebn/font-variable-pitch :name "CMU Concrete" :size 24))
 
 (use-package evil
   :if (ebn/use-evil)
@@ -180,26 +180,34 @@
  :init
  (show-paren-mode 1)
  :config
- (set-face-attribute 'variable-pitch nil :family "DejaVu Serif" :height 1.0)
  (setq modus-themes-vivendi-color-overrides
        '((bg-main . "#0C0F12")
 	 (bg-focused . "#0C0F12")))
+ (setq modus-themes-org-agenda
+      '((header-block . (variable-pitch scale-title))
+        (header-date . (grayscale bold-today))
+        (scheduled . uniform)
+        (habit . simplified)))
+ (setq modus-themes-headings
+       '((1 . (background overline))
+         (2 . (background overline))
+         (3 . (background rainbow overline))
+         (t . (background rainbow no-bold overline))))
+ (setq
+  modus-themes-variable-pitch-ui nil
+  modus-themes-variable-pitch-headings nil
+  modus-themes-scale-headings t
+  modus-themes-scale-1 1.1
+  modus-themes-scale-2 1.15
+  modus-themes-scale-3 1.21
+  modus-themes-scale-4 1.27
+  modus-themes-scale-title 1.33
+  modus-themes-scale-small 0.9)
  (setq modus-themes-mixed-fonts t)
  (setq modus-themes-mode-line '(3d))
  (setq modus-themes-paren-match '(bold intense))
  (when window-system (set-frame-size (selected-frame) 90 50))
  (modus-themes-load-vivendi))
-
-;; (use-package kaolin-themes
-;;   :custom-face
-;;   (default ((t (:background "#0C0F12" :foreground "#fff"))))
-;;   (fringe ((t (:background "#0C0F12"))))
-;;   (font-lock-keyword-face ((t (:weight normal))))
-;;   (mode-line ((t (box: (:line-width -1 :style released-button)))))
-;;   :config
-;;   (load-theme 'kaolin-aurora t nil))
-
-;(use-package gruber-darker-theme)
 
 (use-package diminish
   :ensure t)
@@ -274,7 +282,7 @@
 	   (last-day-of-month
 	    (calendar-last-day-of-month month year)))
       (= day last-day-of-month)))
-  :config 
+  :config
   (general-define-key
    :states 'normal
    :prefix "SPC"
@@ -293,28 +301,6 @@
   (setq org-return-follows-link t)
   (setq org-hide-emphasis-markers t)
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.4))
-
-  (let* ((variable-tuple
-          (cond ((x-list-fonts "ETBembo")         '(:font "ETBembo"))
-                ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                ((x-list-fonts "Verdana")         '(:font "Verdana"))
-                ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-         (base-font-color     (face-foreground 'default nil 'default))
-         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-
-    (custom-theme-set-faces
-     'user
-     `(org-level-8 ((t (,@headline ,@variable-tuple))))
-     `(org-level-7 ((t (,@headline ,@variable-tuple))))
-     `(org-level-6 ((t (,@headline ,@variable-tuple))))
-     `(org-level-5 ((t (,@headline ,@variable-tuple))))
-     `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-     `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-     `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-     `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 
   (setq org-latex-listings 'minted
 	org-latex-packages-alist '(("" "minted"))
