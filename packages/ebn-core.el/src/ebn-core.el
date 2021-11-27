@@ -7,8 +7,16 @@
 
 (defmacro ebn/font (&rest spec)
   `(let ((fs (funcall 'font-spec ,@spec)))
+     (message "%s" (font-get fs :name) (font-family-list))
      (when (member (font-get fs :name) (font-family-list))
-       (set-frame-font fs t t))))
+       (set-face-attribute 'default nil :font fs)
+       (set-face-attribute 'fixed-pitch nil :font fs))))
+
+(defmacro ebn/font-variable-pitch (&rest spec)
+  `(let ((fs (funcall 'font-spec ,@spec)))
+     (message "%s" (font-get fs :name) (font-family-list))
+     (when (member (font-get fs :name) (font-family-list))
+       (set-face-attribute 'variable-pitch nil :font fs))))
 
 (defun ebn/kill-current-buffer ()
   "Kill current buffer."
