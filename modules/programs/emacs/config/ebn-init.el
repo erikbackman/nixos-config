@@ -188,6 +188,7 @@
         (header-date . (grayscale bold-today))
         (scheduled . uniform)
         (habit . simplified)))
+ (setq modus-themes-org-blocks '(nil))
  (setq modus-themes-headings
        '((1 . (background overline))
          (2 . (background overline))
@@ -206,6 +207,8 @@
  (setq modus-themes-mixed-fonts t)
  (setq modus-themes-mode-line '(3d))
  (setq modus-themes-paren-match '(bold intense))
+ (setq modus-themes-syntax '(nil))
+ (setq modus-themes-links '(faint))
  (when window-system (set-frame-size (selected-frame) 90 50))
  (modus-themes-load-vivendi))
 
@@ -308,7 +311,9 @@
 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
-	org-latex-tables-centered t))
+	org-latex-tables-centered t)
+  :hook (org-mode . variable-pitch-mode)
+  )
 
 (use-package evil-org
   :when (ebn/use-evil)
@@ -555,6 +560,9 @@
     ("n" next-line))
   (defhydra move-up (global-map "C-p")
     "Move up"
-    ("p" previous-line)))
+    ("p" previous-line))
+  (defhydra undo-hydra (global-map "C-x u")
+    "Undo"
+    ("u" undo)))
 
 ;;; ebn-init.el ends here
