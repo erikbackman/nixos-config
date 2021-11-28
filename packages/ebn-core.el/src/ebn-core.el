@@ -62,17 +62,21 @@
 	   gcs-done))
 
 (defun ebn/open-line-below ()
+  "Open a newline below current line."
   (interactive)
   (move-end-of-line nil)
   (newline-and-indent))
 
 (defun ebn/open-line-above ()
+  "Open a newline above current line."
   (interactive)
   (previous-line)
   (move-end-of-line nil)
   (newline-and-indent))
 
 (defun ebn/copy-dwim ()
+  "Run the command `kill-ring-save' on the current region
+or the current line if there is no active region."
   (interactive)
   (if (region-active-p)
       (kill-ring-save nil nil t)
