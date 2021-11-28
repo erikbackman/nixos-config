@@ -60,7 +60,9 @@
   :ensure nil
   :config
   (ebn/font :name "Iosevka Custom" :size 20)
-  (ebn/font-variable-pitch :name "CMU Concrete" :size 24))
+  (ebn/font-variable-pitch :name "CMU Concrete" :size 24)
+  :bind
+  ("M-w" . ebn/copy-dwim))
 
 (use-package evil
   :if (ebn/use-evil)

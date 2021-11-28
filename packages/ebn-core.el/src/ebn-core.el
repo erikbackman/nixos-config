@@ -5,6 +5,8 @@
 
 ;;; Code:
 
+(set-face-attribute 'variable-pitch nil :family "CMU Concrete")
+
 (defmacro ebn/font (&rest spec)
   `(let ((fs (funcall 'font-spec ,@spec)))
      (message "%s" (font-get fs :name) (font-family-list))
@@ -69,6 +71,12 @@
   (previous-line)
   (move-end-of-line nil)
   (newline-and-indent))
+
+(defun ebn/copy-dwim ()
+  (interactive)
+  (if (region-active-p)
+      (kill-ring-save nil nil t)
+    (kill-ring-save (point-at-bol) (point-at-eol))))
 
 (provide 'ebn-core)
 ;;; ebn-core.el ends here
