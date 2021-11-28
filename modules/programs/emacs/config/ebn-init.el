@@ -523,14 +523,10 @@
   ("M-s" . avy-goto-char-in-line)
   ("C-ö" . avy-goto-char-timer))
 
-;; (use-package multiple-cursors
-;;   :ensure t
-;;   :bind
-;;   (:map global-map
-;; 	("C-m" . mc/mark-next-like-this)
-;; 	("C-," . mc/mark-previous-like-this)
-;; 	("C--" . mc/mark-all-like-this-dwim))
-;;   (:map prog-mode-map ("<return>" . newline)))
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  ("C--" . mc/mark-all-like-this-dwim))
 
 (use-package expand-region
   :ensure t
