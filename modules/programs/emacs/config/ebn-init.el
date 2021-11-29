@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 (require 'use-package)
+(require 'ebn-core)
 
 (defun ebn/use-evil() nil)
 
@@ -12,7 +13,7 @@
       ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-(add-hook 'after-init-hook #'ebn/display-startup-time)
+;(add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
 ;; Packages
@@ -49,6 +50,7 @@
   
   :bind
   ("C-j" . join-line)
+  ("M-u" . upcase-dwim)
   ("C-x k" . ebn/kill-current-buffer)
   ("C-o" . ebn/open-line-below)
   ("M-o" . ebn/open-line-above)
@@ -59,10 +61,11 @@
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "Iosevka Custom" :size 20)
+  (ebn/font :name "Iosevka Custom" :size 20 :weight 'normal)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 24)
-  :bind
-  ("M-w" . ebn/copy-dwim))
+  :bind (:map global-map 
+	      ("M-w" . ebn/copy-dwim)))
+  
 
 (use-package evil
   :if (ebn/use-evil)
@@ -561,6 +564,16 @@
     ("p" previous-line))
   (defhydra undo-hydra (global-map "C-x u")
     "Undo"
-    ("u" undo)))
+    ("u" undo))
+  (defhydra increment/decrement-number-hydra (global-map "C-+")
+    "Incremenet or decrement number at point"
+    ("+" ebn/increment-number-at-point)
+    ("-" ebn/decrement-number-at-point))
+  )
+
+(use-package ox-hugo
+  :ensure t
+  :defer t
+  :after 'ox)
 
 ;;; ebn-init.el ends here
