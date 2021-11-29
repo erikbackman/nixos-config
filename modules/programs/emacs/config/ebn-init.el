@@ -63,10 +63,8 @@
   :config
   (ebn/font :name "Iosevka Custom" :size 20 :weight 'normal)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 24)
-  :bind (:map global-map 
-	      ("M-w" . ebn/copy-dwim)))
-  
-
+  (global-set-key (kbd "M-w") 'ebn/copy-dwim))
+ 
 (use-package evil
   :if (ebn/use-evil)
   :init
@@ -177,8 +175,7 @@
 	   "oO" '(outline-cycle-buffer :which-key "Outline cycle")
 
 	   "e" '(:ignore t :which-key "Eval")
-	   "ef" '(eval-defun :which-key "Eval-defun")))
-  )
+	   "ef" '(eval-defun :which-key "Eval-defun"))))
   
 (use-package modus-themes
  :ensure t
@@ -199,21 +196,20 @@
          (2 . (background overline))
          (3 . (background rainbow overline))
          (t . (background rainbow no-bold overline))))
- (setq
-  modus-themes-variable-pitch-ui nil
-  modus-themes-variable-pitch-headings nil
-  modus-themes-scale-headings t
-  modus-themes-scale-1 1.1
-  modus-themes-scale-2 1.15
-  modus-themes-scale-3 1.21
-  modus-themes-scale-4 1.27
-  modus-themes-scale-title 1.33
-  modus-themes-scale-small 0.9)
- (setq modus-themes-mixed-fonts t)
- (setq modus-themes-mode-line '(3d))
- (setq modus-themes-paren-match '(bold intense))
- (setq modus-themes-syntax '(nil))
- (setq modus-themes-links '(faint))
+ (setq modus-themes-variable-pitch-ui nil
+       modus-themes-variable-pitch-headings nil
+       modus-themes-scale-headings t
+       modus-themes-scale-1 1.1
+       modus-themes-scale-2 1.15
+       modus-themes-scale-3 1.21
+       modus-themes-scale-4 1.27
+       modus-themes-scale-title 1.33
+       modus-themes-scale-small 0.9
+       modus-themes-mixed-fonts t
+       modus-themes-mode-line '(3d)
+       modus-themes-paren-match '(bold intense)
+       modus-themes-syntax '(nil)
+       modus-themes-links '(faint))
  (when window-system (set-frame-size (selected-frame) 90 50))
  (modus-themes-load-vivendi))
 
@@ -531,8 +527,9 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind
-  ("C--" . mc/mark-all-like-this-dwim))
+  :config
+  (global-set-key (kbd "C--") 'mc/mark-all-like-this-dwim)
+  (global-set-key (kbd "C-'") 'mc/mark-next-like-this))
 
 (use-package expand-region
   :ensure t
@@ -575,6 +572,7 @@
 (use-package ox-hugo
   :ensure t
   :defer t
+  :commands 'org-export-dispatch
   :after 'ox)
 
 ;;; ebn-init.el ends here
