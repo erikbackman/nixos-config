@@ -317,8 +317,9 @@
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
 	org-latex-tables-centered t)
-  :hook (org-mode . variable-pitch-mode)
-  )
+  (setq org-insert-heading-respect-content t)
+  :bind* ("C-<return>" . org-meta-return)
+  :hook (org-mode . variable-pitch-mode))
 
 (use-package evil-org
   :when (ebn/use-evil)
