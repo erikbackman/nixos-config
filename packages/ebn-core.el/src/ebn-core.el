@@ -5,18 +5,15 @@
 
 ;;; Code:
 
-(set-face-attribute 'variable-pitch nil :family "CMU Concrete")
-
+;;;###autoload
 (defmacro ebn/font (&rest spec)
   `(let ((fs (funcall 'font-spec ,@spec)))
-     (message "%s" (font-get fs :name) (font-family-list))
      (when (member (font-get fs :name) (font-family-list))
        (set-face-attribute 'default nil :font fs)
        (set-face-attribute 'fixed-pitch nil :font fs))))
-
+;;;###autoload
 (defmacro ebn/font-variable-pitch (&rest spec)
   `(let ((fs (funcall 'font-spec ,@spec)))
-     (message "%s" (font-get fs :name) (font-family-list))
      (when (member (font-get fs :name) (font-family-list))
        (set-face-attribute 'variable-pitch nil :font fs))))
 
@@ -53,6 +50,7 @@
   (interactive)
   (funcall-interactively #'consult-ripgrep (project-root (project-current))))
 
+;;;###autoload
 (defun ebn/display-startup-time ()
   "Message startup time."
   (message "Emacs loaded in %s with %d garbage collections."
@@ -74,6 +72,7 @@
   (move-end-of-line nil)
   (newline-and-indent))
 
+;;;###autoload
 (defun ebn/copy-dwim ()
   "Run the command `kill-ring-save' on the current region
 or the current line if there is no active region."
@@ -81,6 +80,26 @@ or the current line if there is no active region."
   (if (region-active-p)
       (kill-ring-save nil nil t)
     (kill-ring-save (point-at-bol) (point-at-eol))))
+
+(defun ebn/change-number-at-point (change increment)
+  (let ((number (number-at-point))
+        (point (point)))
+    (when number
+      (progn
+        (forward-word)
+        (search-backward (number-to-string number))
+        (replace-match (number-to-string (funcall change number increment)))
+        (goto-char point)))))
+
+(defun ebn/increment-number-at-point (&optional increment)
+  "Increment number at point like vim's C-a"
+  (interactive "p")
+  (ebn/change-number-at-point '+ (or increment 1)))
+
+(defun ebn/decrement-number-at-point (&optional increment)
+  "Decrement number at point like vim's C-x"
+  (interactive "p")
+  (ebn/change-number-at-point '- (or increment 1)))
 
 (provide 'ebn-core)
 ;;; ebn-core.el ends here
