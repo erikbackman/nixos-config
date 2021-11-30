@@ -72,7 +72,6 @@
   (move-end-of-line nil)
   (newline-and-indent))
 
-;;;###autoload
 (defun ebn/copy-dwim ()
   "Run the command `kill-ring-save' on the current region
 or the current line if there is no active region."
