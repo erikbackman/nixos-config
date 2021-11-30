@@ -54,7 +54,10 @@
   ("M-o" . ebn/open-line-above)
   ("M-§" . end-of-buffer)
   ("<f7>" . call-last-kbd-macro)
-  ("M-z" . zap-up-to-char))
+  ("M-z" . zap-up-to-char)
+  (:map
+   dired-mode-map
+   ("-" . ebn/dired-up-directory)))
 
 (use-package ebn-core
   :ensure nil
