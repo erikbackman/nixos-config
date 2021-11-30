@@ -314,7 +314,7 @@
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
 	org-latex-tables-centered t)
   (setq org-insert-heading-respect-content t)
-  :bind* ("C-<return>" . org-meta-return)
+  :bind* (:map org-mode-map ("C-<return>" . org-meta-return))
   :hook (org-mode . variable-pitch-mode))
 
 (use-package evil-org
