@@ -3,6 +3,7 @@
 ;;; Code:
 (require 'use-package)
 (require 'ebn-core)
+(require 'dired)
 
 ;; Basic
 ;; Setting this lower after early-init for shorter gc-pauses
@@ -54,10 +55,7 @@
   ("M-o" . ebn/open-line-above)
   ("M-§" . end-of-buffer)
   ("<f7>" . call-last-kbd-macro)
-  ("M-z" . zap-up-to-char)
-  (:map
-   dired-mode-map
-   ("-" . ebn/dired-up-directory)))
+  ("M-z" . zap-up-to-char))
 
 (use-package ebn-core
   :ensure nil
@@ -77,19 +75,19 @@
  :config
  (setq modus-themes-vivendi-color-overrides
        '((bg-main . "#0C0F12")
-	 (bg-focused . "#0C0F12")))
- (setq modus-themes-org-agenda
-      '((header-block . (variable-pitch scale-title))
-        (header-date . (grayscale bold-today))
-        (scheduled . uniform)
-        (habit . simplified)))
- (setq modus-themes-org-blocks '(nil))
- (setq modus-themes-headings
+	 (bg-focused . "#0C0F12"))
+       modus-themes-org-agenda
+       '((header-block . (variable-pitch scale-title))
+         (header-date . (grayscale bold-today))
+         (scheduled . uniform)
+         (habit . simplified))
+       modus-themes-org-blocks '(nil)
+       modus-themes-headings
        '((1 . (background overline))
          (2 . (background overline))
          (3 . (background rainbow overline))
-         (t . (background rainbow no-bold overline))))
- (setq modus-themes-variable-pitch-ui nil
+         (t . (background rainbow no-bold overline)))
+       modus-themes-variable-pitch-ui nil
        modus-themes-variable-pitch-headings nil
        modus-themes-scale-headings t
        modus-themes-scale-1 1.1
@@ -150,7 +148,11 @@
   :config
   (setq dired-recursive-copies t
 	dired-recursive-deletes t
-	dired-dwim-target t))
+	dired-dwim-target t)
+  :bind*			    
+  (:map
+   dired-mode-map
+   ("-" . ebn/dired-up-directory)))
 
 (use-package cdlatex
   :defer t)
@@ -180,34 +182,27 @@
 	    (calendar-last-day-of-month month year)))
       (= day last-day-of-month)))
   :config
-  (general-define-key
-   :states 'normal
-   :prefix "SPC"
-   "n"  '(:ignore t :which-key "Notes")
-   "na" '(org-agenda :which-key "Agenda")
-   "no"  '(org-capture :which-key "Capture"))
-
-  (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org"))
-  (setq org-capture-templates
+  (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
+	org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
 	   "* TODO %?\n  %i\n  %a")
 	  ("j" "Journal" entry (file+datetree "~/org/journal.org")
 	   "* %?\nEntered on %U\n  %i\n  %a")
-	  ("r" "Roam node" function #'org-roam-capture)))
-  (setq org-image-actual-width nil)
-  (setq org-return-follows-link t)
-  (setq org-hide-emphasis-markers t)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.4))
-
-  (setq org-latex-listings 'minted
+	  ("r" "Roam node" function #'org-roam-capture))
+	org-image-actual-width nil
+	org-return-follows-link t
+	org-hide-emphasis-markers t
+	org-format-latex-options (plist-put org-format-latex-options :scale 1.4)
+	org-latex-listings 'minted
 	org-latex-packages-alist '(("" "minted"))
 	org-latex-pdf-process
 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
-	org-latex-tables-centered t)
-  (setq org-insert-heading-respect-content t)
-  :bind* (:map org-mode-map ("C-<return>" . org-meta-return))
+	org-latex-tables-centered t
+	org-insert-heading-respect-content t)
+  :bind*
+  (:map org-mode-map ("C-<return>" . org-meta-return))
   :hook (org-mode . variable-pitch-mode))
 
 (use-package org-roam
@@ -250,9 +245,9 @@
 					     (:results . "output")))
   (with-eval-after-load "org"
     (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-export-babel-evaluate nil)
-  (setq org-startup-with-inline-images t)
+  (setq org-confirm-babel-evaluate nil
+	org-export-babel-evaluate nil
+	org-startup-with-inline-images t)
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
 (use-package haskell-mode
@@ -342,22 +337,6 @@
 
 (use-package vterm
   :bind ("C-c C-t" . vterm-other-window))
-
-(use-package project
-  :config
-  (defun ebn/project-compile ()
-    (interactive)
-    (if compile-history
-	(recompile)
-      (call-interactively 'project-compile)))
-  (general-define-key
-   :prefix "C-c"
-   "p" '(:ignore)
-   "pc" '(ebn/project-compile :which-key "Compile")
-   "pt" '(gtags-find-tag :which-key "gtags-find")
-   "pp" '(project-switch-project :which-key "Switch project")
-   ;"pb" '(project-switch-buffer :which-key "Switch project buffer")
-   "pf" '(project-find-file :which-key "Find project file")))
 
 (use-package cc-mode
   :ensure nil
