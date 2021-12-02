@@ -98,7 +98,7 @@ in {
       xclip
 
       # ob-jupyter
-      (python38.withPackages(ps: [ ps.jupyter]))
+      (python38.withPackages(ps: [ ps.jupyter ps.python-lsp-server ]))
 
       # agda
       haskellPackages.Agda
@@ -107,6 +107,9 @@ in {
       gcc
       ccls
       global
+
+      # python
+      yapf
     ];
   };
 }

@@ -241,6 +241,15 @@
   :config
   (setq sage-shell:set-ipython-version-on-startup nil))
 
+(use-package elpy
+  :ensure t
+  :defer t
+  :init
+  (advice-add 'python-mode :before 'elpy-enable))
+
+(use-package yapfify
+  :ensure t)
+
 (use-package ob-sagemath
   :ensure t
   :config
@@ -306,13 +315,17 @@
 (use-package eglot
   :defer t
   :hook ((haskell-mode . eglot-ensure)
-	 (c-mode . eglot-ensure))
+	 (c-mode . eglot-ensure)
+	 (python-mode . eglot-ensure))
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
   (eglot-confirm-server-initiated-edits nil)
   (eldoc-idle-delay 1)
   :config
+  (add-to-list 'eglot-server-programs
+             `(sage-shell:sage-mode . ("pyls" "-v" "--tcp" "--host"
+				       "localhost" "--port" :autoport)))
   :bind (:map eglot-mode-map ("C-c C-a" . eglot-code-actions)))
 
 (use-package envrc
