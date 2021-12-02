@@ -126,8 +126,10 @@
   (recentf-mode)
   :bind
   ("C-c r" . consult-recent-file)
-  ("C-c f" . consult-ripgrep) 
-  ("C-c t" . gtags-find-tag))
+  ("C-c f" . consult-ripgrep)
+  ("C-c l" . consult-line)
+  ("C-c t" . gtags-find-tag)
+  ("C-x b" . consult-buffer))
 
 (use-package orderless
   :init
@@ -201,6 +203,7 @@
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
 	org-latex-tables-centered t
 	org-insert-heading-respect-content t)
+  
   :bind*
   (:map org-mode-map ("C-<return>" . org-meta-return))
   :hook (org-mode . variable-pitch-mode))
