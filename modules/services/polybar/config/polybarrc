@@ -28,8 +28,8 @@ underline-color = #00f
 border-size = 0
 border-color = ${colors.gray}
 
-padding-left = 2
-padding-right = 2
+padding-left = 0
+padding-right = 0
 module-margin-left = 0
 module-margin-right = 0
 
