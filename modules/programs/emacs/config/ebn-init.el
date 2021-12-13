@@ -15,6 +15,21 @@
 ;(add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 
+(defun ebn/kill-dwim ()
+  (interactive)
+  (if (region-active-p)
+      (kill-region (region-beginning) (region-end) nil)
+    (kill-line)))
+
+(defun ebn/jump-to-mark ()
+  (interactive)
+  (goto-char (mark-marker)))
+
+(defun ebn/cht.sh (query)
+  "QUERY cht.sh"
+  (interactive "sQuery: ")
+  (eww (concat "https://cht.sh/" query)))
+
 ;; Packages
 (use-package emacs
   :init
@@ -40,6 +55,7 @@
   (delete-selection-mode t)
   (auto-save-visited-mode t)
   (save-place-mode t)
+  (initial-scratch-message nil)
   
   :delight
   (auto-fill-function " AF")
@@ -55,15 +71,22 @@
   ("M-o" . ebn/open-line-above)
   ("M-§" . end-of-buffer)
   ("<f7>" . call-last-kbd-macro)
-  ("M-z" . zap-up-to-char))
+  ("M-z" . zap-up-to-char)
+  ("C-k" . ebn/kill-dwim)
+  ("M-1" . delete-other-windows)
+  ("M-3" . split-window-right)
+  ("C-'" . ebn/jump-to-mark))
 
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "Iosevka Custom" :size 20 :weight 'normal)
+  ;(ebn/font :name "Iosevka Custom" :size 20 :weight 'normal)
+  ;(ebn/font :name "Victor Mono" :size 15 :weight 'semibold)
+  (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal)
+  ;(ebn/font :name "progsole" :size 20 :weight 'normal)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 24)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
- 
+
 (use-package which-key
   :ensure nil
   :diminish)
@@ -262,12 +285,13 @@
 	org-startup-with-inline-images t)
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
+(use-package csharp-mode
+  :ensure t)
+
 (use-package haskell-mode
   :defer t
   :commands (haskell-mode) 
-  :init
-  (load-library "haskell-mode-autoloads")
-  
+ 
   :mode
   (("\\.hs\\'" . haskell-mode)
    ("\\.cabal\\'" . haskell-cabal-mode))
@@ -280,6 +304,7 @@
   (haskell-font-lock-symbols t)
   
   :config
+  (load-library "haskell-mode-autoloads")
   (require 'haskell-interactive-mode)
 
   (defun haskell-mode-after-save-handler ())
@@ -290,7 +315,7 @@
 		(seq-find (lambda (x) (string-match-p (regexp-quote "ormolu") x))
 			  exec-path)))
       (make-process
-       :name "ormolu"
+       :name "ormolxu"
        :buffer "*ormolu-log*"
        :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
        :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
@@ -316,13 +341,16 @@
   :defer t
   :hook ((haskell-mode . eglot-ensure)
 	 (c-mode . eglot-ensure)
-	 (python-mode . eglot-ensure))
+	 (python-mode . eglot-ensure)
+	 (csharp-mode . eglot-ensure))
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
   (eglot-confirm-server-initiated-edits nil)
   (eldoc-idle-delay 1)
   :config
+  (add-to-list 'eglot-server-programs
+             `(csharp-mode . ("omnisharp" "-lsp" "--verbose")))
   (add-to-list 'eglot-server-programs
              `(sage-shell:sage-mode . ("pyls" "-v" "--tcp" "--host"
 				       "localhost" "--port" :autoport)))
@@ -383,14 +411,16 @@
   :config
   ; TODO: come up with better bindings for these, use super?
   (global-set-key (kbd "C--") 'mc/mark-all-like-this-dwim)
-  (global-set-key (kbd "C-'") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-c m") 'mc/mark-all-like-this-dwim)
   (global-set-key [(super down)] 'mc/mark-next-like-this))
 
 (use-package expand-region
   :ensure t
   :defer t
   :commands 'er/expand-region
-  :bind ("C-," . er/expand-region))
+  :bind
+  ("C-," . er/expand-region)
+  ("C-<return>" . er/expand-region))
 
 (use-package dot-mode
   :ensure t
@@ -420,13 +450,20 @@
   (defhydra increment/decrement-number-hydra (global-map "C-+")
     "Incremenet or decrement number at point"
     ("+" ebn/increment-number-at-point)
-    ("-" ebn/decrement-number-at-point))
-  )
+    ("-" ebn/decrement-number-at-point)))
 
 (use-package ox-hugo
   :ensure t
   :defer t
   :commands 'org-export-dispatch
   :after 'ox)
+
+(use-package gnus
+  :config
+  (setq
+   user-mail-address "erikbackman@users.noreply.github.com"
+   user-full-name "Erik Bäckman")
+  (setq gnus-select-method '(nntp "news.gnus.org"))
+  (add-to-list 'gnus-secondary-select-methods '(nnrss "https://haskellweekly.news/podcast.rss")))
 
 ;;; ebn-init.el ends here
