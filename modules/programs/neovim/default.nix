@@ -21,7 +21,11 @@ in with lib; {
         packages.myVimPackage = with pkgs.vimPlugins; {
           start = [
             ebn 
-            completion-nvim
+            #completion-nvim
+            nvim-cmp
+            cmp_luasnip
+            cmp-nvim-lsp
+            nvim-treesitter
             fennel-vim
             #aniseed
             fzf-vim
