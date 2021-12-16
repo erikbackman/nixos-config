@@ -4,7 +4,8 @@
       alert = "#ddb566";
       #background = "#0a0d10";
       #background = "#14191e";
-      background = "#0C0F12";
+      #background = "#0c0f12";
+      background = "#080B0E";
       bg-dark = "#181a23";
       black = "#000";
       foreground = "#e6e8ee";

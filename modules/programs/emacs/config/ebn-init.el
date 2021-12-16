@@ -56,12 +56,14 @@
   (auto-save-visited-mode t)
   (save-place-mode t)
   (initial-scratch-message nil)
-  
+
   :delight
   (auto-fill-function " AF")
   (visual-line-mode)
 
-  :hook (prog-mode . superword-mode)
+  :hook ((prog-mode . superword-mode)
+	 (fundamental-mode . repeat-mode)
+	 (prog-mode . repeat-mode))
   
   :bind
   ("C-j" . join-line)
@@ -97,8 +99,8 @@
  (show-paren-mode 1)
  :config
  (setq modus-themes-vivendi-color-overrides
-       '((bg-main . "#0C0F12")
-	 (bg-focused . "#0C0F12"))
+       '((bg-main . "#080B0E")
+	 (bg-focused . "#080B0E"))
        modus-themes-org-agenda
        '((header-block . (variable-pitch scale-title))
          (header-date . (grayscale bold-today))
@@ -124,6 +126,23 @@
        modus-themes-paren-match '(bold intense)
        modus-themes-syntax '(nil)
        modus-themes-links '(faint))
+
+ (defun my-modus-themes-custom-faces ()
+   (set-face-attribute 'mode-line nil
+                    :background "#000"
+                    :foreground "white"
+                    :box '(:line-width 8 :color "#000")
+                    :overline nil
+                    :underline nil)
+
+   (set-face-attribute 'mode-line-inactive nil
+                    :background "#0c0f12"
+                    :foreground "white"
+                    :box '(:line-width 8 :color "#0c0f12")
+                    :overline nil
+                    :underline nil))
+
+ (add-hook 'modus-themes-after-load-theme-hook #'my-modus-themes-custom-faces)
  (when window-system (set-frame-size (selected-frame) 90 50))
  (modus-themes-load-vivendi))
 
@@ -435,22 +454,22 @@
   :mode ("\\.el\\'" . emacs-lisp-mode)
   :hook (emacs-lisp-mode . enable-paredit-mode))
 
-(use-package hydra
-  :ensure t
-  :config
-  (defhydra move-down (global-map "C-n")
-    "Move down"
-    ("n" next-line))
-  (defhydra move-up (global-map "C-p")
-    "Move up"
-    ("p" previous-line))
-  (defhydra undo-hydra (global-map "C-x u")
-    "Undo"
-    ("u" undo))
-  (defhydra increment/decrement-number-hydra (global-map "C-+")
-    "Incremenet or decrement number at point"
-    ("+" ebn/increment-number-at-point)
-    ("-" ebn/decrement-number-at-point)))
+;; (use-package hydra
+;;   :ensure t
+;;   :config
+;;   (defhydra move-down (global-map "C-n")
+;;     "Move down"
+;;     ("n" next-line))
+;;   (defhydra move-up (global-map "C-p")
+;;     "Move up"
+;;     ("p" previous-line))
+;;   (defhydra undo-hydra (global-map "C-x u")
+;;     "Undo"
+;;     ("u" undo))
+;;   (defhydra increment/decrement-number-hydra (global-map "C-+")
+;;     "Incremenet or decrement number at point"
+;;     ("+" ebn/increment-number-at-point)
+;;     ("-" ebn/decrement-number-at-point)))
 
 (use-package ox-hugo
   :ensure t
@@ -463,7 +482,8 @@
   (setq
    user-mail-address "erikbackman@users.noreply.github.com"
    user-full-name "Erik Bäckman")
-  (setq gnus-select-method '(nntp "news.gnus.org"))
-  (add-to-list 'gnus-secondary-select-methods '(nnrss "https://haskellweekly.news/podcast.rss")))
+  (setq gnus-select-method '(nntp "news.gmane.io"))
+  (add-to-list 'gnus-secondary-select-methods '(nnrss "https://haskellweekly.news/podcast.rss"))
+  )
 
 ;;; ebn-init.el ends here
