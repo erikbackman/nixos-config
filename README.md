@@ -10,9 +10,6 @@
 **Old screenshots**
 ![](../assets/v2-semi-clean.png)
 
-![](../assets/busy2.png)
-![](../assets/clean2.png)
-
 |            |                |
 |------------|----------------|
 | *OS*       | NixOS          |
