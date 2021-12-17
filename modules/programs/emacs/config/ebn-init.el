@@ -30,6 +30,17 @@
   (interactive "sQuery: ")
   (eww (concat "https://cht.sh/" query)))
 
+(defun ebn/comment-or-uncomment ()
+  (interactive)
+  (if (region-active-p)
+      (comment-or-uncomment-region (region-beginning)
+				   (region-end))
+    (save-excursion
+      (move-beginning-of-line nil)
+      (mark-paragraph)
+      (comment-or-uncomment-region (region-beginning)
+				   (region-end)))))
+
 ;; Packages
 (use-package emacs
   :init
@@ -77,15 +88,13 @@
   ("C-k" . ebn/kill-dwim)
   ("M-1" . delete-other-windows)
   ("M-3" . split-window-right)
-  ("C-'" . ebn/jump-to-mark))
+  ("C-'" . ebn/jump-to-mark)
+  )
 
 (use-package ebn-core
   :ensure nil
   :config
-  ;(ebn/font :name "Iosevka Custom" :size 20 :weight 'normal)
-  ;(ebn/font :name "Victor Mono" :size 15 :weight 'semibold)
   (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal)
-  ;(ebn/font :name "progsole" :size 20 :weight 'normal)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 24)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
@@ -409,7 +418,8 @@
   (:map c-mode-map
 	("C-c o" . ff-find-other-file)
 	("C-c c" . project-compile)
-	("C-c C-c" . comment-or-uncomment-region)))
+	("C-c u" . ebn/comment-or-uncomment))
+   )
 
 (use-package gtags
   :ensure nil)
@@ -454,36 +464,10 @@
   :mode ("\\.el\\'" . emacs-lisp-mode)
   :hook (emacs-lisp-mode . enable-paredit-mode))
 
-;; (use-package hydra
-;;   :ensure t
-;;   :config
-;;   (defhydra move-down (global-map "C-n")
-;;     "Move down"
-;;     ("n" next-line))
-;;   (defhydra move-up (global-map "C-p")
-;;     "Move up"
-;;     ("p" previous-line))
-;;   (defhydra undo-hydra (global-map "C-x u")
-;;     "Undo"
-;;     ("u" undo))
-;;   (defhydra increment/decrement-number-hydra (global-map "C-+")
-;;     "Incremenet or decrement number at point"
-;;     ("+" ebn/increment-number-at-point)
-;;     ("-" ebn/decrement-number-at-point)))
-
 (use-package ox-hugo
   :ensure t
   :defer t
   :commands 'org-export-dispatch
   :after 'ox)
-
-(use-package gnus
-  :config
-  (setq
-   user-mail-address "erikbackman@users.noreply.github.com"
-   user-full-name "Erik Bäckman")
-  (setq gnus-select-method '(nntp "news.gmane.io"))
-  (add-to-list 'gnus-secondary-select-methods '(nnrss "https://haskellweekly.news/podcast.rss"))
-  )
 
 ;;; ebn-init.el ends here
