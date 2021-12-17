@@ -75,21 +75,21 @@
   :hook ((prog-mode . superword-mode)
 	 (fundamental-mode . repeat-mode)
 	 (prog-mode . repeat-mode))
-  
+
   :bind
-  ("C-j" . join-line)
-  ("M-u" . upcase-dwim)
-  ("C-x k" . ebn/kill-current-buffer)
-  ("C-o" . ebn/open-line-below)
-  ("M-o" . ebn/open-line-above)
-  ("M-§" . end-of-buffer)
-  ("<f7>" . call-last-kbd-macro)
-  ("M-z" . zap-up-to-char)
-  ("C-k" . ebn/kill-dwim)
-  ("M-1" . delete-other-windows)
-  ("M-3" . split-window-right)
-  ("C-'" . ebn/jump-to-mark)
-  )
+  (:map global-map 
+	("C-j" . join-line)
+	("M-u" . upcase-dwim)
+	("C-x k" . ebn/kill-current-buffer)
+	("C-o" . ebn/open-line-below)
+	("M-o" . ebn/open-line-above)
+	("M-§" . end-of-buffer)
+	("<f7>" . call-last-kbd-macro)
+	("M-z" . zap-up-to-char)
+	("C-k" . ebn/kill-dwim)
+	("M-1" . delete-other-windows)
+	("M-3" . split-window-right)
+	("C-'" . ebn/jump-to-mark)))
 
 (use-package ebn-core
   :ensure nil
