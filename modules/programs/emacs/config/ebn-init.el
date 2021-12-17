@@ -211,7 +211,17 @@
   :defer t)
 
 (use-package auctex
-  :defer t)
+  :mode
+  ("\\.tex\\'" . latex-mode)
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (setq TeX-PDF-mode t)
+  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex))
 
 (use-package org
   :defer t
@@ -219,7 +229,6 @@
 	     org-agenda
 	     org-capture
 	     org-cdlatex-mode)
-  ;:hook (org-mode . org-cdlatex-mode)
   :init
   (defun my/org-prettify-buffer ()
     (interactive)
@@ -257,7 +266,9 @@
   
   :bind*
   (:map org-mode-map ("C-<return>" . org-meta-return))
-  :hook (org-mode . variable-pitch-mode))
+  :hook ((org-mode . variable-pitch-mode)
+	 (org-mode . org-cdlatex-mode)
+	 ))
 
 (use-package org-roam
   :defer t
