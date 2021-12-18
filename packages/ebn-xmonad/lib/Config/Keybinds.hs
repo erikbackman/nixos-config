@@ -4,23 +4,20 @@
 
 module Config.Keybinds where
 
-import Config.Applications (AppConfig (..), maybeSpawn)
+import Config.Applications (AppConfig (..), maybeSpawn, isInstance, App, appCommand)
 import Data.Map (Map)
 import Graphics.X11
 import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.), kill)
-import XMonad.Hooks.ManageDocks (Direction2D (D, R, U))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import XMonad.Layout.MultiToggle (Toggle (..))
-import XMonad.Layout.WindowNavigation (Direction2D (L), Navigate (Go))
 import XMonad.Actions.WithAll (killAll)
-import XMonad.Prompt.Window
-
 import qualified Data.Map as M
 import qualified XMonad.StackSet as W
 import XMonad.Prompt (def, bgColor, XPConfig (..), height, promptBorderWidth)
 import XMonad.Prompt.FuzzyMatch (fuzzyMatch)
 import System.Exit (exitSuccess)
 import XMonad.Core (io)
+import XMonad.Actions.WindowGo (runOrRaise)
 
 data KeybindConfig l = KeybindConfig
   { appConfig :: AppConfig,
@@ -36,12 +33,10 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
       ((modm, xK_c), kill),
       ((modm .|. shiftMask, xK_c), killAll),
       ((modm, xK_p), maybeSpawn (launcher apps)),
-      ((modm, xK_o), windowPrompt xpConf Goto wsWindows),
+      ((modm, xK_6), runOrRaise' $ visualEditor apps),
+      ((modm, xK_7), runOrRaise' $ browser apps),
+      ((modm, xK_8), runOrRaise' $ terminal apps),
       ((modm, xK_space), sendMessage NextLayout),
-      ((modm, xK_h), sendMessage $ Go L),
-      ((modm, xK_j), sendMessage $ Go D),
-      ((modm, xK_k), sendMessage $ Go U),
-      ((modm, xK_l), sendMessage $ Go R),
       ((modm, xK_n), windows W.focusUp),
       ((modm, xK_m), windows W.focusDown),
       ((modm, xK_Return), windows W.swapMaster),
@@ -71,3 +66,7 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
         searchPredicate = fuzzyMatch,
         maxComplRows = Just 4
       }
+
+    runOrRaise' :: Maybe App -> X ()
+    runOrRaise' Nothing = pure ()
+    runOrRaise' (Just app) = runOrRaise (appCommand app) (isInstance app)

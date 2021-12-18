@@ -5,7 +5,6 @@
 
 module Config where
 
-import Data.Maybe (fromMaybe)
 import XMonad
 import XMonad.Actions.MessageFeedback
 import XMonad.Actions.SpawnOn (manageSpawn)
@@ -35,9 +34,9 @@ main = xmonad . ewmh . docks . cfg =<< polybar
         { manageHook = App.manageApps <+> manageSpawn,
           logHook = dynamicLogWithPP (polybarHook dbus),
           startupHook = myStartupHook,
-          terminal = fromMaybe "xterm" $ App.terminal apps,
+          terminal = maybe "xterm" App.appCommand $ App.terminal apps,
           modMask = mod4Mask,
-          borderWidth = 2,
+          borderWidth = 1,
           keys = keybinds . KeybindConfig apps,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,
@@ -48,9 +47,14 @@ main = xmonad . ewmh . docks . cfg =<< polybar
 
     apps =
       defaultAppConfig
-        { App.terminal = Just "kitty",
-          App.launcher = Just "rofi -matching fuzzy -show drun -modi drun,run -show-icons",
-          App.mailClient = Just "claws-mail"
+        { App.terminal = Just (App.ClassApp "kitty" "kitty"),
+          App.launcher = Just
+          (App.NameApp
+            "rofi"
+            "rofi -matching fuzzy -show drun -modi drun,run -show-icons"),
+          App.mailClient = Just (App.ClassApp "Claws-mail" "claws-mail"),
+          App.visualEditor = Just (App.ClassApp "Emacs" "emacs"),
+          App.browser = Just (App.ClassApp "Brave-browser" "brave")
         }
 
     myStartupHook :: X ()
@@ -96,7 +100,7 @@ myLayouts =
     ratio = 1 / 2
     -- Percent of screen to increment by when resizing panes
     delta = 3 / 100 -- Gaps bewteen windows
-    gapSpaced = spacingRaw True (Border 5 5 5 5) True (Border 5 5 5 5) True
+    gapSpaced = spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True
     -- Per workspace layout
     --
     comLayout = onWorkspace comWs (tiled ||| full) 

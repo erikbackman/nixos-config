@@ -6,11 +6,11 @@ import XMonad.Hooks.ManageHelpers ((-?>), composeOne, isDialog, doCenterFloat, i
 import XMonad.Hooks.InsertPosition
 
 data AppConfig = AppConfig
-  { terminal :: !(Maybe String),
-    launcher :: !(Maybe String),
-    browser :: !(Maybe String),
-    visualEditor :: !(Maybe String),
-    mailClient :: !(Maybe String)
+  { terminal :: !(Maybe App),
+    launcher :: !(Maybe App),
+    browser :: !(Maybe App),
+    visualEditor :: !(Maybe App),
+    mailClient :: !(Maybe App)
   }
 
 type AppName = String
@@ -37,8 +37,8 @@ defaultAppConfig =
       mailClient = Nothing
     }
 
-maybeSpawn :: MonadIO m => Maybe String -> m ()
-maybeSpawn = maybe (pure ()) spawn
+maybeSpawn :: MonadIO m => Maybe App -> m ()
+maybeSpawn = maybe (pure ()) (spawn . appCommand)
 
 manageApps :: ManageHook
 manageApps =
@@ -57,6 +57,11 @@ manageApps =
       pure True -?> tileBelow
     ]
 
+appCommand :: App -> String
+appCommand (ClassApp _ s) = s
+appCommand (TitleApp _ s) = s
+appCommand (NameApp _ s) = s
+    
 tileBelow :: ManageHook
 tileBelow = insertPosition Below Newer
 
@@ -72,7 +77,7 @@ isInstance (TitleApp t _) = title =? t
 isInstance (NameApp n _) = appName =? n
 
 isBrowserDialog :: Query Bool
-isBrowserDialog = isDialog <&&> className =? "chromium-browser"
+isBrowserDialog = isDialog <&&> className =? "Brave-browser"
 
 isFileChooserDialog :: Query Bool
 isFileChooserDialog = isRole =? "GtkFileChooserDialog"
