@@ -1,22 +1,22 @@
 set recolor true
 
-set default-bg '#0C0F12'
+set default-bg '#080B0E'
 set default-fg '#e6e8ee'
 
 set recolor-darkcolor '#e6e8ee'
-set recolor-lightcolor '#0C0F12'
+set recolor-lightcolor '#080B0E'
 
 set font "JetBrains Mono 12"
 
-set inputbar-bg '#0C0F12'
+set inputbar-bg '#080B0E'
 set inputbar-fg '#e6e8ee'
 
-set statusbar-bg '#0C0F12'
+set statusbar-bg '#080B0E'
 set statusbar-fg '#e6e8ee'
 
-set notification-bg '#0C0F12'
+set notification-bg '#080B0E'
 set notification-fg '#e6e8ee'
 
-set completion-bg '#0C0F12'
+set completion-bg '#080B0E'
 set completion-fg '#e6e8ee'
 set completion-highlight-bg '#7F7F7F'
