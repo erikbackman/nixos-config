@@ -41,6 +41,21 @@
       (comment-or-uncomment-region (region-beginning)
 				   (region-end)))))
 
+(defun ebn/setup-modeline ()
+    (set-face-attribute 'mode-line nil
+                    :background "#000"
+                    :foreground "white"
+                    :box '(:line-width 8 :color "#000")
+                    :overline nil
+                    :underline nil)
+
+   (set-face-attribute 'mode-line-inactive nil
+                    :background "#0c0f12"
+                    :foreground "white"
+                    :box '(:line-width 8 :color "#0c0f12")
+                    :overline nil
+                    :underline nil))
+
 ;; Packages
 (use-package emacs
   :init
@@ -94,7 +109,9 @@
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "JetBrains Mono" :size 15 :weight 'normal)
+  ;(ebn/font :name "JetBrains Mono" :size 18 :weight 'normal)
+  ;(ebn/font :name "JuliaMono" :size 18 :weight 'normal)
+  (ebn/font :name "Victor Mono" :size 18 :weight 'medium)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 24)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
@@ -103,57 +120,46 @@
   :diminish)
 
 (use-package modus-themes
- :ensure t
- :init
- (show-paren-mode 1)
- :config
- (setq modus-themes-vivendi-color-overrides
-       '((bg-main . "#080B0E")
-	 (bg-focused . "#080B0E"))
-       modus-themes-org-agenda
-       '((header-block . (variable-pitch scale-title))
-         (header-date . (grayscale bold-today))
-         (scheduled . uniform)
-         (habit . simplified))
-       modus-themes-org-blocks '(nil)
-       modus-themes-headings
-       '((1 . (background overline))
-         (2 . (background overline))
-         (3 . (background rainbow overline))
-         (t . (background rainbow no-bold overline)))
-       modus-themes-variable-pitch-ui nil
-       modus-themes-variable-pitch-headings nil
-       modus-themes-scale-headings t
-       modus-themes-scale-1 1.1
-       modus-themes-scale-2 1.15
-       modus-themes-scale-3 1.21
-       modus-themes-scale-4 1.27
-       modus-themes-scale-title 1.33
-       modus-themes-scale-small 0.9
-       modus-themes-mixed-fonts t
-       modus-themes-mode-line '(3d)
-       modus-themes-paren-match '(bold intense)
-       modus-themes-syntax '(nil)
-       modus-themes-links '(faint))
+  :ensure t
+  :init
+  (show-paren-mode 1)
+  :config
+  
+  (setq modus-themes-vivendi-color-overrides
+	'((bg-main . "#080B0E")
+	  (bg-focused . "#080B0E"))
+	modus-themes-org-agenda
+	'((header-block . (variable-pitch scale-title))
+          (header-date . (grayscale bold-today))
+          (scheduled . uniform)
+          (habit . simplified))
+	modus-themes-org-blocks '(grayscale)
+	modus-themes-headings
+	'((1 . (background overline))
+          (2 . (background overline))
+          (3 . (background rainbow overline))
+          (t . (background rainbow no-bold overline)))
+	modus-themes-variable-pitch-ui nil
+	modus-themes-variable-pitch-headings nil
+	modus-themes-scale-headings t
+	modus-themes-scale-1 1.1
+	modus-themes-scale-2 1.15
+	modus-themes-scale-3 1.21
+	modus-themes-scale-4 1.27
+	modus-themes-scale-title 1.33
+	modus-themes-scale-small 0.9
+	modus-themes-mixed-fonts t
+	modus-themes-mode-line '(3d)
+	modus-themes-paren-match '(bold intense)
+	modus-themes-syntax '(nil)
+	modus-themes-italic-constructs t
+	modus-themes-links '(faint))
 
- (defun my-modus-themes-custom-faces ()
-   (set-face-attribute 'mode-line nil
-                    :background "#000"
-                    :foreground "white"
-                    :box '(:line-width 8 :color "#000")
-                    :overline nil
-                    :underline nil)
-
-   (set-face-attribute 'mode-line-inactive nil
-                    :background "#0c0f12"
-                    :foreground "white"
-                    :box '(:line-width 8 :color "#0c0f12")
-                    :overline nil
-                    :underline nil))
-
- (add-hook 'modus-themes-after-load-theme-hook #'my-modus-themes-custom-faces)
- (when window-system (set-frame-size (selected-frame) 90 50))
- (modus-themes-load-vivendi))
+  (add-hook 'modus-themes-after-load-theme-hook #'ebn/setup-modeline)
+  (add-hook 'modus-themes-after-load-theme-hook
+	    (lambda () (set-face-italic 'font-lock-keyword-face t)))
+  (when window-system (set-frame-size (selected-frame) 90 50))
+  (modus-themes-load-vivendi))
 
 (use-package diminish
   :ensure t)
@@ -262,13 +268,15 @@
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
 	org-latex-tables-centered t
-	org-insert-heading-respect-content t)
+	org-insert-heading-respect-content t
+
+	)
+  
   
   :bind*
   (:map org-mode-map ("C-<return>" . org-meta-return))
   :hook ((org-mode . variable-pitch-mode)
-	 (org-mode . org-cdlatex-mode)
-	 ))
+	 (org-mode . org-cdlatex-mode)))
 
 (use-package org-roam
   :defer t
@@ -387,12 +395,14 @@
   (eglot-autoreconnect nil)
   (eglot-confirm-server-initiated-edits nil)
   (eldoc-idle-delay 1)
+  (eldoc-echo-area-display-truncation-message nil)
+  (eldoc-echo-area-use-multiline-p 3)
   :config
   (add-to-list 'eglot-server-programs
-             `(csharp-mode . ("omnisharp" "-lsp" "--verbose")))
+               `(csharp-mode . ("omnisharp" "-lsp" "--verbose")))
   (add-to-list 'eglot-server-programs
-             `(sage-shell:sage-mode . ("pyls" "-v" "--tcp" "--host"
-				       "localhost" "--port" :autoport)))
+               `(sage-shell:sage-mode . ("pyls" "-v" "--tcp" "--host"
+					 "localhost" "--port" :autoport)))
   :bind (:map eglot-mode-map ("C-c C-a" . eglot-code-actions)))
 
 (use-package envrc
@@ -429,8 +439,7 @@
   (:map c-mode-map
 	("C-c o" . ff-find-other-file)
 	("C-c c" . project-compile)
-	("C-c u" . ebn/comment-or-uncomment))
-   )
+	("C-c u" . ebn/comment-or-uncomment)))
 
 (use-package gtags
   :ensure nil)
@@ -462,12 +471,6 @@
   ("C-," . er/expand-region)
   ("C-<return>" . er/expand-region))
 
-(use-package dot-mode
-  :ensure t
-  :diminish
-  :bind
-  ("C-." . dot-mode-execute))
-
 (use-package paredit
   :ensure t
   :defer t
@@ -480,5 +483,25 @@
   :defer t
   :commands 'org-export-dispatch
   :after 'ox)
+
+(use-package erc
+  :config
+  (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))))
+
+(use-package popper
+  :ensure t
+  :bind (("C-`"   . popper-toggle-latest)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+	  "\\*eldoc\\*"
+          help-mode
+          compilation-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1))
 
 ;;; ebn-init.el ends here
