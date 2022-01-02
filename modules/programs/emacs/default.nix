@@ -24,7 +24,9 @@ let
         config = configTxt;
         alwaysEnsure = true;
         package = package; 
-        extraEmacsPackages = epkgs: with epkgs; [ vterm init agda2-mode use-package pkgs.ebn.ebn-core-el ];
+        extraEmacsPackages = epkgs: with epkgs; [
+          vterm init agda2-mode use-package pkgs.ebn.ebn-core-el
+        ];
         override = epkgs: epkgs // {
           kaolin-themes = pkgs.ebn.kaolin-themes;
         }; 

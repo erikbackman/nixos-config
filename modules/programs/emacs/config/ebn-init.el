@@ -14,6 +14,7 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 ;(add-hook 'after-init-hook #'ebn/display-startup-time)
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
+(add-to-list 'load-path "~/.emcas.d/lisp")
 
 (defun ebn/kill-dwim ()
   (interactive)
@@ -30,31 +31,52 @@
   (interactive "sQuery: ")
   (eww (concat "https://cht.sh/" query)))
 
+(defun ebn/comment-or-uncomment-fn ()
+  (interactive)
+  (save-excursion
+    (end-of-defun -1)
+    (set-mark (point))
+    (end-of-defun)  
+    (comment-or-uncomment-region
+     (region-beginning)
+     (region-end))))
+
 (defun ebn/comment-or-uncomment ()
   (interactive)
+  ;; Comment or uncomment active region
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning)
 				   (region-end))
     (save-excursion
-      (move-beginning-of-line nil)
-      (mark-paragraph)
-      (comment-or-uncomment-region (region-beginning)
-				   (region-end)))))
+      ;; When cursor is at a function definition
+      ;; comment or uncomment the entire functions
+      (if (equal (symbol-at-point) 'defun)
+	  (ebn/comment-or-uncomment-fn)
+	;; Else comment or uncomment the line
+	(move-beginning-of-line nil)
+	(set-mark (point))
+	(move-end-of-line nil)
+	(comment-or-uncomment-region (region-beginning)
+				     (region-end))))))
 
 (defun ebn/setup-modeline ()
-    (set-face-attribute 'mode-line nil
-                    :background "#000"
-                    :foreground "white"
-                    :box '(:line-width 8 :color "#000")
-                    :overline nil
-                    :underline nil)
+  (set-face-attribute
+   'mode-line nil
+   :background "#000"
+   :foreground "white"
+   :box '(:line-width 6 :color "#000")
+   :overline nil
+   :underline nil)
 
-   (set-face-attribute 'mode-line-inactive nil
-                    :background "#0c0f12"
-                    :foreground "white"
-                    :box '(:line-width 8 :color "#0c0f12")
-                    :overline nil
-                    :underline nil))
+  (set-face-attribute
+   'mode-line-inactive nil
+   :background "#090a0b"
+   :foreground "white"
+   :box '(:line-width 6 :color "#090a0b")
+   :overline nil
+   :underline nil))
+
+;(set-face-attribute 'vertical-border nil :background nil :foreground "darkgray")
 
 ;; Packages
 (use-package emacs
@@ -110,21 +132,32 @@
   :ensure nil
   :config
   ;(ebn/font :name "JetBrains Mono" :size 18 :weight 'normal)
-  ;(ebn/font :name "JuliaMono" :size 18 :weight 'normal)
+  ;(ebn/font :name "JuliaMono" :size 18 :weight 'regular)
   (ebn/font :name "Victor Mono" :size 18 :weight 'medium)
-  (ebn/font-variable-pitch :name "CMU Concrete" :size 24)
+  (ebn/font-variable-pitch :name "CMU Concrete" :size 21)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
 (use-package which-key
   :ensure nil
   :diminish)
 
-(use-package modus-themes
+(use-package kaolin-themes
   :ensure t
+  :config
+  (load-theme 'kaolin-aurora t nil)
+  (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
+  (set-face-attribute 'fringe nil :background nil)
+  (set-face-attribute 'fringe nil :background nil)
+  (set-face-attribute 'mode-line nil :background nil :box nil :overline "darkgray")
+  (set-face-attribute 'mode-line-inactive nil :background nil :box nil :foreground "darkgray" :overline "darkgray")
+  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "Green"))
+
+(use-package modus-themes
+  :ensure nil
+  :disabled t
   :init
   (show-paren-mode 1)
   :config
-  
   (setq modus-themes-vivendi-color-overrides
 	'((bg-main . "#080B0E")
 	  (bg-focused . "#080B0E"))
@@ -134,30 +167,36 @@
           (scheduled . uniform)
           (habit . simplified))
 	modus-themes-org-blocks '(grayscale)
-	modus-themes-headings
-	'((1 . (background overline))
-          (2 . (background overline))
-          (3 . (background rainbow overline))
-          (t . (background rainbow no-bold overline)))
+	modus-themes-headings nil
+	;; modus-themes-headings
+	;; '((1 . (background overline))
+        ;;   (2 . (background overline))
+        ;;   (3 . (background rainbow overline))
+        ;;   (t . (background rainbow no-bold overline)))
 	modus-themes-variable-pitch-ui nil
 	modus-themes-variable-pitch-headings nil
 	modus-themes-scale-headings t
-	modus-themes-scale-1 1.1
-	modus-themes-scale-2 1.15
-	modus-themes-scale-3 1.21
-	modus-themes-scale-4 1.27
+	modus-themes-scale-1 1.0
+	modus-themes-scale-2 1.0
+	modus-themes-scale-3 1.0
+	modus-themes-scale-4 1.0
 	modus-themes-scale-title 1.33
 	modus-themes-scale-small 0.9
 	modus-themes-mixed-fonts t
-	modus-themes-mode-line '(3d)
+	;modus-themes-mode-line '(3d)
 	modus-themes-paren-match '(bold intense)
-	modus-themes-syntax '(nil)
+	modus-themes-syntax '(faint)
 	modus-themes-italic-constructs t
+	modus-themes-bold-constructs nil
 	modus-themes-links '(faint))
+  (setq org-todo-keyword-faces
+	'(("TODO" . '(org-todo))))
 
-  (add-hook 'modus-themes-after-load-theme-hook #'ebn/setup-modeline)
   (add-hook 'modus-themes-after-load-theme-hook
-	    (lambda () (set-face-italic 'font-lock-keyword-face t)))
+	    (lambda ()
+	      (ebn/setup-modeline)
+	      (set-face-italic 'font-lock-keyword-face t)))
+  
   (when window-system (set-frame-size (selected-frame) 90 50))
   (modus-themes-load-vivendi))
 
@@ -268,11 +307,8 @@
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
 	org-latex-tables-centered t
-	org-insert-heading-respect-content t
-
-	)
-  
-  
+	org-insert-heading-respect-content t)
+    
   :bind*
   (:map org-mode-map ("C-<return>" . org-meta-return))
   :hook ((org-mode . variable-pitch-mode)
@@ -503,5 +539,8 @@
           compilation-mode))
   (popper-mode +1)
   (popper-echo-mode +1))
+
+(use-package rainbow-mode
+  :ensure t)
 
 ;;; ebn-init.el ends here

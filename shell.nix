@@ -28,8 +28,8 @@ in mkShell {
 
   inputsFrom = [ ebn-xmonad.env ];
   shellHook = ''
-    alias os-build="nixos-rebuild build --flake ."
-    alias os-test="sudo nixos-rebuild test --flake ."
-    alias os-switch="sudo nixos-rebuild switch --flake ."
+    alias nrb="nixos-rebuild build --flake ."
+    alias nrt="sudo nixos-rebuild test --flake ."
+    alias nrs="sudo nixos-rebuild switch --flake ."
   '';
 }

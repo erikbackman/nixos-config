@@ -7,16 +7,16 @@
 }:
 
 emacsPackages.melpaBuild rec {
-  pname = "kaolin-themes";
+  pname = "modus-themes";
   version = "1.6.4";
 
-  commit = "c5544e32ad799ad8d7204207e681f47a77c7b1e1";
+  commit = "1cff9f114526505b621111d7d68294c1d269bada";
   
   src = fetchFromGitHub {
     owner = "erikbackman";
-    repo = "emacs-kaolin-themes";
-    rev = "c5544e32ad799ad8d7204207e681f47a77c7b1e1";
-    sha256 = "1dv7hdhchgfz7siqi6m15ljwjqwn8abpqch306rp8w0678yd8p0p";
+    repo = "modus-themes";
+    rev = "2f5b7ccbc4d13500344b1e5c9fe1be88d3ca964b";
+    sha256 = "169ns1gy58a4gx3zl8kzg6ibxwr0vrfx2k6svyhyfv0xd1z0h404";
   };
 
   buildInputs = [
@@ -31,10 +31,10 @@ emacsPackages.melpaBuild rec {
   ];
 
   recipe = pkgs.writeText "recipe" ''
-    (kaolin-themes
-    :repo "erikbackman/emacs-kaolin-themes"
+    (modus-themes
+    :repo "erikbackman/emacs-modus-themes"
     :fetcher github
-    :files ("*.el" "themes/*.el"))
+    :branch "main")
   '';
 
   meta = with lib; {

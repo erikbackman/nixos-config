@@ -81,6 +81,7 @@
     lmmath
     proggyfonts
     tamsyn
+    julia-mono
   ];
 
   fonts.fontconfig = {
