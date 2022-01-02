@@ -4,10 +4,11 @@
 ![https://builtwithnix.org](https://img.shields.io/badge/Built_With-Nix-5277C3.svg?style=flat-square&logo=nixos&labelColor=41439a&logoColor=white)
 
 **Current screenshots**
-![](../assets/v3-clean.png)
-![](../assets/v4-busy.png)
+![](../assets/v5-busy.png)
 
 **Old screenshots**
+![](../assets/v3-clean.png)
+![](../assets/v4-busy.png)
 ![](../assets/v2-semi-clean.png)
 
 |            |                |
