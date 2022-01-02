@@ -1,7 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# OPTIONS_GHC -Wno-overflowed-literals #-}
 {-# OPTIONS_GHC -Wunused-imports #-}
-{-# LANGUAGE PartialTypeSignatures #-}
 
 module Config where
 
@@ -42,19 +40,17 @@ main = xmonad . ewmh . docks . cfg =<< polybar
           layoutHook = myLayouts,
           focusedBorderColor = "#bd93f9",
           normalBorderColor = "#434C5E",
-          workspaces = myWS
+          workspaces = workspaceIds
         }
 
     apps =
       defaultAppConfig
-        { App.terminal = Just (App.ClassApp "kitty" "kitty"),
-          App.launcher = Just
-          (App.NameApp
+        { App.terminal = Just $ App.ClassApp "kitty" "kitty",
+          App.launcher = Just $ App.NameApp
             "rofi"
-            "rofi -matching fuzzy -show drun -modi drun,run -show-icons"),
-          App.mailClient = Just (App.ClassApp "Claws-mail" "claws-mail"),
-          App.visualEditor = Just (App.ClassApp "Emacs" "emacs"),
-          App.browser = Just (App.ClassApp "Brave-browser" "brave")
+            "rofi -matching fuzzy -show drun -modi drun,run -show-icons",
+          App.visualEditor = Just $ App.ClassApp "Emacs" "emacs",
+          App.browser = Just $ App.ClassApp "Brave-browser" "brave"
         }
 
     myStartupHook :: X ()
@@ -62,20 +58,21 @@ main = xmonad . ewmh . docks . cfg =<< polybar
       setDefaultCursor xC_left_ptr
 
 -- Workspaces ---------------------------------------------------------------
-webWs = "I"
 
-devWs = "II"
+webWs = "web"
 
-comWs = "III"
+devWs = "dev"
 
-wrkWs = "IV"
+comWs = "com"
 
-sysWs = "V"
+wrkWs = "wrk"
 
-etcWs = "VI"
+sysWs = "sys"
 
-myWS :: [WorkspaceId]
-myWS = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
+etcWs = "etc"
+
+workspaceIds :: [WorkspaceId]
+workspaceIds = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
 
 myLayouts =
   avoidStruts
@@ -89,27 +86,21 @@ myLayouts =
     . wrkLayout
     $ (tiled ||| Mirror tiled ||| column3 ||| full)
   where
-    tiled = gapSpaced $ Tall nmaster delta ratio
+    tiled = gapSpaced $ Tall nmaster ratio_increment ratio
     full = gapSpaced Full
     column3 = gapSpaced $ ThreeColMid 1 (3 / 100) (1 / 2)
     float = simpleFloat
     mirrorTall = gapSpaced $ Mirror (Tall 1 (3 / 100) (1 / 2))
-    -- The default number of windows in the master pane
     nmaster = 1
-    -- Default proportion of screen occupied by master pane
     ratio = 1 / 2
-    -- Percent of screen to increment by when resizing panes
-    delta = 3 / 100 -- Gaps bewteen windows
-    gapSpaced = spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True
-    -- Per workspace layout
-    --
+    ratio_increment = 3 / 100
+    gapSpaced = spacingRaw False (Border 10 10 10 10) True (Border 10 10 10 10) True
+        
     comLayout = onWorkspace comWs (tiled ||| full) 
-
     devLayout = onWorkspace devWs (full ||| column3 ||| tiled ||| mirrorTall)
     webLayout = onWorkspace webWs (tiled ||| full)
     wrkLayout = onWorkspace wrkWs (tiled ||| full)
     etcLayout = onWorkspace etcWs float
-    -- Fullscreen
     fullScreenToggle = mkToggle (single NBFULL)
 
 tryResize :: ResizeDirectional -> Resize -> X ()

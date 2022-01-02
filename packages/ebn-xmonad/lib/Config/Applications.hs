@@ -9,8 +9,7 @@ data AppConfig = AppConfig
   { terminal :: !(Maybe App),
     launcher :: !(Maybe App),
     browser :: !(Maybe App),
-    visualEditor :: !(Maybe App),
-    mailClient :: !(Maybe App)
+    visualEditor :: !(Maybe App)
   }
 
 type AppName = String
@@ -33,8 +32,7 @@ defaultAppConfig =
     { terminal = Nothing,
       launcher = Nothing,
       browser = Nothing,
-      visualEditor = Nothing,
-      mailClient = Nothing
+      visualEditor = Nothing
     }
 
 maybeSpawn :: MonadIO m => Maybe App -> m ()
