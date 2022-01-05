@@ -7,12 +7,14 @@
 
 ;; Basic
 ;; Setting this lower after early-init for shorter gc-pauses
-(setq-default fill-column 80)
 (setq gc-cons-threshold (* 2 1000 1000)
       ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-;(add-hook 'after-init-hook #'ebn/display-startup-time)
+
+(setq-default fill-column 80)
+(setq global-mark-ring-max 2)
+
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 (add-to-list 'load-path "~/.emcas.d/lisp")
 
@@ -21,10 +23,6 @@
   (if (region-active-p)
       (kill-region (region-beginning) (region-end) nil)
     (kill-line)))
-
-(defun ebn/jump-to-mark ()
-  (interactive)
-  (goto-char (mark-marker)))
 
 (defun ebn/cht.sh (query)
   "QUERY cht.sh"
@@ -76,8 +74,6 @@
    :overline nil
    :underline nil))
 
-;(set-face-attribute 'vertical-border nil :background nil :foreground "darkgray")
-
 ;; Packages
 (use-package emacs
   :init
@@ -126,13 +122,13 @@
 	("C-k" . ebn/kill-dwim)
 	("M-1" . delete-other-windows)
 	("M-3" . split-window-right)
-	("C-'" . ebn/jump-to-mark)))
+	("C-0" . pop-global-mark)
+	("C-9" . forward-list)
+	("C-8" . backward-list)))
 
 (use-package ebn-core
   :ensure nil
   :config
-  ;(ebn/font :name "JetBrains Mono" :size 18 :weight 'normal)
-  ;(ebn/font :name "JuliaMono" :size 18 :weight 'regular)
   (ebn/font :name "Victor Mono" :size 18 :weight 'medium)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 21)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
@@ -216,16 +212,21 @@
   :config
   (vertico-mode))
 
-(use-package consult
+(use-package
+  consult
   :config
   (setq consult-preview-key nil)
   (recentf-mode)
+  (defun ebn/consult-buffer ()
+    (interactive)
+    (push-mark (point) t nil)
+    (consult-buffer))
   :bind
   ("C-c r" . consult-recent-file)
   ("C-c f" . consult-ripgrep)
   ("C-c l" . consult-line)
   ("C-c t" . gtags-find-tag)
-  ("C-x b" . consult-buffer))
+  ("C-x b" . ebn/consult-buffer))
 
 (use-package orderless
   :init
@@ -485,6 +486,7 @@
   :defer t
   :commands 'avy-goto-char-timer
   :config
+  (setq avy-timeout-seconds 0.4)
   :bind
   ("M-g g" . avy-goto-line)
   ("M-g c" . avy-goto-char-in-line)
