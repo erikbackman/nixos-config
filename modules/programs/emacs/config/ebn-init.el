@@ -141,7 +141,6 @@
   :ensure t
   :config
   (load-theme 'kaolin-aurora t nil)
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'mode-line nil :background nil :box nil :overline "darkgray")
@@ -290,6 +289,7 @@
 	    (calendar-last-day-of-month month year)))
       (= day last-day-of-month)))
   :config
+  (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
 	org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
