@@ -38,23 +38,25 @@ defaultAppConfig =
 maybeSpawn :: MonadIO m => Maybe App -> m ()
 maybeSpawn = maybe (pure ()) (spawn . appCommand)
 
-manageApps :: ManageHook
-manageApps =
+manageApps :: AppConfig -> ManageHook
+manageApps apps =
   composeOne
     [ resource =? "desktop_window" -?> doIgnore,
       resource =? "kdesktop" -?> doIgnore,
-      anyOf
-        [ isBrowserDialog,
-          isFileChooserDialog,
+      anyOf (
+        [ isFileChooserDialog,
           isDialog,
           isPopup,
           isSplash
-        ]
+        ] <> browser'
+        )
         -?> doCenterFloat,
       isFullscreen -?> doFullFloat,
       pure True -?> tileBelow
     ]
-
+    where
+      browser' = maybe mempty (pure . isInstance) (browser apps)
+                      
 appCommand :: App -> String
 appCommand (ClassApp _ s) = s
 appCommand (TitleApp _ s) = s
@@ -74,8 +76,8 @@ isInstance (ClassApp c _) = className =? c
 isInstance (TitleApp t _) = title =? t
 isInstance (NameApp n _) = appName =? n
 
-isBrowserDialog :: Query Bool
-isBrowserDialog = isDialog <&&> className =? "Brave-browser"
+isClassDialog :: String -> Query Bool
+isClassDialog name = isDialog <&&> className =? name
 
 isFileChooserDialog :: Query Bool
 isFileChooserDialog = isRole =? "GtkFileChooserDialog"
