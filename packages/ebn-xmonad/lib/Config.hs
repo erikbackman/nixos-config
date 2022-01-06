@@ -29,7 +29,7 @@ main = xmonad . ewmh . docks . cfg =<< polybar
   where
     cfg dbus =
       def
-        { manageHook = App.manageApps <+> manageSpawn,
+        { manageHook = App.manageApps apps <+> manageSpawn,
           logHook = dynamicLogWithPP (polybarHook dbus),
           startupHook = myStartupHook,
           terminal = maybe "xterm" App.appCommand $ App.terminal apps,
@@ -48,7 +48,7 @@ main = xmonad . ewmh . docks . cfg =<< polybar
         { App.terminal = Just $ App.ClassApp "kitty" "kitty",
           App.launcher = Just $ App.NameApp
             "rofi"
-            "rofi -matching fuzzy -show drun -modi drun,run -show-icons",
+            "rofi -matching fuzzy -show drun -modi drun,run -show-icons -theme dmenu",
           App.visualEditor = Just $ App.ClassApp "Emacs" "emacs",
           App.browser = Just $ App.ClassApp "Brave-browser" "brave"
         }
@@ -105,3 +105,18 @@ myLayouts =
 
 tryResize :: ResizeDirectional -> Resize -> X ()
 tryResize x y = sequence_ [tryMessageWithNoRefreshToCurrent x y, refresh]
+
+
+uselessFn :: [Int] -> [Int]
+uselessFn = fmap descriptive_name
+    where
+      descriptive_name n = n+1 -- imagine this is more complex
+
+
+fizzBuzzes :: [String]
+fizzBuzzes = zipWith max words numbers
+  where
+    fizzes  = cycle [ "", "", "Fizz" ]
+    buzzes  = cycle [ "", "", "", "", "Buzz" ]
+    words   = zipWith (<>) fizzes buzzes
+    numbers = map show [1..]
