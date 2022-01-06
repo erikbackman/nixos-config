@@ -105,18 +105,3 @@ myLayouts =
 
 tryResize :: ResizeDirectional -> Resize -> X ()
 tryResize x y = sequence_ [tryMessageWithNoRefreshToCurrent x y, refresh]
-
-
-uselessFn :: [Int] -> [Int]
-uselessFn = fmap descriptive_name
-    where
-      descriptive_name n = n+1 -- imagine this is more complex
-
-
-fizzBuzzes :: [String]
-fizzBuzzes = zipWith max words numbers
-  where
-    fizzes  = cycle [ "", "", "Fizz" ]
-    buzzes  = cycle [ "", "", "", "", "Buzz" ]
-    words   = zipWith (<>) fizzes buzzes
-    numbers = map show [1..]
