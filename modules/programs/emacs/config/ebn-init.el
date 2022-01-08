@@ -6,9 +6,8 @@
 (require 'dired)
 
 ;; Basic
-;; Setting this lower after early-init for shorter gc-pauses
-(setq gc-cons-threshold (* 2 1000 1000)
-      ring-bell-function 'ignore
+
+(setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
@@ -144,8 +143,7 @@
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'mode-line nil :background nil :box nil :overline "darkgray")
-  (set-face-attribute 'mode-line-inactive nil :background nil :box nil :foreground "darkgray" :overline "darkgray")
-  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "Green"))
+  (set-face-attribute 'mode-line-inactive nil :background nil :box nil :foreground "darkgray" :overline "darkgray"))
 
 (use-package modus-themes
   :ensure nil
@@ -524,6 +522,7 @@
 
 (use-package erc
   :config
+  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "Green")
   (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))))
 
 (use-package popper

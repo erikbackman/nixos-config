@@ -104,6 +104,10 @@ least specific (the system profile)"
 ;;(setq gc-cons-threshold 134217728)   ; 128mb
 (setq gc-cons-threshold most-positive-fixnum)
 
+(add-hook 'emacs-startup-hook
+	  (lambda ()
+	    (setq gc-cons-threshold (* 2 1000 1000))))
+
 ;; Ignore X resources
 (advice-add #'x-apply-session-resources :override #'ignore)
 ;; TODO: Probably the better approach is:
