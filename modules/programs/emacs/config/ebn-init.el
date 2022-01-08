@@ -6,7 +6,6 @@
 (require 'dired)
 
 ;; Basic
-
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
@@ -143,55 +142,8 @@
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'mode-line nil :background nil :box nil :overline "darkgray")
-  (set-face-attribute 'mode-line-inactive nil :background nil :box nil :foreground "darkgray" :overline "darkgray"))
-
-(use-package modus-themes
-  :ensure nil
-  :disabled t
-  :init
-  (show-paren-mode 1)
-  :config
-  (setq modus-themes-vivendi-color-overrides
-	'((bg-main . "#080B0E")
-	  (bg-focused . "#080B0E"))
-	modus-themes-org-agenda
-	'((header-block . (variable-pitch scale-title))
-          (header-date . (grayscale bold-today))
-          (scheduled . uniform)
-          (habit . simplified))
-	modus-themes-org-blocks '(grayscale)
-	modus-themes-headings nil
-	;; modus-themes-headings
-	;; '((1 . (background overline))
-        ;;   (2 . (background overline))
-        ;;   (3 . (background rainbow overline))
-        ;;   (t . (background rainbow no-bold overline)))
-	modus-themes-variable-pitch-ui nil
-	modus-themes-variable-pitch-headings nil
-	modus-themes-scale-headings t
-	modus-themes-scale-1 1.0
-	modus-themes-scale-2 1.0
-	modus-themes-scale-3 1.0
-	modus-themes-scale-4 1.0
-	modus-themes-scale-title 1.33
-	modus-themes-scale-small 0.9
-	modus-themes-mixed-fonts t
-	;modus-themes-mode-line '(3d)
-	modus-themes-paren-match '(bold intense)
-	modus-themes-syntax '(faint)
-	modus-themes-italic-constructs t
-	modus-themes-bold-constructs nil
-	modus-themes-links '(faint))
-  (setq org-todo-keyword-faces
-	'(("TODO" . '(org-todo))))
-
-  (add-hook 'modus-themes-after-load-theme-hook
-	    (lambda ()
-	      (ebn/setup-modeline)
-	      (set-face-italic 'font-lock-keyword-face t)))
-  
-  (when window-system (set-frame-size (selected-frame) 90 50))
-  (modus-themes-load-vivendi))
+  (set-face-attribute 'mode-line-inactive nil :background nil :box nil :foreground "darkgray" :overline "darkgray")
+  )
 
 (use-package diminish
   :ensure t)
