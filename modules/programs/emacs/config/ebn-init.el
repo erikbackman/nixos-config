@@ -14,8 +14,10 @@
 (setq global-mark-ring-max 2)
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
-(add-to-list 'load-path "~/.emcas.d/lisp")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
+;; Functions
+;; TODO: Move to ebn-core 
 (defun ebn/kill-dwim ()
   (interactive)
   (if (region-active-p)
@@ -26,6 +28,11 @@
   "QUERY cht.sh"
   (interactive "sQuery: ")
   (eww (concat "https://cht.sh/" query)))
+
+(defun ebn/forward-to-paragraph ()
+  (interactive)
+  (forward-paragraph)
+  (forward-line 1))
 
 (defun ebn/comment-or-uncomment-fn ()
   (interactive)
@@ -54,6 +61,10 @@
 	(move-end-of-line nil)
 	(comment-or-uncomment-region (region-beginning)
 				     (region-end))))))
+
+(defun ebn/haskell-mode-lines-to-list ()
+  (interactive)
+  (skip-chars-forward "[:space:]"))
 
 (defun ebn/setup-modeline ()
   (set-face-attribute
@@ -122,7 +133,11 @@
 	("M-3" . split-window-right)
 	("C-0" . pop-global-mark)
 	("C-9" . forward-list)
-	("C-8" . backward-list)))
+	("C-8" . backward-list)
+	("C-<down>" . ebn/forward-to-paragraph)
+	("C-h l" . display-local-help)
+	("M-i" . back-to-indentation)
+	("C-x C-b" . ibuffer)))
 
 (use-package ebn-core
   :ensure nil
@@ -142,8 +157,8 @@
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'mode-line nil :background nil :box nil :overline "darkgray")
-  (set-face-attribute 'mode-line-inactive nil :background nil :box nil :foreground "darkgray" :overline "darkgray")
-  )
+  (set-face-attribute 'mode-line-inactive nil :foreground "darkgray" :overline "darkgray")
+  (set-face-attribute 'font-lock-keyword-face nil :italic nil))
 
 (use-package diminish
   :ensure t)
@@ -161,8 +176,7 @@
   :config
   (vertico-mode))
 
-(use-package
-  consult
+(use-package consult
   :config
   (setq consult-preview-key nil)
   (recentf-mode)
@@ -261,7 +275,9 @@
 	org-insert-heading-respect-content t)
     
   :bind*
-  (:map org-mode-map ("C-<return>" . org-meta-return))
+  (:map org-mode-map
+	("C-<return>" . org-meta-return)
+	("C-c h" . consult-org-heading))
   :hook ((org-mode . variable-pitch-mode)
 	 (org-mode . org-cdlatex-mode)))
 
@@ -331,7 +347,7 @@
    ("\\.cabal\\'" . haskell-cabal-mode))
   
   :custom
-  (haskell-process-type 'cabal-new-repl)
+  (haskell-process-type 'cabal-repl)
   (haskell-process-load-or-reload-prompt t)
   (haskell-process-auto-import-loaded-modules t)
   (haskell-process-log t)
@@ -339,6 +355,9 @@
   
   :config
   (load-library "haskell-mode-autoloads")
+  (set-face-attribute 'haskell-interactive-face-result nil :foreground "White" :weight 'medium)
+
+  ;(add-hook 'after-save-hook (lambda () (funcall-interactively 'haskell-process-load-or-reload)))
   (require 'haskell-interactive-mode)
 
   (defun haskell-mode-after-save-handler ())
@@ -369,7 +388,10 @@
    (haskell-mode . interactive-haskell-mode))
   
   :bind
-  (:map haskell-mode-map ("C-c C-f" . ebn/haskell-format-buffer)))
+  (:map haskell-mode-map
+	("C-c C-f" . ebn/haskell-format-buffer)
+	("M-<left>" . backward-sexp)
+	("M-<right>" . forward-sexp)))
 
 (use-package eglot
   :defer t
@@ -385,6 +407,7 @@
   (eldoc-echo-area-display-truncation-message nil)
   (eldoc-echo-area-use-multiline-p 3)
   :config
+  (define-key eglot-mode-map [remap display-local-help] nil)
   (add-to-list 'eglot-server-programs
                `(csharp-mode . ("omnisharp" "-lsp" "--verbose")))
   (add-to-list 'eglot-server-programs
@@ -447,14 +470,14 @@
   :ensure t
   :config
   ; TODO: come up with better bindings for these, use super?
-  (global-set-key (kbd "C--") 'mc/mark-all-like-this-dwim)
-  (global-set-key (kbd "C-c m") 'mc/mark-all-like-this-dwim)
+  (global-set-key (kbd "C-m") 'mc/mark-all-like-this-dwim)
   (global-set-key [(super down)] 'mc/mark-next-like-this))
 
 (use-package expand-region
   :ensure t
   :defer t
   :commands 'er/expand-region
+  :config (unbind-key "C-<return>" python-mode-map)
   :bind
   ("C-," . er/expand-region)
   ("C-<return>" . er/expand-region))
@@ -494,6 +517,7 @@
   (popper-echo-mode +1))
 
 (use-package rainbow-mode
-  :ensure t)
+  :ensure t
+  :mode "\\.css\\'")
 
 ;;; ebn-init.el ends here

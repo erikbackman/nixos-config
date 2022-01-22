@@ -49,6 +49,7 @@ in {
       ebn.iosevka-custom
       jetbrains-mono
       cm_unicode
+      victor-mono
     ];
     
     environment.systemPackages = with pkgs; [
@@ -68,7 +69,7 @@ in {
 
       ## Package dependencies
       # :checkers spell
-      (aspellWithDicts (ds: with ds; [ en en-computers en-science ]))
+      (aspellWithDicts (ds: with ds; [ en en-computers en-science sv ]))
 
       # :checkers grammar
       languagetool
