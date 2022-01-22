@@ -470,7 +470,7 @@
   :ensure t
   :config
   ; TODO: come up with better bindings for these, use super?
-  (global-set-key (kbd "C-m") 'mc/mark-all-like-this-dwim)
+  (global-set-key (kbd "M-m") 'mc/mark-all-like-this-dwim)
   (global-set-key [(super down)] 'mc/mark-next-like-this))
 
 (use-package expand-region
