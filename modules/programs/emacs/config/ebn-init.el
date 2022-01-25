@@ -137,6 +137,7 @@
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-h l" . display-local-help)
 	("M-i" . back-to-indentation)
+	("<f8>" . kmacro-insert-counter)
 	("C-x C-b" . ibuffer)))
 
 (use-package ebn-core
@@ -210,7 +211,8 @@
   :config
   (setq dired-recursive-copies t
 	dired-recursive-deletes t
-	dired-dwim-target t)
+	dired-dwim-target t
+	delete-by-moving-to-trash t)
   :bind*			    
   (:map
    dired-mode-map
