@@ -44,6 +44,14 @@
     '';
   };
 
+  fonts.fontconfig = {
+    enable = true;
+    antialias = true;
+    hinting = {
+      enable = true;
+    };
+  };  
+
   nix = {
     gc = {
       automatic = true;

@@ -47,14 +47,7 @@
     siji
   ];
 
-  fonts.fontconfig = {
-    enable = true;
-    antialias = true;
-    hinting = {
-      enable = true;
-    };
-  };
-
+ 
   environment.systemPackages = with pkgs; [
     zathura
     texlive.combined.scheme-full
