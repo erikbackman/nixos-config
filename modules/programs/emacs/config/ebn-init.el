@@ -147,10 +147,6 @@
   (ebn/font-variable-pitch :name "CMU Concrete" :size 21)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
-(use-package which-key
-  :ensure nil
-  :diminish)
-
 (use-package kaolin-themes
   :ensure t
   :config
@@ -189,6 +185,7 @@
   ("C-c r" . consult-recent-file)
   ("C-c f" . consult-ripgrep)
   ("C-c l" . consult-line)
+  ("C-c i" . consult-imenu)
   ("C-c t" . gtags-find-tag)
   ("C-x b" . ebn/consult-buffer))
 
@@ -201,10 +198,6 @@
 (use-package eldoc
   :ensure nil
   :diminish)
-
-(use-package envrc
-  :commands 'envrc-global-mode
-  :config (envrc-global-mode))
 
 (use-package dired
   :ensure nil
@@ -380,7 +373,7 @@
     (autoload 'haskell-doc-current-info "haskell-doc")
     (setq-local eldoc-documentation-function
 		'haskell-doc-current-info)
-    (setq-local tab-stop-list '(2 4))
+    (setq-local tab-stop-list '(2))
     (setq-local haskell-process-path-cabal "cabal")
     (setq indent-line-function 'indent-relative)
     (setq tab-width 2))
@@ -473,7 +466,10 @@
   :config
   ; TODO: come up with better bindings for these, use super?
   (global-set-key (kbd "M-m") 'mc/mark-all-like-this-dwim)
-  (global-set-key [(super down)] 'mc/mark-next-like-this))
+  (global-set-key [(super down)] 'mc/mark-next-like-this)
+  :bind
+  (:map global-map
+	("s-<down>" . mc/mark-next-like-this)))
 
 (use-package expand-region
   :ensure t
