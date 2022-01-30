@@ -69,7 +69,6 @@
             ./hosts/base
             ./hosts/bifrost
             ./hosts/bifrost/hardware-configuration.nix
-            # TODO: Hardware config
             myModules
             nixos-hardware.nixosModules.lenovo-thinkpad-t480
           ];
