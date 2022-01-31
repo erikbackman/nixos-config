@@ -330,9 +330,6 @@
 	org-startup-with-inline-images t)
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
 
-(use-package csharp-mode
-  :ensure t)
-
 (use-package haskell-mode
   :defer t
   :commands (haskell-mode) 
@@ -392,8 +389,7 @@
   :defer t
   :hook ((haskell-mode . eglot-ensure)
 	 (c-mode . eglot-ensure)
-	 (python-mode . eglot-ensure)
-	 (csharp-mode . eglot-ensure))
+	 (python-mode . eglot-ensure))
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
@@ -403,8 +399,6 @@
   (eldoc-echo-area-use-multiline-p 3)
   :config
   (define-key eglot-mode-map [remap display-local-help] nil)
-  (add-to-list 'eglot-server-programs
-               `(csharp-mode . ("omnisharp" "-lsp" "--verbose")))
   (add-to-list 'eglot-server-programs
                `(sage-shell:sage-mode . ("pyls" "-v" "--tcp" "--host"
 					 "localhost" "--port" :autoport)))
