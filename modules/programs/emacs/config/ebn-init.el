@@ -34,55 +34,6 @@
   (forward-paragraph)
   (forward-line 1))
 
-(defun ebn/comment-or-uncomment-fn ()
-  (interactive)
-  (save-excursion
-    (end-of-defun -1)
-    (set-mark (point))
-    (end-of-defun)  
-    (comment-or-uncomment-region
-     (region-beginning)
-     (region-end))))
-
-(defun ebn/comment-or-uncomment ()
-  (interactive)
-  ;; Comment or uncomment active region
-  (if (region-active-p)
-      (comment-or-uncomment-region (region-beginning)
-				   (region-end))
-    (save-excursion
-      ;; When cursor is at a function definition
-      ;; comment or uncomment the entire functions
-      (if (equal (symbol-at-point) 'defun)
-	  (ebn/comment-or-uncomment-fn)
-	;; Else comment or uncomment the line
-	(move-beginning-of-line nil)
-	(set-mark (point))
-	(move-end-of-line nil)
-	(comment-or-uncomment-region (region-beginning)
-				     (region-end))))))
-
-(defun ebn/haskell-mode-lines-to-list ()
-  (interactive)
-  (skip-chars-forward "[:space:]"))
-
-(defun ebn/setup-modeline ()
-  (set-face-attribute
-   'mode-line nil
-   :background "#000"
-   :foreground "white"
-   :box '(:line-width 6 :color "#000")
-   :overline nil
-   :underline nil)
-
-  (set-face-attribute
-   'mode-line-inactive nil
-   :background "#090a0b"
-   :foreground "white"
-   :box '(:line-width 6 :color "#090a0b")
-   :overline nil
-   :underline nil))
-
 ;; Packages
 (use-package emacs
   :init
@@ -347,12 +298,17 @@
   
   :config
   (load-library "haskell-mode-autoloads")
-  (set-face-attribute 'haskell-interactive-face-result nil :foreground "White" :weight 'medium)
-
-  ;(add-hook 'after-save-hook (lambda () (funcall-interactively 'haskell-process-load-or-reload)))
   (require 'haskell-interactive-mode)
-
   (defun haskell-mode-after-save-handler ())
+  (defun ebn/haskell-mode-setup ()
+    (haskell-indentation-mode)
+    (autoload 'haskell-doc-current-info "haskell-doc")
+    (setq-local eldoc-documentation-function
+		'haskell-doc-current-info)
+    (setq-local tab-stop-list '(2))
+    (setq-local haskell-process-path-cabal "cabal")
+    (setq indent-line-function 'indent-relative)
+    (setq tab-width 2))
   (defun ebn/haskell-format-buffer ()
     "Format Haskell buffer using Ormolu."
     (interactive)
@@ -364,21 +320,10 @@
        :buffer "*ormolu-log*"
        :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
        :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
-  
-  (defun haskell-mode-setup ()
-    (haskell-indentation-mode)
-    (autoload 'haskell-doc-current-info "haskell-doc")
-    (setq-local eldoc-documentation-function
-		'haskell-doc-current-info)
-    (setq-local tab-stop-list '(2))
-    (setq-local haskell-process-path-cabal "cabal")
-    (setq indent-line-function 'indent-relative)
-    (setq tab-width 2))
 
   :hook
-  ((haskell-mode . haskell-mode-setup)
+  ((haskell-mode . ebn/haskell-mode-setup)
    (haskell-mode . interactive-haskell-mode))
-  
   :bind
   (:map haskell-mode-map
 	("C-c C-f" . ebn/haskell-format-buffer)
@@ -437,8 +382,7 @@
   :bind
   (:map c-mode-map
 	("C-c o" . ff-find-other-file)
-	("C-c c" . project-compile)
-	("C-c u" . ebn/comment-or-uncomment)))
+	("C-c c" . project-compile)))
 
 (use-package gtags
   :ensure nil)
