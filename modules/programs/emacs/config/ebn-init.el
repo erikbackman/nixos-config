@@ -61,6 +61,10 @@
   (save-place-mode t)
   (initial-scratch-message nil)
 
+  :config
+  (set-face-attribute 'Man-overstrike nil :inherit font-lock-type-face :bold t)
+  (set-face-attribute 'Man-underline nil :inherit font-lock-keyword-face :underline t)
+  
   :delight
   (auto-fill-function " AF")
   (visual-line-mode)
@@ -199,7 +203,14 @@
 	    (calendar-last-day-of-month month year)))
       (= day last-day-of-month)))
   :config
+  (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-property-value nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
+  (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)
+  
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
 	org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
