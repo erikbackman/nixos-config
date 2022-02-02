@@ -34,6 +34,15 @@
   (forward-paragraph)
   (forward-line 1))
 
+(defun ebn/minibuffer-kill-backward ()
+    "Kill backward by word for directories else by char"
+    (interactive)
+    (with-current-buffer (current-buffer)
+      (superword-mode)
+      (if (looking-back "/")
+	  (backward-kill-word 1)
+	(backward-delete-char 1))))
+
 ;; Packages
 (use-package emacs
   :init
@@ -74,6 +83,8 @@
 	 (prog-mode . repeat-mode))
 
   :bind
+  (:map minibuffer-mode-map
+	("<DEL>" . ebn/minibuffer-kill-backward))
   (:map global-map 
 	("C-j" . join-line)
 	("M-u" . upcase-dwim)
