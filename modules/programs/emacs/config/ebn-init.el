@@ -118,8 +118,12 @@
   (load-theme 'kaolin-aurora t nil)
   (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'fringe nil :background nil)
-  (set-face-attribute 'mode-line nil :background nil :box nil :overline "darkgray")
-  (set-face-attribute 'mode-line-inactive nil :foreground "darkgray" :overline "darkgray")
+  (set-face-attribute 'mode-line nil
+		      :background nil :box nil
+		      :overline "darkgray")
+  (set-face-attribute 'mode-line-inactive nil
+		      :foreground "darkgray"
+		      :overline "darkgray")
   (set-face-attribute 'font-lock-keyword-face nil :italic nil))
 
 (use-package diminish
@@ -219,7 +223,14 @@
   (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
+  (set-face-attribute 'org-block-begin-line nil
+		      :inherit '(fixed-pitch font-lock-comment-face)
+		      :background nil)
+  (set-face-attribute 'org-block-end-line nil :inherit 'org-block-begin-line)
+  (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-quote nil :inherit nil :background nil)
   (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)
+  (setq org-fontify-quote-and-verse-blocks t)
   
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
 	org-capture-templates
