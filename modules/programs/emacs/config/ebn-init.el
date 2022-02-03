@@ -68,10 +68,6 @@
   (save-place-mode t)
   (initial-scratch-message nil)
 
-  :config
-  (set-face-attribute 'Man-overstrike nil :inherit font-lock-type-face :bold t)
-  (set-face-attribute 'Man-underline nil :inherit font-lock-keyword-face :underline t)
-  
   :delight
   (auto-fill-function " AF")
   (visual-line-mode)
@@ -100,6 +96,7 @@
 	("C-9" . forward-list)
 	("C-8" . backward-list)
 	("C-<down>" . ebn/forward-to-paragraph)
+	("C-h ," . xref-find-definitions)
 	("C-h l" . display-local-help)
 	("M-i" . back-to-indentation)
 	("<f8>" . kmacro-insert-counter)
@@ -111,6 +108,12 @@
   (ebn/font :name "Victor Mono" :size 18 :weight 'medium)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 21)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
+
+(use-package man
+  :commands (man)
+  :config
+  (set-face-attribute 'Man-overstrike nil :inherit font-lock-type-face :bold t)
+  (set-face-attribute 'Man-underline nil :inherit font-lock-keyword-face :underline t))
 
 (use-package kaolin-themes
   :ensure t
@@ -195,6 +198,12 @@
   (add-hook 'LaTeX-mode-hook 'flyspell-mode)
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex))
+
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+	 ("\\.md\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
 
 (use-package org
   :defer t
