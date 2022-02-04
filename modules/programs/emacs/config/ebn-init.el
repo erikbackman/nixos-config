@@ -340,6 +340,7 @@
   :config
   (load-library "haskell-mode-autoloads")
   (require 'haskell-interactive-mode)
+  (set-face-attribute 'markdown-code-face nil :background nil)
   (defun haskell-mode-after-save-handler ())
   (defun ebn/haskell-mode-setup ()
     (haskell-indentation-mode)
