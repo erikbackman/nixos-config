@@ -351,24 +351,12 @@
     (setq-local haskell-process-path-cabal "cabal")
     (setq indent-line-function 'indent-relative)
     (setq tab-width 2))
-  (defun ebn/haskell-format-buffer ()
-    "Format Haskell buffer using Ormolu."
-    (interactive)
-    (when-let ((ormolu-path
-		(seq-find (lambda (x) (string-match-p (regexp-quote "ormolu") x))
-			  exec-path)))
-      (make-process
-       :name "ormolxu"
-       :buffer "*ormolu-log*"
-       :command `(,(format "%sormolu" ormolu-path) "-m" "inplace" ,(buffer-file-name))
-       :sentinel (lambda (proc evt) (revert-buffer-quick nil)))))
 
   :hook
   ((haskell-mode . ebn/haskell-mode-setup)
    (haskell-mode . interactive-haskell-mode))
   :bind
   (:map haskell-mode-map
-	("C-c C-f" . ebn/haskell-format-buffer)
 	("M-<left>" . backward-sexp)
 	("M-<right>" . forward-sexp)))
 
@@ -389,7 +377,9 @@
   (add-to-list 'eglot-server-programs
                `(sage-shell:sage-mode . ("pyls" "-v" "--tcp" "--host"
 					 "localhost" "--port" :autoport)))
-  :bind (:map eglot-mode-map ("C-c C-a" . eglot-code-actions)))
+  :bind (:map eglot-mode-map
+	      ("C-c C-a" . eglot-code-actions)
+	      ("C-c C-f" . eglot-format-buffer)))
 
 (use-package envrc
   :config
