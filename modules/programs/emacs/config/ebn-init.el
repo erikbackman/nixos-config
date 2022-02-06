@@ -11,13 +11,13 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 (setq-default fill-column 80)
-(setq global-mark-ring-max 2)
+(setq global-mark-ring-max 5)
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
 ;; Functions
-;; TODO: Move to ebn-core 
+;; TODO: Move to ebn-core
 (defun ebn/kill-dwim ()
   (interactive)
   (if (region-active-p)
@@ -149,17 +149,13 @@
   :config
   (setq consult-preview-key nil)
   (recentf-mode)
-  (defun ebn/consult-buffer ()
-    (interactive)
-    (push-mark (point) t nil)
-    (consult-buffer))
   :bind
   ("C-c r" . consult-recent-file)
   ("C-c f" . consult-ripgrep)
   ("C-c l" . consult-line)
   ("C-c i" . consult-imenu)
   ("C-c t" . gtags-find-tag)
-  ("C-x b" . ebn/consult-buffer))
+  ("C-x b" . consult-buffer))
 
 (use-package orderless
   :init
