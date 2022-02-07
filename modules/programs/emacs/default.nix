@@ -46,7 +46,6 @@ in {
   config = mkIf cfg.enable {
 
     fonts.fonts = with pkgs; [
-      ebn.iosevka-custom
       jetbrains-mono
       cm_unicode
       victor-mono
