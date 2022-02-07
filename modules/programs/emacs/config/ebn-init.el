@@ -109,12 +109,6 @@
   (ebn/font-variable-pitch :name "CMU Concrete" :size 21)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
-(use-package man
-  :commands (man)
-  :config
-  (set-face-attribute 'Man-overstrike nil :inherit font-lock-type-face :bold t)
-  (set-face-attribute 'Man-underline nil :inherit font-lock-keyword-face :underline t))
-
 (use-package kaolin-themes
   :ensure t
   :config
@@ -236,7 +230,10 @@
   (set-face-attribute 'org-quote nil :inherit nil :background nil)
   (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)
   (setq org-fontify-quote-and-verse-blocks t)
-  
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((latex . t)
+     (emacs-lisp . t)))
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
 	org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
@@ -466,9 +463,9 @@
 
 (use-package popper
   :ensure t
-  :bind (("C-`"   . popper-toggle-latest)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
+  :bind (("C-´"   . popper-toggle-latest)
+         ("M-´"   . popper-cycle)
+         ("C-M-´" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
         '("\\*Messages\\*"
