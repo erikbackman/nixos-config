@@ -14,6 +14,7 @@ in {
   config = mkIf cfg.enable {
     fonts.fonts = with pkgs; [
       jetbrains-mono
+      victor-mono
     ];
 
     environment.systemPackages = 
