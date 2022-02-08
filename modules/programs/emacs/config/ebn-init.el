@@ -216,6 +216,8 @@
 	    (calendar-last-day-of-month month year)))
       (= day last-day-of-month)))
   :config
+  ;; Faces
+  (set-face-attribute 'org-document-title nil :underline t :height 1.2)
   (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-property-value nil :inherit 'fixed-pitch)
@@ -229,11 +231,22 @@
   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-quote nil :inherit nil :background nil)
   (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)
-  (setq org-fontify-quote-and-verse-blocks t)
+  ;; Options
+  (setq org-startup-indented t
+	org-startup-with-latex-preview t
+	org-pretty-entities t
+	org-fontify-quote-and-verse-blocks t
+	org-startup-folded t
+	org-hide-leading-stars t)
+
+  ;; Org-babel languages
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((latex . t)
-     (emacs-lisp . t)))
+     (emacs-lisp . t)
+     (python . t)))
+
+  ;; Org-agenda
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
 	org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
@@ -244,7 +257,7 @@
 	org-image-actual-width nil
 	org-return-follows-link t
 	org-hide-emphasis-markers t
-	org-format-latex-options (plist-put org-format-latex-options :scale 1.4)
+	org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
 	org-latex-listings 'minted
 	org-latex-packages-alist '(("" "minted"))
 	org-latex-pdf-process
@@ -253,7 +266,7 @@
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
 	org-latex-tables-centered t
 	org-insert-heading-respect-content t)
-    
+  
   :bind*
   (:map org-mode-map
 	("C-<return>" . org-meta-return)
@@ -472,6 +485,7 @@
           "Output\\*$"
           "\\*Async Shell Command\\*"
 	  "\\*eldoc\\*"
+	  "\\*ibuffer\\*"
           help-mode
           compilation-mode))
   (popper-mode +1)
@@ -480,5 +494,14 @@
 (use-package rainbow-mode
   :ensure t
   :mode "\\.css\\'")
+
+(use-package ibuffer-project
+  :commands (ibuffer)
+  :config
+  (defun ebn/ibuffer-setup ()
+    (setq ibuffer-filter-groups
+	  (ibuffer-project-generate-filter-groups)))
+  (setq ibuffer-project-use-cache t)
+  :hook ((ibuffer . ebn/ibuffer-setup)))
 
 ;;; ebn-init.el ends here
