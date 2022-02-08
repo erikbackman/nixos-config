@@ -114,7 +114,6 @@
   :config
   (load-theme 'kaolin-aurora t nil)
   (set-face-attribute 'fringe nil :background nil)
-  (set-face-attribute 'fringe nil :background nil)
   (set-face-attribute 'mode-line nil
 		      :background nil :box nil
 		      :overline "darkgray")
