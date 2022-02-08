@@ -2,6 +2,7 @@
     aurora = {
       accent = "#bd93f9";
       alert = "#ddb566";
+      # Old backgrounds
       #background = "#0a0d10";
       #background = "#14191e";
       #background = "#0c0f12";
@@ -11,15 +12,13 @@
       foreground = "#e6e8ee";
       foreground-alt = "#ebdbb2";
       gray = "#7F7F7F";
-      #purple = "#bd93f9";
       purple = "#9d81ba";
       white = "#e6e8ee";
       yellow = "#ddb566";
       red = "#b53f36";
       green = "#5ab977";
-      blue = "#6a7b92";
+      blue = "#6C8BC9";
       cyan = "#0D9C94";
-      #cyan = "#00c9c7";
     };
 
     modus-operandi = {
