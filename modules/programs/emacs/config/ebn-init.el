@@ -498,7 +498,6 @@
   :mode "\\.css\\'")
 
 (use-package ibuffer-project
-  :commands (ibuffer)
   :config
   (defun ebn/ibuffer-setup ()
     (setq ibuffer-filter-groups
