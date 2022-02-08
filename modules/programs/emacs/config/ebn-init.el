@@ -486,6 +486,7 @@
           "\\*Async Shell Command\\*"
 	  "\\*eldoc\\*"
 	  "\\*ibuffer\\*"
+	  "\\*vc-git"
           help-mode
           compilation-mode))
   (popper-mode +1)
