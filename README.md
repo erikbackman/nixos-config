@@ -11,12 +11,13 @@
 ![](../assets/v4-busy.png)
 ![](../assets/v2-semi-clean.png)
 
-|            |                |
-|------------|----------------|
-| *OS*       | NixOS          |
-| *Shell*    | bash           |
-| *Terminal* | Kitty          |
-| *WM*       | xmonad         |
-| *Font*     | JetBrains Mono |
-| *Editor*   | Emacs          |
-| *Top*      | Bottom         |
+|            |             |
+|------------|-------------|
+| *OS*       | NixOS       |
+| *Shell*    | bash        |
+| *Prompt*   | Starship    |
+| *Terminal* | Kitty       |
+| *WM*       | xmonad      |
+| *Font*     | Victor Mono |
+| *Editor*   | Emacs       |
+| *Top*      | Bottom      |
