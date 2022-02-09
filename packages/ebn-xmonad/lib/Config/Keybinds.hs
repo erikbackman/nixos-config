@@ -4,18 +4,35 @@
 
 module Config.Keybinds where
 
-import Config.Applications (AppConfig (..), maybeSpawn, isInstance, App, appCommand)
+import Config.Applications
+  ( App
+  , AppConfig(..)
+  , appCommand
+  , isInstance
+  , maybeSpawn
+  )
 import Data.Map (Map)
-import Graphics.X11
-import XMonad (ChangeLayout (NextLayout), X, XConfig (XConfig, modMask), sendMessage, spawn, windows, withFocused, workspaces, (.|.), kill)
-import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
-import XMonad.Layout.MultiToggle (Toggle (..))
-import XMonad.Actions.WithAll (killAll)
 import qualified Data.Map as M
-import qualified XMonad.StackSet as W
+import Graphics.X11
 import System.Exit (exitSuccess)
-import XMonad.Core (io)
+import XMonad
+  ( ChangeLayout(NextLayout)
+  , X
+  , XConfig(XConfig, modMask)
+  , (.|.)
+  , kill
+  , sendMessage
+  , spawn
+  , windows
+  , withFocused
+  , workspaces
+  )
 import XMonad.Actions.WindowGo (runOrRaise)
+import XMonad.Actions.WithAll (killAll)
+import XMonad.Core (io)
+import XMonad.Layout.MultiToggle (Toggle(..))
+import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL))
+import qualified XMonad.StackSet as W
 
 data KeybindConfig l = KeybindConfig
   { appConfig :: AppConfig,
@@ -25,24 +42,25 @@ data KeybindConfig l = KeybindConfig
 keybinds :: KeybindConfig l -> Map (KeyMask, KeySym) (X ())
 keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
   M.fromList $
-    [ ((modm,               xK_q),       spawn "xmonad --recompile; xmonad --restart"),
-      ((modm .|. shiftMask, xK_q),       io exitSuccess),
-      ((modm .|. shiftMask, xK_Return),  maybeSpawn (terminal apps)),
-      ((modm,               xK_c),       kill),
-      ((modm .|. shiftMask, xK_c),       killAll),
-      ((modm,               xK_p),       maybeSpawn (launcher apps)),
-      ((modm,               xK_6),       runOrRaise' $ visualEditor apps),
-      ((modm,               xK_7),       runOrRaise' $ browser apps),
-      ((modm,               xK_8),       runOrRaise' $ terminal apps),
-      ((modm,               xK_space),   sendMessage NextLayout),
-      ((modm,               xK_n),       windows W.focusUp),
-      ((modm,               xK_m),       windows W.focusDown),
-      ((modm,               xK_Return),  windows W.swapMaster),
-      ((modm,               xK_f),       sendMessage (Toggle NBFULL)),
-      ((modm .|. shiftMask, xK_t),       withFocused toggleFloat)
+    [ ((modm,               xK_q),        restart),
+      ((modm .|. shiftMask, xK_q),        io exitSuccess),
+      ((modm .|. shiftMask, xK_Return),   maybeSpawn (terminal apps)),
+      ((modm,               xK_c),        kill),
+      ((modm .|. shiftMask, xK_c),        killAll),
+      ((modm,               xK_p),        maybeSpawn (launcher apps)),
+      ((modm,               xK_6),        runOrRaise' $ visualEditor apps),
+      ((modm,               xK_7),        runOrRaise' $ browser apps),
+      ((modm,               xK_8),        runOrRaise' $ terminal apps),
+      ((modm,               xK_space),    sendMessage NextLayout),
+      ((modm,               xK_n),        windows W.focusUp),
+      ((modm,               xK_m),        windows W.focusDown),
+      ((modm,               xK_Return),   windows W.swapMaster),
+      ((modm,               xK_f),        sendMessage (Toggle NBFULL)),
+      ((modm .|. shiftMask, xK_t),        withFocused toggleFloat)
     ]
-    <> switchWsById
+      <> switchWsById
   where
+    restart = spawn "xmonad --recompile; xmonad --restart"
     switchWsById =
       [ ((m, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_F1 .. xK_F6],
@@ -58,5 +76,3 @@ keybinds (KeybindConfig apps conf@XConfig {XMonad.modMask = modm}) =
     runOrRaise' :: Maybe App -> X ()
     runOrRaise' Nothing = pure ()
     runOrRaise' (Just app) = runOrRaise (appCommand app) (isInstance app)
-
-

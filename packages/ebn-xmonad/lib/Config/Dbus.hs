@@ -4,6 +4,8 @@ import qualified Codec.Binary.UTF8.String as UTF8
 import qualified DBus as D
 import qualified DBus.Client as D
 import qualified DBus.Internal.Types as D
+import Control.Applicative
+import Control.Monad
 
 data SignalConfig = SignalConfig
   { sObjectPath :: String
@@ -26,5 +28,5 @@ dbusOutput sconf dbus str =
       signal = D.signal opath iname mname
       body = [D.toVariant $ UTF8.decodeString str]
 
-   in D.emit dbus $ signal {D.signalBody = body}
+  in D.emit dbus $ signal {D.signalBody = body}
 
