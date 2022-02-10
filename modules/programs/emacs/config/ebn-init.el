@@ -68,10 +68,6 @@
   (save-place-mode t)
   (initial-scratch-message nil)
 
-  :delight
-  (auto-fill-function " AF")
-  (visual-line-mode)
-
   :hook ((prog-mode . superword-mode)
 	 (fundamental-mode . repeat-mode)
 	 (prog-mode . repeat-mode)
@@ -126,11 +122,12 @@
   :ensure t)
 
 (use-package yasnippet
-  :diminish
+  :diminish yas-minor-mode
   :config
   (yas-global-mode 1))
 
 (use-package which-key
+  :diminish
   :config
   (which-key-mode 1))
 
@@ -223,6 +220,8 @@
   (set-face-attribute 'org-property-value nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)  
+  (set-face-attribute 'org-checkbox-statistics-done nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
   (set-face-attribute 'org-block-begin-line nil
 		      :inherit '(fixed-pitch font-lock-comment-face)
@@ -230,14 +229,15 @@
   (set-face-attribute 'org-block-end-line nil :inherit 'org-block-begin-line)
   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-quote nil :inherit nil :background nil)
-  (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)
+  
   ;; Options
   (setq org-startup-indented t
 	org-startup-with-latex-preview t
 	org-pretty-entities t
 	org-fontify-quote-and-verse-blocks t
 	org-startup-folded t
-	org-hide-leading-stars t)
+	org-hide-leading-stars t
+	org-cycle-separator-lines -1)
 
   ;; Org-babel languages
   (org-babel-do-load-languages
@@ -330,7 +330,8 @@
 
 (use-package haskell-mode
   :defer t
-  :commands (haskell-mode) 
+  :commands (haskell-mode)
+  :diminish interactive-haskell-mode
  
   :mode
   (("\\.hs\\'" . haskell-mode)
