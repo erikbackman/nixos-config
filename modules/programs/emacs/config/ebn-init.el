@@ -72,12 +72,15 @@
 
   :hook ((prog-mode . superword-mode)
 	 (fundamental-mode . repeat-mode)
+	 (fundamental-mode . electric-pair-mode)
 	 (prog-mode . repeat-mode)
 	 (minibuffer-mode . superword-mode))
 
   :bind
   (:map minibuffer-mode-map
 	("<DEL>" . ebn/kill-dir-or-char))
+  (:map isearch-mode-map
+	("TAB" . isearch-toggle-symbol))
   (:map global-map 
 	("C-j" . join-line)
 	("M-u" . upcase-dwim)
@@ -363,7 +366,8 @@
 
   :hook
   ((haskell-mode . ebn/haskell-mode-setup)
-   (haskell-mode . interactive-haskell-mode))
+   (haskell-mode . interactive-haskell-mode)
+   (haskell-mode . electric-pair-mode))
   :bind
   (:map haskell-mode-map
 	("M-<left>" . backward-sexp)
@@ -423,7 +427,8 @@
   :bind
   (:map c-mode-map
 	("C-c o" . ff-find-other-file)
-	("C-c c" . project-compile)))
+	("C-c c" . project-compile))
+  :hook (c-mode . electric-pair-mode))
 
 (use-package gtags
   :ensure nil)
