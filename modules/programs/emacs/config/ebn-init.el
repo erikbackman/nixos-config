@@ -59,6 +59,8 @@
   (setq tab-bar-close-button nil)
   (setq tab-bar-new-button nil)
 
+  (put 'narrow-to-region 'disabled nil)
+  
   :custom
   (delete-by-moving-to-trash t)
   (gdb-many-windows t)
