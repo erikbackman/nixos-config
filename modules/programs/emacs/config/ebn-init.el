@@ -11,7 +11,7 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 (setq-default fill-column 80)
-(setq global-mark-ring-max 5)
+(setq global-mark-ring-max 16)
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -60,6 +60,11 @@
   (setq tab-bar-new-button nil)
 
   (put 'narrow-to-region 'disabled nil)
+
+  (defun ebn/setup-minibuffer ()
+    (interactive)
+    (electric-pair-local-mode -1))
+  (add-hook 'minibuffer-setup-hook 'ebn/setup-minibuffer)
   
   :custom
   (delete-by-moving-to-trash t)
@@ -72,8 +77,8 @@
 
   :hook ((prog-mode . superword-mode)
 	 (fundamental-mode . repeat-mode)
-	 (fundamental-mode . electric-pair-mode)
 	 (prog-mode . repeat-mode)
+	 (prog-mode . electric-pair-local-mode)
 	 (minibuffer-mode . superword-mode))
 
   :bind
@@ -83,6 +88,7 @@
 	("TAB" . isearch-toggle-symbol))
   (:map global-map 
 	("C-j" . join-line)
+	("C-t" . transpose-lines)
 	("M-u" . upcase-dwim)
 	("C-x k" . ebn/kill-current-buffer)
 	("C-o" . ebn/open-line-below)
@@ -103,8 +109,14 @@
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-h ," . xref-find-definitions)
 	("C-h l" . display-local-help)
+	("C-." . repeat)
 	("M-i" . back-to-indentation)
-	("<f8>" . kmacro-insert-counter)
+	("<f9>" . kmacro-insert-counter)
+	("<f10>" . call-last-kbd-macro)
+	("<f11>" . kmacro-end-macro)
+	("<f12>" . kmacro-start-macro)
+	("s-e" . electric-pair-local-mode)
+	("s-r" . replace-string)
 	("C-x C-b" . ibuffer)))
 
 (use-package ebn-core
@@ -446,6 +458,7 @@
   :bind
   ("M-g g" . avy-goto-line)
   ("M-g c" . avy-goto-char-in-line)
+  ("M-g m" . avy-move-line)
   ("M-s" . avy-goto-char-in-line)
   ("C-ö" . avy-goto-char-timer))
 
@@ -457,7 +470,8 @@
   (global-set-key [(super down)] 'mc/mark-next-like-this)
   :bind
   (:map global-map
-	("s-<down>" . mc/mark-next-like-this)))
+	("s-<down>" . mc/mark-next-like-this)
+	("s-," . mc/mark-all-in-region-regexp)))
 
 (use-package expand-region
   :ensure t
