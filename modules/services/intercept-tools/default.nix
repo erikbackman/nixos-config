@@ -14,6 +14,9 @@
               - KEY: KEY_ENTER
                 TAP: KEY_ENTER
                 HOLD: KEY_LEFTALT
+              - KEY: KEY_RIGHTALT
+                TAP: [ KEY_RIGHTCTRL, KEY_X ]
+                HOLD: KEY_RIGHTALT
             '';
           uinput = "${pkgs.interception-tools}/bin/uinput";
           intercept = "${pkgs.interception-tools}/bin/intercept";
@@ -22,7 +25,7 @@
          - JOB: "${intercept} -g $DEVNODE | ${dual-function-keys} -c ${mappings} | ${uinput} -d $DEVNODE"
            DEVICE: 
              EVENTS:
-               EV_KEY: [KEY_ENTER]
+               EV_KEY: [KEY_ENTER, KEY_RIGHTALT]
              LINK: .*-event-kbd
       '';
   };
