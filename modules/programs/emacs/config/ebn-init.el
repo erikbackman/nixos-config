@@ -135,6 +135,7 @@
 		      :background nil :box nil
 		      :overline "darkgray")
   (set-face-attribute 'mode-line-inactive nil
+		      :box nil
 		      :foreground "darkgray"
 		      :overline "darkgray")
   (set-face-attribute 'font-lock-keyword-face nil :italic nil))
