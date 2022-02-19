@@ -24,6 +24,7 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.WindowNavigation (windowNavigation)
 import XMonad.Util.Cursor (setDefaultCursor)
+import XMonad.Layout.Named (named)
 
 main :: IO ()
 main = xmonad . ewmh . docks . cfg =<< polybar
@@ -70,15 +71,14 @@ comWs = "com"
 
 wrkWs = "wrk"
 
-sysWs = "sys"
-
 etcWs = "etc"
 
 workspaceIds :: [WorkspaceId]
-workspaceIds = [webWs, devWs, comWs, wrkWs, sysWs, etcWs]
+workspaceIds = [webWs, devWs, comWs, wrkWs, etcWs]
 
 myLayouts =
   avoidStruts
+    . gapSpaced
     . windowNavigation
     . smartBorders
     . fullScreenToggle
@@ -89,10 +89,10 @@ myLayouts =
     . wrkLayout
     $ (tiled ||| Mirror tiled ||| column3 ||| full)
   where
-    tiled   = gapSpaced $ Tall nmaster ratio_increment ratio where ratio = 1 / 2
-    full    = gapSpaced Full
-    column3 = gapSpaced $ ThreeColMid nmaster ratio_increment ratio where ratio = 1 / 2
-    column2 = gapSpaced $ reflectHoriz $ Tall nmaster ratio_increment ratio where ratio = 2 / 3
+    tiled   = named "Default" $ Tall nmaster ratio_increment ratio where ratio = 1 / 2
+    full    = named "Full" Full
+    column3 = named "Three Col" $ ThreeColMid nmaster ratio_increment ratio where ratio = 1 / 2
+    column2 = named "Master 2/3" $ reflectHoriz $ Tall nmaster ratio_increment ratio where ratio = 2 / 3
         
     nmaster         = 1
     ratio_increment = 3 / 100
@@ -101,7 +101,7 @@ myLayouts =
     fullScreenToggle = mkToggle (single NBFULL)
 
     comLayout = onWorkspace comWs (tiled ||| full)
-    devLayout = onWorkspace devWs (full ||| column3 ||| tiled ||| column2)
+    devLayout = onWorkspace devWs (column2 ||| full ||| column3)
     webLayout = onWorkspace webWs (tiled ||| full)
     wrkLayout = onWorkspace wrkWs (tiled ||| full)
     etcLayout = onWorkspace etcWs simpleFloat
