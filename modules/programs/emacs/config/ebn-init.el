@@ -41,6 +41,10 @@
 	(backward-kill-word 1)
       (backward-delete-char 1)))
 
+(defun ebn/shell-command-on-region ()
+  (interactive)
+  (shell-command-on-region (region-beginning) (region-end) nil t))
+
 ;; Packages
 (use-package emacs
   :init
@@ -109,6 +113,7 @@
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-h ," . xref-find-definitions)
 	("C-h l" . display-local-help)
+	("C-h r" . xref-find-references)
 	("C-." . repeat)
 	("M-i" . back-to-indentation)
 	("<f9>" . kmacro-insert-counter)
@@ -137,7 +142,8 @@
   (set-face-attribute 'mode-line-inactive nil
 		      :box nil
 		      :foreground "darkgray"
-		      :overline "darkgray")
+		      :background nil
+		      :overline "#343638")
   (set-face-attribute 'font-lock-keyword-face nil :italic nil))
 
 (use-package diminish
@@ -236,6 +242,8 @@
       (= day last-day-of-month)))
   :config
   ;; Faces
+  (set-face-attribute 'secondary-selection nil :background nil :underline nil)
+  (set-face-attribute 'org-quote nil :background nil)
   (set-face-attribute 'org-document-title nil :underline t :height 1.2)
   (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
@@ -259,7 +267,8 @@
 	org-fontify-quote-and-verse-blocks t
 	org-startup-folded t
 	org-hide-leading-stars t
-	org-cycle-separator-lines -1)
+	org-cycle-separator-lines -1
+	org-catch-invisible-edits 'show)
 
   ;; Org-babel languages
   (org-babel-do-load-languages
@@ -525,6 +534,7 @@
 
 (use-package ibuffer-project
   :config
+  (setq ibuffer-truncate-lines nil)
   (defun ebn/ibuffer-setup ()
     (setq ibuffer-filter-groups
 	  (ibuffer-project-generate-filter-groups)))
