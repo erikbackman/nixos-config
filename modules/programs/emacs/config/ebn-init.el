@@ -127,8 +127,8 @@
 (use-package ebn-core
   :ensure nil
   :config
-  (ebn/font :name "Victor Mono" :size 18 :weight 'medium)
-  (ebn/font-variable-pitch :name "CMU Concrete" :size 21)
+  (ebn/font :name "Victor Mono" :size 14.0 :weight 'medium)
+  (ebn/font-variable-pitch :name "CMU Concrete" :size 17.0)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
 (use-package kaolin-themes
