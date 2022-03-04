@@ -27,15 +27,15 @@
         ];
       };
 
+      my-lib = import ./lib/lib.nix pkgs.lib;
+      my-modules = my-lib.listModulesRec ./modules;
+      
       make-system = extra-modules: nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs pkgs; };
         modules = pkgs.lib.lists.flatten (extra-modules ++ my-modules);
       };
       
-      my-lib = import ./lib/lib.nix pkgs.lib;
-      my-modules = my-lib.listModulesRec ./modules;
-
     in {
       devShell.${system} = import ./shell.nix { inherit pkgs; };
       
