@@ -9,10 +9,6 @@ in with lib; {
 
   config = mkIf cfg.enable {
     
-    nixpkgs.overlays = [
-      inputs.neovim-git.overlay
-    ];
-
     programs.neovim = {
       enable = true;
       package = pkgs.neovim;

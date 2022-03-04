@@ -32,7 +32,7 @@
       
       make-system = extra-modules: nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit inputs pkgs; };
+        specialArgs = { inherit pkgs; };
         modules = pkgs.lib.lists.flatten (extra-modules ++ my-modules);
       };
       
