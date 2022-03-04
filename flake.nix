@@ -27,10 +27,10 @@
         ];
       };
 
-      make-system = modules: nixpkgs.lib.nixosSystem {
+      make-system = extra-modules: nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs pkgs; };
-        modules = pkgs.lib.lists.flatten (modules ++ my-modules);
+        modules = pkgs.lib.lists.flatten (extra-modules ++ my-modules);
       };
       
       my-lib = import ./lib/lib.nix pkgs.lib;
