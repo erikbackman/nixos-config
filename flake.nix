@@ -17,22 +17,18 @@
   outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, emacs-overlay, neovim-git, nixos-hardware, ... }:
     let
       system = "x86_64-linux";
+      make-pkg-set = ps: attrs:
+        import ps ({
+          inherit system;
+          config.allowUnfree = true;
+        } // attrs);
 
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-        overlays = [ 
+      pkgs = make-pkg-set nixpkgs {
+        overlays = [
           emacs-overlay.overlay
           neovim-git.overlay
           (import ./packages)
-          (final: prev: { 
-            steam =
-              let unstable = import nixpkgs-unstable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-              in unstable.steam;
-          })
+          (final: prev: { steam = (make-pkg-set nixpkgs-unstable { }).steam; })
         ];
       };
 
@@ -40,7 +36,6 @@
       myModules = myLib.listModulesRec ./modules;
 
     in {
-
       # Output pkgs and myLib so I can access them via builtins.getFlake in a nix repl
       inherit pkgs;
       inherit myLib;
@@ -65,7 +60,7 @@
         bifrost = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs pkgs; };
-          modules = pkgs.lib.lists.flatten [ 
+          modules = pkgs.lib.lists.flatten [
             ./hosts/base
             ./hosts/bifrost
             ./hosts/bifrost/hardware-configuration.nix
@@ -73,7 +68,6 @@
             nixos-hardware.nixosModules.lenovo-thinkpad-t480
           ];
         };
-
       };
     };
 }
