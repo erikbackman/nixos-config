@@ -1,16 +1,30 @@
 module Config.Applications where
 
 import Control.Monad.IO.Class (MonadIO)
-import XMonad (spawn, ManageHook, Query, resource, (=?), doIgnore, className, title, appName, (<&&>), stringProperty, (<||>))
-import XMonad.Hooks.ManageHelpers ((-?>), composeOne, isDialog, doCenterFloat, isFullscreen, doFullFloat, isInProperty)
+import XMonad
+  ( ManageHook,
+    Query,
+    appName,
+    className,
+    doIgnore,
+    resource,
+    spawn,
+    stringProperty,
+    title,
+    (<&&>),
+    (<||>),
+    (=?),
+  )
 import XMonad.Hooks.InsertPosition
-
-data AppConfig = AppConfig
-  { terminal :: !(Maybe App),
-    launcher :: !(Maybe App),
-    browser :: !(Maybe App),
-    visualEditor :: !(Maybe App)
-  }
+import XMonad.Hooks.ManageHelpers
+  ( composeOne,
+    doCenterFloat,
+    doFullFloat,
+    isDialog,
+    isFullscreen,
+    isInProperty,
+    (-?>),
+  )
 
 type AppName = String
 
@@ -26,42 +40,30 @@ data App
   | NameApp AppName AppCommand
   deriving (Show)
 
-defaultAppConfig :: AppConfig
-defaultAppConfig =
-  AppConfig
-    { terminal = Nothing,
-      launcher = Nothing,
-      browser = Nothing,
-      visualEditor = Nothing
-    }
-
 maybeSpawn :: MonadIO m => Maybe App -> m ()
 maybeSpawn = maybe (pure ()) (spawn . appCommand)
 
-manageApps :: AppConfig -> ManageHook
-manageApps apps =
+manageApps :: ManageHook
+manageApps =
   composeOne
     [ resource =? "desktop_window" -?> doIgnore,
       resource =? "kdesktop" -?> doIgnore,
-      anyOf (
+      anyOf
         [ isFileChooserDialog,
           isDialog,
           isPopup,
           isSplash
-        ] <> browser'
-        )
+        ]
         -?> doCenterFloat,
       isFullscreen -?> doFullFloat,
       pure True -?> tileBelow
     ]
-    where
-      browser' = maybe mempty (pure . isInstance) (browser apps)
-                      
+
 appCommand :: App -> String
 appCommand (ClassApp _ s) = s
 appCommand (TitleApp _ s) = s
 appCommand (NameApp _ s) = s
-    
+
 tileBelow :: ManageHook
 tileBelow = insertPosition Below Newer
 
