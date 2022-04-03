@@ -23,7 +23,12 @@
           emacs-overlay.overlay
           neovim-git.overlay
           (import ./packages)
-          (final: prev: { steam = (make-packages nixpkgs-unstable { }).steam; })
+          (final: prev:
+            let unstable = make-packages nixpkgs-unstable { };
+            in {
+              steam = unstable.steam;
+              discord = unstable.discord;
+            })
         ];
       };
 
