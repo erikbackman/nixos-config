@@ -9,7 +9,7 @@
   };
 
   programs.steam.enable = true;
-  programs.ebn.nvim.enable = true;
+  programs.ebn.nvim.enable = false;
   programs.ebn.kitty.enable = true;
   programs.ebn.rofi.enable = true;
   programs.ebn.bash.enable = true;
@@ -24,7 +24,9 @@
   };
 
   windowManager.ebn.xmonad.enable = true;
-  services.ebn.polybar.enable = true;
+  services.ebn.tint2.enable = true;
+  #services.xserver.desktopManager.enlightenment.enable = true;
+  services.ebn.polybar.enable = false;
   services.xserver.enable = true;
   services.xserver.displayManager.sessionCommands = ''
     xrandr --output DP-0 --mode 3440x1440 --rate 99.98
@@ -58,11 +60,10 @@
 
   environment.systemPackages = with pkgs; [
     zathura
-    maxima
-    wxmaxima
+    #maxima
+    #wxmaxima
     texlive.combined.scheme-full
     libreoffice
-    firefox
     playerctl
     gsettings-desktop-schemas
     gnumake
@@ -70,9 +71,9 @@
     neofetch
     mpc_cli
     mpv
-    streamlink
+    #streamlink
     feh
-    #discord
+    discord
     gnome.gucharmap
     gimp
     rofi-pass
@@ -83,10 +84,13 @@
     #anki
     sage
     #geogebra6
-    jekyll
+    #jekyll
     man-pages
     brave
+    firefox
     trash-cli
+    spotify
+    e17gtk
   ] 
   ++ 
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;

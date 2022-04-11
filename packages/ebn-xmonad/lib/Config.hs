@@ -5,47 +5,43 @@ module Config where
 
 import qualified Config.Applications as App
 import Config.Keybinds (keybinds)
-import Config.Polybar (polybar, polybarHook)
 import XMonad
 import XMonad.Actions.MessageFeedback
 import XMonad.Actions.SpawnOn (manageSpawn)
-import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.MultiToggle (mkToggle, single)
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import XMonad.Layout.Named (named)
-import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.Reflect
 import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
-import XMonad.Layout.WindowNavigation (windowNavigation)
+import XMonad.Layout.WindowNavigation (configurableNavigation, noNavigateBorders)
 import XMonad.Util.Cursor (setDefaultCursor)
 
 main :: IO ()
-main = xmonad . ewmh . docks . cfg =<< polybar
+main = xmonad . ewmh . docks $ cfg
   where
-    cfg dbus =
+    cfg =
       def
         { manageHook = App.manageApps <+> manageSpawn,
-          logHook = dynamicLogWithPP (polybarHook dbus),
           startupHook = myStartupHook,
           modMask = mod4Mask,
           borderWidth = 2,
           keys = keybinds,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,
-          focusedBorderColor = "#434C5E",
-          normalBorderColor = "#101010",
+          focusedBorderColor = "#000",
+          normalBorderColor = "#7F7F7F",
           workspaces = workspaceIds
         }
 
     myStartupHook :: X ()
     myStartupHook = do
-      setDefaultCursor xC_left_ptr
+      setDefaultCursor xC_left_ptr      
 
 -- Workspaces ---------------------------------------------------------------
 
@@ -64,9 +60,10 @@ workspaceIds = [webWs, devWs, comWs, wrkWs, etcWs]
 
 myLayouts =
   avoidStruts
+    . configurableNavigation noNavigateBorders 
+--    . simpleDeco shrinkText (def { decoWidth = 100 })
     . gapSpaced
-    . windowNavigation
-    . smartBorders
+--    . smartBorders
     . fullScreenToggle
     . comLayout
     . devLayout

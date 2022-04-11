@@ -9,21 +9,12 @@ import Config.Applications (App(..))
 import Data.Map (Map)
 import qualified Data.Map as M
 import Graphics.X11
-import System.Exit (exitSuccess)
+import System.Exit
 import XMonad
-  ( ChangeLayout (NextLayout),
-    X,
-    XConfig (XConfig, modMask, workspaces),
-    kill,
-    sendMessage,
-    spawn,
-    windows,
-    withFocused,
-    (.|.)
-  )
 import XMonad.Actions.WindowGo (runOrRaise)
 import XMonad.Actions.WithAll (killAll)
 import XMonad.Core (io)
+import XMonad.Operations
 import XMonad.Layout.MultiToggle (Toggle (..))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import qualified XMonad.StackSet as W
@@ -31,7 +22,7 @@ import qualified XMonad.StackSet as W
 keybinds :: XConfig l -> Map (KeyMask, KeySym) (X ())
 keybinds conf@XConfig {XMonad.modMask = modm} =
   M.fromList $
-    [ ((modm, xK_q), restart),
+    [ ((modm, xK_q), restart'),
       ((modm .|. shiftMask, xK_q), io exitSuccess),
       ((modm .|. shiftMask, xK_Return), spawn $ Apps.appCommand terminal),
       ((modm, xK_c), kill),
@@ -49,7 +40,8 @@ keybinds conf@XConfig {XMonad.modMask = modm} =
     ]
       <> switchWsById
   where
-    restart = spawn "xmonad --recompile; xmonad --restart"
+    restart' = restart "xmonad" True
+      --spawn "xmonad --recompile; xmonad --restart"
 
     terminal = ClassApp "kitty" "kitty"
     editor = ClassApp "Emacs" "emacs"
