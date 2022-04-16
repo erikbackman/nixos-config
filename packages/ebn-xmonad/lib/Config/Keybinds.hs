@@ -46,7 +46,7 @@ keybinds conf@XConfig {XMonad.modMask = modm} =
     terminal = ClassApp "kitty" "kitty"
     editor = ClassApp "Emacs" "emacs"
     browser = ClassApp "Brave-browser" "brave"
-    launcher = "rofi -matching fuzzy -show drun -modi drun,run -theme dmenu"
+    launcher = "j4-dmenu-desktop"
 
     switchWsById =
       [ ((m, k), windows $ f i)

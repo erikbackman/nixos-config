@@ -34,8 +34,8 @@ main = xmonad . ewmh . docks $ cfg
           keys = keybinds,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,
-          focusedBorderColor = "#000",
-          normalBorderColor = "#7F7F7F",
+          focusedBorderColor = "#81A1C1",
+          normalBorderColor = "#000",
           workspaces = workspaceIds
         }
 
