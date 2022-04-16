@@ -10,11 +10,21 @@
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
+; TODO
 (setq-default fill-column 80)
 (setq global-mark-ring-max 16)
+(setq-default left-margin-width 1)
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/lisp")
+
+(add-hook 'lisp-mode-hook
+	  (lambda ()
+	    (set (make-local-variable 'lisp-indent-function)
+		   'common-lisp-indent-function)))
+
+(setq lisp-backquote-indentation nil)
 
 ;; Functions
 ;; TODO: Move to ebn-core
@@ -45,6 +55,12 @@
   (interactive)
   (shell-command-on-region (region-beginning) (region-end) nil t))
 
+(defun ebn/comment-paragraph ()
+  (interactive)
+  (save-excursion
+    (mark-paragraph)
+    (comment-or-uncomment-region (region-beginning) (region-end))))
+
 ;; Packages
 (use-package emacs
   :init
@@ -69,7 +85,7 @@
     (interactive)
     (electric-pair-local-mode -1))
   (add-hook 'minibuffer-setup-hook 'ebn/setup-minibuffer)
-  
+
   :custom
   (delete-by-moving-to-trash t)
   (gdb-many-windows t)
@@ -101,6 +117,7 @@
 	("<f7>" . call-last-kbd-macro)
 	("M-z" . zap-up-to-char)
 	("C-k" . ebn/kill-dwim)
+	("C-x f" . find-file)
 	("C-x C-f" . find-file-other-window)
 	("M-1" . delete-other-windows)
 	("M-2" . split-window-below)
@@ -117,34 +134,27 @@
 	("C-." . repeat)
 	("M-i" . back-to-indentation)
 	("<f9>" . kmacro-insert-counter)
-	("<f10>" . call-last-kbd-macro)
+	("<f10>" . kmacro-start-macro)
 	("<f11>" . kmacro-end-macro)
-	("<f12>" . kmacro-start-macro)
+	("<f12>" . call-last-kbd-macro)
 	("s-e" . electric-pair-local-mode)
 	("s-r" . replace-string)
+	("C-c c" . ebn/comment-paragraph)
 	("C-x C-b" . ibuffer)))
+
+(use-package notebook-theme
+  :ensure nil
+  :load-path "themes/"
+  :config
+  (notebook))
 
 (use-package ebn-core
   :ensure nil
+  :after notebook-theme
   :config
-  (ebn/font :name "Victor Mono" :size 14.0 :weight 'medium)
-  (ebn/font-variable-pitch :name "CMU Concrete" :size 17.0)
+  (ebn/font :name "Sarasa Mono CL" :size 14.5 :weight 'medium)
+  (ebn/font-variable-pitch :name "CMU Concrete" :size 21 :weight 'regular)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
-
-(use-package kaolin-themes
-  :ensure t
-  :config
-  (load-theme 'kaolin-aurora t nil)
-  (set-face-attribute 'fringe nil :background nil)
-  (set-face-attribute 'mode-line nil
-		      :background nil :box nil
-		      :overline "darkgray")
-  (set-face-attribute 'mode-line-inactive nil
-		      :box nil
-		      :foreground "darkgray"
-		      :background nil
-		      :overline "#343638")
-  (set-face-attribute 'font-lock-keyword-face nil :italic nil))
 
 (use-package diminish
   :ensure t)
@@ -242,12 +252,16 @@
       (= day last-day-of-month)))
   :config
   ;; Faces
+  (setq org-export-preserve-breaks t)
+  (setq org-ellipsis " …")
+  (set-face-attribute 'org-hide nil :foreground "#FFFFFF" :inherit nil)
   (set-face-attribute 'secondary-selection nil :background nil :underline nil)
   (set-face-attribute 'org-quote nil :background nil)
   (set-face-attribute 'org-document-title nil :underline t :height 1.2)
   (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-property-value nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-meta-line nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)  
@@ -255,10 +269,12 @@
   (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
   (set-face-attribute 'org-block-begin-line nil
 		      :inherit '(fixed-pitch font-lock-comment-face)
+		      :foreground "lightgray"
 		      :background nil)
   (set-face-attribute 'org-block-end-line nil :inherit 'org-block-begin-line)
   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-quote nil :inherit nil :background nil)
+  (set-face-attribute 'org-level-1 nil :weight 'semibold :height 1.0)
   
   ;; Options
   (setq org-startup-indented t
@@ -268,8 +284,9 @@
 	org-startup-folded t
 	org-hide-leading-stars t
 	org-cycle-separator-lines -1
-	org-catch-invisible-edits 'show)
-
+	org-catch-invisible-edits 'error
+	org-ctrl-k-protect-subtree t)
+  
   ;; Org-babel languages
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -302,8 +319,11 @@
   (:map org-mode-map
 	("C-<return>" . org-meta-return)
 	("C-c h" . consult-org-heading))
-  :hook ((org-mode . variable-pitch-mode)
-	 (org-mode . org-cdlatex-mode)))
+  :hook ((org-mode . (lambda ()
+		       (setq line-spacing .2)
+		       (setq cursor-type 'box)
+		       (org-cdlatex-mode)
+		       (variable-pitch-mode)))))
 
 (use-package org-roam
   :defer t
@@ -336,13 +356,21 @@
 (use-package sage-shell-mode
   :ensure t
   :config
-  (setq sage-shell:set-ipython-version-on-startup nil))
+  (setq sage-shell:set-ipython-version-on-startup nil)
+  (setq sage-shell-sagetex:auctex-command-name "LaTeX")
+  (add-hook 'sage-shell:sage-mode-hook
+	    (setq-local prettify-symbols-alist
+			'(("lambda" . 955)
+			  ("beta" . 120573)
+			  ("alpha" . 120572)))))
 
 (use-package elpy
   :ensure t
   :defer t
   :init
-  (advice-add 'python-mode :before 'elpy-enable))
+  (advice-add 'python-mode :before 'elpy-enable)
+  :config
+  (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8))))
 
 (use-package yapfify
   :ensure t)
@@ -350,14 +378,15 @@
 (use-package ob-sagemath
   :ensure t
   :config
-  (setq org-babel-default-header-args:sage '((:session . t)
-					     (:results . "output")))
-  (with-eval-after-load "org"
-    (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
-  (setq org-confirm-babel-evaluate nil
-	org-export-babel-evaluate nil
-	org-startup-with-inline-images t)
-  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images))
+  (progn 
+    (setq org-babel-default-header-args:sage '((:session . t)
+					       (:results . "output replace")))
+    (with-eval-after-load "org"
+      (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
+    (setq org-confirm-babel-evaluate nil
+	  org-export-babel-evaluate nil
+	  org-startup-with-inline-images t)
+    (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)))
 
 (use-package haskell-mode
   :defer t
@@ -379,7 +408,9 @@
   (load-library "haskell-mode-autoloads")
   (require 'haskell-interactive-mode)
 
-  (defun haskell-mode-after-save-handler ())
+  (defun haskell-mode-after-save-handler ()
+    (let ((inhibit-message t))
+      (eglot-format-buffer)))
   (defun ebn/haskell-mode-setup ()
     (haskell-indentation-mode)
     (autoload 'haskell-doc-current-info "haskell-doc")
@@ -413,14 +444,12 @@
   (eldoc-echo-area-use-multiline-p 3)
   :config
   (define-key eglot-mode-map [remap display-local-help] nil)
-  (add-to-list 'eglot-server-programs
-               `(sage-shell:sage-mode . ("pyls" "-v" "--tcp" "--host"
-					 "localhost" "--port" :autoport)))
   :bind (:map eglot-mode-map
 	      ("C-c C-a" . eglot-code-actions)
 	      ("C-c C-f" . eglot-format-buffer)))
 
 (use-package envrc
+  :diminish
   :config
   (envrc-global-mode))
 
@@ -465,6 +494,7 @@
   :commands 'avy-goto-char-timer
   :config
   (setq avy-timeout-seconds 0.4)
+  (setq avy-all-windows nil)
   :bind
   ("M-g g" . avy-goto-line)
   ("M-g c" . avy-goto-char-in-line)
@@ -507,7 +537,7 @@
 
 (use-package erc
   :config
-  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "Green")
+  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "foreground")
   (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))))
 
 (use-package popper
