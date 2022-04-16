@@ -11,7 +11,7 @@ in with lib; {
   config = mkIf cfg.enable {
     fonts.fonts = with pkgs; [
     ];
-    environment.systemPackages = [ pkgs.tint2 ];
+    environment.systemPackages = [ pkgs.tint2 pkgs.pasystray ];
     
     services.dbus = {
       enable = true;
@@ -23,10 +23,12 @@ in with lib; {
       partOf = [ "tray.target" ];
       serviceConfig = {
         Type = "forking";
-        Environment = "PATH=${pkgs.tint2}/bin:/run/wrappers/bin";
+        Environment = "PATH=${pkgs.tint2}/bin:/run/wrappers/bin:${pkgs.pasystray}/bin";
         ExecStart =
-          let scriptPkg =
-                pkgs.writeShellScriptBin "tint2-start" "${pkgs.tint2}/bin/tint2 &";
+          let
+            tint2rc = pkgs.writeText "tint2rc" (builtins.readFile ./config/tint2rc);
+            scriptPkg =
+              pkgs.writeShellScriptBin "tint2-start" "${pkgs.tint2}/bin/tint2 -c ${tint2rc} &";
           in "${scriptPkg}/bin/tint2-start";
         ExecStop = "pkill tint2";
         Restart = "on-failure";
