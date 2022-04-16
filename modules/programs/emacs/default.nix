@@ -46,9 +46,8 @@ in {
   config = mkIf cfg.enable {
 
     fonts.fonts = with pkgs; [
-      jetbrains-mono
       cm_unicode
-      victor-mono
+      sarasa-gothic
     ];
     
     environment.systemPackages = with pkgs; [
