@@ -6,7 +6,6 @@
   programs.steam.enable = true;
   programs.ebn.nvim.enable = false;
   programs.ebn.kitty.enable = true;
-  programs.ebn.rofi.enable = true;
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
   programs.ebn.emacs.enable = true;
