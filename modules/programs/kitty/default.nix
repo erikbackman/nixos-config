@@ -19,10 +19,10 @@ in {
 
     environment.systemPackages = 
       let 
-        config = pkgs.writeText "kitty config" (
-          (builtins.readFile ./config/kitty.conf) +
-          cfg.extraConfig
-        );
+        config = pkgs.writeText "kitty config" ''
+          ${(builtins.readFile ./config/kitty.conf)}
+          ${cfg.extraConfig}
+        '';
 
         wrapped = pkgs.writeShellScriptBin "kitty" ''
           exec ${pkgs.kitty}/bin/kitty -c ${config}
