@@ -16,7 +16,7 @@ in with lib; {
       after = [ "graphical-session-pre.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig = {
-        ExecStart = "${pkgs.xcompmgr}/bin/xcompmgr";
+        ExecStart = "${pkgs.xcompmgr}/bin/xcompmgr -c -C -t-5 -l-5 -r4.2 -o.55";
         ExecStop = "pkill xcompmgr";
         Restart = "on-failure";
         RestartSec = 5;
