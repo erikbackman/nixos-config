@@ -3,11 +3,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  ebn.themes = {
-    enable = true;
-    palette = "aurora";
-  };
-
   programs.steam.enable = true;
   programs.ebn.nvim.enable = false;
   programs.ebn.kitty.enable = true;
@@ -25,7 +20,6 @@
 
   windowManager.ebn.xmonad.enable = true;
   services.ebn.tint2.enable = true;
-  #services.xserver.desktopManager.enlightenment.enable = true;
   services.ebn.polybar.enable = false;
   services.xserver.enable = true;
   services.xserver.displayManager.sessionCommands = ''
@@ -38,9 +32,10 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.layout = "se";
   services.fstrim.enable = true;
-
+  
   fonts.fonts = with pkgs; [
     etBook
+    eb-garamond
     google-fonts
     hack-font
     ebn.iosevka-custom
@@ -56,6 +51,7 @@
     proggyfonts
     tamsyn
     julia-mono
+    recursive
   ];
 
   environment.systemPackages = with pkgs; [
