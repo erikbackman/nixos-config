@@ -142,15 +142,15 @@
 	("C-c c" . ebn/comment-paragraph)
 	("C-x C-b" . ibuffer)))
 
-(use-package notebook-theme
+(use-package mindre-theme
   :ensure nil
   :load-path "themes/"
   :config
-  (notebook))
+  (mindre))
 
 (use-package ebn-core
   :ensure nil
-  :after notebook-theme
+  :after mindre-theme
   :config
   (ebn/font :name "Sarasa Mono CL" :size 14.5 :weight 'medium)
   (ebn/font-variable-pitch :name "CMU Concrete" :size 21 :weight 'regular)
