@@ -7,6 +7,10 @@ in {
   options.programs.ebn.bash = {
     enable = mkEnableOption "Enable Bash";
     starship = { enable = mkEnableOption "Enable Starship Prompt"; };
+    extraConfig = mkOption {
+      type = types.lines;
+      default = "";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -33,6 +37,7 @@ in {
       if !cfg.starship.enable then
         builtins.readFile ./config/bashrc + ''
           eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+          ${cfg.extraConfig}
         ''
         else ''
           export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
@@ -46,16 +51,13 @@ in {
           alias du="du -h -a --total"
           alias la="ls -al"
           alias nb="nix build"
-          alias v="nvim"
-          alias vim="nvim"
-          alias vi="nvim"
           alias gs="git status"
           alias ga="git add"
           alias gc="git commit"
           alias gp="git push"
 
           p() {
-          cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | fzf)
+          cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | ${pkgs.fzf}/bin/fzf)
           }
 
           eval "$(${pkgs.direnv}/bin/direnv hook bash)"
