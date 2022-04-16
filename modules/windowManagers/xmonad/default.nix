@@ -30,15 +30,13 @@ in {
     };
 
     environment.systemPackages = with pkgs; [
-      yad
-      xdotool
-      bottom
       flameshot
       feh
       xorg.xset
       xmonad-log
       nitrogen
       xcompmgr
+      j4-dmenu-desktop
     ];
     
     services = {
@@ -64,7 +62,6 @@ in {
 
         displayManager.sessionCommands = ''
           xset r rate 500 33
-
         '';
 
         windowManager.xmonad.enable = true;
