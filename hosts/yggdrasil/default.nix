@@ -33,24 +33,24 @@
   services.fstrim.enable = true;
   
   fonts.fonts = with pkgs; [
-    etBook
+    #etBook
     eb-garamond
     google-fonts
     hack-font
-    ebn.iosevka-custom
+    #ebn.iosevka-custom
     jetbrains-mono
-    victor-mono
+    #victor-mono
     oldstandard
     gyre-fonts
-    libre-baskerville
+    #libre-baskerville
     siji
     cm_unicode
     bakoma_ttf
     lmmath
-    proggyfonts
-    tamsyn
-    julia-mono
-    recursive
+    #proggyfonts
+    #tamsyn
+    #julia-mono
+    #recursive
   ];
 
   environment.systemPackages = with pkgs; [
