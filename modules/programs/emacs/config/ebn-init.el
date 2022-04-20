@@ -10,10 +10,11 @@
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-; TODO
 (setq-default fill-column 80)
 (setq global-mark-ring-max 16)
 (setq-default left-margin-width 1)
+(setq sentence-end-double-space nil)
+(setq kill-whole-line t)
 
 (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
@@ -189,6 +190,7 @@
   :init
   (setq completion-styles '(orderless)
 	completion-category-defaults nil
+	orderless-skip-highlighting nil
 	completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package eldoc
