@@ -573,4 +573,7 @@
   (setq ibuffer-project-use-cache t)
   :hook ((ibuffer . ebn/ibuffer-setup)))
 
+(use-package elpher
+  :ensure t)
+
 ;;; ebn-init.el ends here
