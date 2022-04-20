@@ -37,6 +37,7 @@
     eb-garamond
     google-fonts
     hack-font
+    iosevka
     #ebn.iosevka-custom
     jetbrains-mono
     #victor-mono
@@ -81,7 +82,7 @@
     #geogebra6
     #jekyll
     man-pages
-    brave
+    #brave
     firefox
     trash-cli
     spotify
