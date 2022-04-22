@@ -10,6 +10,10 @@
  'default nil
  :font (font-spec :family "Sarasa Mono CL" :size 14.5 :weight 'medium))
 
+(set-face-attribute
+ 'fixed-pitch nil
+ :font (font-spec :family "Sarasa Mono CL" :size 14.5 :weight 'medium))
+
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
