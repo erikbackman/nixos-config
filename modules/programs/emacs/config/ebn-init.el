@@ -8,11 +8,11 @@
 ;; Basic
 (set-face-attribute
  'default nil
- :font (font-spec :family "Sarasa Mono CL" :size 14.5 :weight 'medium))
+ :font (font-spec :family "Sarasa Mono CL" :size 14.5))
 
 (set-face-attribute
  'fixed-pitch nil
- :font (font-spec :family "Sarasa Mono CL" :size 14.5 :weight 'medium))
+ :font (font-spec :family "Sarasa Mono CL" :size 14.5))
 
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
@@ -162,7 +162,6 @@
   :ensure nil
   :defer t
   :commands 'ebn/copy-dwim
-  :config
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
 (use-package diminish
@@ -538,6 +537,8 @@
   :hook (emacs-lisp-mode . enable-paredit-mode))
 
 (use-package erc
+  :defer t
+  :commands 'erc-tls
   :config
   (set-face-attribute 'erc-prompt-face nil :background nil :foreground "foreground")
   (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))))
