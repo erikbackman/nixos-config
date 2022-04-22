@@ -281,11 +281,10 @@
 	org-ctrl-k-protect-subtree t)
   
   ;; Org-babel languages
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((latex . t)
-     (emacs-lisp . t)
-     (python . t)))
+  (org-babel-do-load-languages 'org-babel-load-languages
+			       '((latex . t)
+				 (emacs-lisp . t)
+				 (python . t)))
 
   ;; Org-agenda
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
@@ -295,23 +294,31 @@
 	  ("j" "Journal" entry (file+datetree "~/org/journal.org")
 	   "* %?\nEntered on %U\n  %i\n  %a")
 	  ("r" "Roam node" function #'org-roam-capture))
+	
 	org-image-actual-width nil
 	org-return-follows-link t
 	org-hide-emphasis-markers t
 	org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
 	org-latex-listings 'minted
 	org-latex-packages-alist '(("" "minted"))
+	
 	org-latex-pdf-process
+	;; The reason why this is a list is that it usually takes several
+	;; runs of ‘pdflatex’, maybe mixed with a call to ‘bibtex’.  Org
+	;; does not have a clever mechanism to detect which of these
+	;; commands have to be run to get to a stable result, and it also
+	;; does not do any error checking.
 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
+	
 	org-latex-tables-centered t
 	org-insert-heading-respect-content t)
   
-  :bind*
-  (:map org-mode-map
-	("C-<return>" . org-meta-return)
-	("C-c h" . consult-org-heading))
+  :bind* (:map org-mode-map
+	       ("C-<return>" . org-meta-return)
+	       ("C-c h" . consult-org-heading))
+  
   :hook ((org-mode . (lambda ()
 		       (setq line-spacing .2)
 		       (setq cursor-type 'box)
@@ -407,6 +414,7 @@
   (defun haskell-mode-after-save-handler ()
     (let ((inhibit-message t))
       (eglot-format-buffer)))
+  
   (defun ebn/haskell-mode-setup ()
     (haskell-indentation-mode)
     (autoload 'haskell-doc-current-info "haskell-doc")
@@ -431,6 +439,7 @@
   :hook ((haskell-mode . eglot-ensure)
 	 (c-mode . eglot-ensure)
 	 (python-mode . eglot-ensure))
+  
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
@@ -438,6 +447,7 @@
   (eldoc-idle-delay 1)
   (eldoc-echo-area-display-truncation-message nil)
   (eldoc-echo-area-use-multiline-p 3)
+  
   :config
   (add-to-list 'eglot-server-programs '(LaTeX-mode . ("texlab" "")))
   (define-key eglot-mode-map [remap display-local-help] nil)
