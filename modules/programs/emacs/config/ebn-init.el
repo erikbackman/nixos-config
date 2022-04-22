@@ -6,6 +6,10 @@
 (require 'dired)
 
 ;; Basic
+(set-face-attribute
+ 'default nil
+ :font (font-spec :family "Sarasa Mono CL" :size 14.5 :weight 'medium))
+
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
@@ -147,14 +151,14 @@
   :ensure nil
   :load-path "themes/"
   :config
+  (setq mindre-use-bold nil)
   (mindre))
 
 (use-package ebn-core
   :ensure nil
-  :after mindre-theme
+  :defer t
+  :commands 'ebn/copy-dwim
   :config
-  (ebn/font :name "Sarasa Mono CL" :size 14.5 :weight 'medium)
-  (ebn/font-variable-pitch :name "CMU Concrete" :size 21 :weight 'regular)
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
 (use-package diminish
@@ -254,29 +258,12 @@
       (= day last-day-of-month)))
   :config
   ;; Faces
+  (set-face-attribute
+   'variable-pitch nil
+   :font (font-spec :family "CMU Concrete" :size 21 :weight 'regular))
+
   (setq org-export-preserve-breaks t)
   (setq org-ellipsis " …")
-  (set-face-attribute 'org-hide nil :foreground "#FFFFFF" :inherit nil)
-  (set-face-attribute 'secondary-selection nil :background nil :underline nil)
-  (set-face-attribute 'org-quote nil :background nil)
-  (set-face-attribute 'org-document-title nil :underline t :height 1.2)
-  (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-property-value nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-meta-line nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-checkbox-statistics-todo nil :inherit 'fixed-pitch)  
-  (set-face-attribute 'org-checkbox-statistics-done nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch :background nil)
-  (set-face-attribute 'org-block-begin-line nil
-		      :inherit '(fixed-pitch font-lock-comment-face)
-		      :foreground "lightgray"
-		      :background nil)
-  (set-face-attribute 'org-block-end-line nil :inherit 'org-block-begin-line)
-  (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-quote nil :inherit nil :background nil)
-  (set-face-attribute 'org-level-1 nil :weight 'semibold :height 1.0)
   
   ;; Options
   (setq org-startup-indented t
@@ -357,6 +344,7 @@
 
 (use-package sage-shell-mode
   :ensure t
+  :defer t
   :config
   (setq sage-shell:set-ipython-version-on-startup nil)
   (setq sage-shell-sagetex:auctex-command-name "LaTeX")
@@ -375,10 +363,12 @@
   (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8))))
 
 (use-package yapfify
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package ob-sagemath
   :ensure t
+  :defer t
   :config
   (progn 
     (setq org-babel-default-header-args:sage '((:session . t)
@@ -445,6 +435,7 @@
   (eldoc-echo-area-display-truncation-message nil)
   (eldoc-echo-area-use-multiline-p 3)
   :config
+  (add-to-list 'eglot-server-programs '(LaTeX-mode . ("texlab" "")))
   (define-key eglot-mode-map [remap display-local-help] nil)
   :bind (:map eglot-mode-map
 	      ("C-c C-a" . eglot-code-actions)
@@ -475,6 +466,7 @@
   :mode ("\\.nix\\'" . nix-mode))
 
 (use-package vterm
+  :defer t
   :bind ("C-c C-t" . vterm-other-window))
 
 (use-package cc-mode
@@ -531,12 +523,6 @@
   :mode ("\\.el\\'" . emacs-lisp-mode)
   :hook (emacs-lisp-mode . enable-paredit-mode))
 
-(use-package ox-hugo
-  :ensure t
-  :defer t
-  :commands 'org-export-dispatch
-  :after 'ox)
-
 (use-package erc
   :config
   (set-face-attribute 'erc-prompt-face nil :background nil :foreground "foreground")
@@ -557,12 +543,9 @@
 	  "\\*vc-git"
           help-mode
           compilation-mode))
-  (popper-mode +1)
-  (popper-echo-mode +1))
-
-(use-package rainbow-mode
-  :ensure t
-  :mode "\\.css\\'")
+  :config
+  (popper-mode)
+  (popper-echo-mode))
 
 (use-package ibuffer-project
   :config
@@ -573,7 +556,4 @@
   (setq ibuffer-project-use-cache t)
   :hook ((ibuffer . ebn/ibuffer-setup)))
 
-(use-package elpher
-  :ensure t)
-
-;;; ebn-init.el ends here
+;; ;;; ebn-init.el ends here
