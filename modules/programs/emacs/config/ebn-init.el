@@ -284,7 +284,8 @@
   (org-babel-do-load-languages 'org-babel-load-languages
 			       '((latex . t)
 				 (emacs-lisp . t)
-				 (python . t)))
+				 (python . t)
+				 (sagemath . t)))
 
   ;; Org-agenda
   (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
