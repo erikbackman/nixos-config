@@ -155,13 +155,14 @@
   :ensure nil
   :load-path "themes/"
   :config
-  (setq mindre-use-bold nil)
+  ;(setq mindre-use-bold nil)
   (mindre))
 
 (use-package ebn-core
   :ensure nil
   :defer t
   :commands 'ebn/copy-dwim
+  :config
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
 (use-package diminish
