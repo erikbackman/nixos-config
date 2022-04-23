@@ -23,16 +23,6 @@
 (setq-default left-margin-width 1)
 (setq sentence-end-double-space nil)
 (setq kill-whole-line t)
-
-(add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(add-to-list 'load-path "~/.emacs.d/lisp")
-
-(add-hook 'lisp-mode-hook
-	  (lambda ()
-	    (set (make-local-variable 'lisp-indent-function)
-		   'common-lisp-indent-function)))
-
 (setq lisp-backquote-indentation nil)
 
 ;; Functions
@@ -109,7 +99,7 @@
 	 (prog-mode . repeat-mode)
 	 (prog-mode . electric-pair-local-mode)
 	 (minibuffer-mode . superword-mode))
-
+  
   :bind
   (:map minibuffer-mode-map
 	("<DEL>" . ebn/kill-dir-or-char))
@@ -434,6 +424,12 @@
   (:map haskell-mode-map
 	("M-<left>" . backward-sexp)
 	("M-<right>" . forward-sexp)))
+
+(use-package agda2
+  :ensure nil
+  :init
+  (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
+  :mode ("\\agda\\'" . agda2-mode))
 
 (use-package eglot
   :defer t
