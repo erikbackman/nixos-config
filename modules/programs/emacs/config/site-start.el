@@ -99,14 +99,18 @@ least specific (the system profile)"
 (setq package-enable-at-startup nil)
 (setq package-archives nil)
 
+(defvar last-file-name-handler-alist file-name-handler-alist)
+
 ;; Defer garbage collection further back in the startup process
 ;; (setq gc-cons-threshold most-positive-fixnum)
 ;;(setq gc-cons-threshold 134217728)   ; 128mb
-(setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-threshold most-positive-fixnum
+      file-name-handler-alist nil)
 
 (add-hook 'emacs-startup-hook
 	  (lambda ()
-	    (setq gc-cons-threshold (* 2 1000 1000))))
+	    (setq gc-cons-threshold (* 2 1000 1000)
+		  file-name-handler-alist last-file-name-handler-alist)))
 
 ;; Ignore X resources
 (advice-add #'x-apply-session-resources :override #'ignore)
