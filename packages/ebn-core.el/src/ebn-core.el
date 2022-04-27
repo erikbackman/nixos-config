@@ -5,13 +5,12 @@
 
 ;;; Code:
 
-;;;###autoload
 (defmacro ebn/font (&rest spec)
   `(let ((fs (funcall 'font-spec ,@spec)))
      (when (member (font-get fs :name) (font-family-list))
        (set-face-attribute 'default nil :font fs)
        (set-face-attribute 'fixed-pitch nil :font fs))))
-;;;###autoload
+
 (defmacro ebn/font-variable-pitch (&rest spec)
   `(let ((fs (funcall 'font-spec ,@spec)))
      (when (member (font-get fs :name) (font-family-list))
@@ -49,15 +48,6 @@
   "Run ripgrep in current project"
   (interactive)
   (funcall-interactively #'consult-ripgrep (project-root (project-current))))
-
-;;;###autoload
-(defun ebn/display-startup-time ()
-  "Message startup time."
-  (message "Emacs loaded in %s with %d garbage collections."
-	   (format "%.2f seconds"
-		   (float-time
-		    (time-subtract after-init-time before-init-time)))
-	   gcs-done))
 
 (defun ebn/open-line-below ()
   "Open a newline below current line."
