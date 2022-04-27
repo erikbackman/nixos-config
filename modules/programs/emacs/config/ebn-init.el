@@ -5,7 +5,7 @@
 (require 'ebn-core)
 (require 'dired)
 
-;; Basic
+;;; Fonts:
 (set-face-attribute
  'default nil
  :font (font-spec :family "Sarasa Mono CL" :size 14.5))
@@ -14,6 +14,7 @@
  'fixed-pitch nil
  :font (font-spec :family "Sarasa Mono CL" :size 14.5))
 
+;;; Better defaults:
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
@@ -25,8 +26,8 @@
 (setq kill-whole-line t)
 (setq lisp-backquote-indentation nil)
 
-;; Functions
-;; TODO: Move to ebn-core
+;;; Functions:
+;;; TODO: Move to ebn-core
 (defun ebn/kill-dwim ()
   (interactive)
   (if (region-active-p)
@@ -60,7 +61,7 @@
     (mark-paragraph)
     (comment-or-uncomment-region (region-beginning) (region-end))))
 
-;; Packages
+;;; Packages:
 (use-package emacs
   :init
   ;; TAB cycle if there are only few candidates
@@ -158,38 +159,56 @@
 (use-package diminish
   :ensure t)
 
-(use-package yasnippet
-  :diminish yas-minor-mode
-  :config
-  (yas-global-mode 1))
-
 (use-package which-key
   :diminish
   :config
   (which-key-mode 1))
 
-(use-package vertico
-  :config
-  (vertico-mode))
+(use-package vterm
+  :defer t
+  :bind ("C-c C-t" . vterm-other-window))
 
-(use-package consult
-  :config
-  (setq consult-preview-key nil)
-  (recentf-mode)
-  :bind
-  ("C-c r" . consult-recent-file)
-  ("C-c f" . consult-ripgrep)
-  ("C-c l" . consult-line)
-  ("C-c i" . consult-imenu)
-  ("C-c t" . gtags-find-tag)
-  ("C-x b" . consult-buffer))
+(use-package gtags
+  :ensure nil)
 
-(use-package orderless
+(use-package erc
+  :defer t
+  :commands 'erc-tls
+  :config
+  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "foreground")
+  (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))))
+
+(use-package popper
+  :ensure t
+  :bind (("C-´"   . popper-toggle-latest)
+         ("M-´"   . popper-cycle)
+         ("C-M-´" . popper-toggle-type))
   :init
-  (setq completion-styles '(orderless)
-	completion-category-defaults nil
-	orderless-skip-highlighting nil
-	completion-category-overrides '((file (styles partial-completion)))))
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+	  "\\*eldoc\\*"
+	  "\\*ibuffer\\*"
+	  "\\*vc-git"
+          help-mode
+          compilation-mode))
+  :config
+  (popper-mode)
+  (popper-echo-mode))
+
+(use-package ibuffer-project
+  :config
+  (setq ibuffer-truncate-lines nil)
+  (defun ebn/ibuffer-setup ()
+    (setq ibuffer-filter-groups
+	  (ibuffer-project-generate-filter-groups)))
+  (setq ibuffer-project-use-cache t)
+  :hook ((ibuffer . ebn/ibuffer-setup)))
+
+(use-package elcord
+  :ensure t
+  :commands 'elcord-mode)
 
 (use-package eldoc
   :ensure nil
@@ -203,33 +222,10 @@
 	dired-dwim-target t
 	delete-by-moving-to-trash t)
   :bind*			    
-  (:map
-   dired-mode-map
-   ("-" . ebn/dired-up-directory)))
+  (:map dired-mode-map
+	("-" . ebn/dired-up-directory)))
 
-(use-package cdlatex
-  :defer t)
-
-(use-package auctex
-  :mode
-  ("\\.tex\\'" . latex-mode)
-  :config
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq-default TeX-master nil)
-  (setq TeX-PDF-mode t)
-  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-  (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex))
-
-(use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-	 ("\\.md\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown")
-  :config (set-face-attribute 'markdown-code-face nil :background nil))
-
+;;; Org:
 (use-package org
   :defer t
   :commands (my/org-prettify-buffer
@@ -255,14 +251,15 @@
   (set-face-attribute
    'variable-pitch nil
    :font (font-spec :family "CMU Concrete" :size 21 :weight 'regular))
-
-  (setq org-export-preserve-breaks t)
-  (setq org-ellipsis " …")
   
   ;; Options
   (setq org-startup-indented t
 	org-startup-with-latex-preview t
 	org-pretty-entities t
+	org-ellipsis " …"
+  	org-export-preserve-breaks t
+	org-highlight-latex-and-related '(native)
+	org-src-fontify-natively t
 	org-fontify-quote-and-verse-blocks t
 	org-startup-folded t
 	org-hide-leading-stars t
@@ -344,30 +341,6 @@
   (org-roam-db-autosync-mode)
   (require 'org-roam-protocol))
 
-(use-package sage-shell-mode
-  :ensure t
-  :defer t
-  :config
-  (setq sage-shell:set-ipython-version-on-startup nil)
-  (setq sage-shell-sagetex:auctex-command-name "LaTeX")
-  (add-hook 'sage-shell:sage-mode-hook
-	    (setq-local prettify-symbols-alist
-			'(("lambda" . 955)
-			  ("beta" . 120573)
-			  ("alpha" . 120572)))))
-
-(use-package elpy
-  :ensure t
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable)
-  :config
-  (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8))))
-
-(use-package yapfify
-  :ensure t
-  :defer t)
-
 (use-package ob-sagemath
   :ensure t
   :defer t
@@ -382,6 +355,19 @@
 	  org-startup-with-inline-images t)
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)))
 
+(use-package sage-shell-mode
+  :ensure t
+  :defer t
+  :config
+  (setq sage-shell:set-ipython-version-on-startup nil)
+  (setq sage-shell-sagetex:auctex-command-name "LaTeX")
+  (add-hook 'sage-shell:sage-mode-hook
+	    (setq-local prettify-symbols-alist
+			'(("lambda" . 955)
+			  ("beta" . 120573)
+			  ("alpha" . 120572)))))
+
+;;; Languages:
 (use-package haskell-mode
   :defer t
   :commands (haskell-mode)
@@ -431,6 +417,60 @@
   (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
   :mode ("\\agda\\'" . agda2-mode))
 
+(use-package nix-mode
+  :defer t
+  :mode ("\\.nix\\'" . nix-mode))
+
+(use-package geiser-guile
+  :ensure t
+  :defer t)
+
+(use-package elpy
+  :ensure t
+  :defer t
+  :init
+  (advice-add 'python-mode :before 'elpy-enable)
+  :config
+  (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8))))
+
+(use-package yapfify
+  :ensure t
+  :defer t)
+
+(use-package cc-mode
+  :ensure nil
+  :config
+  (setq c-default-style "cc-mode")
+  :bind
+  (:map c-mode-map
+	("C-c o" . ff-find-other-file)
+	("C-c c" . project-compile))
+  :hook (c-mode . electric-pair-mode))
+
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+	 ("\\.md\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
+  :config (set-face-attribute 'markdown-code-face nil :background nil))
+
+(use-package cdlatex
+  :defer t)
+
+(use-package auctex
+  :mode
+  ("\\.tex\\'" . latex-mode)
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (setq TeX-PDF-mode t)
+  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex))
+
+;;; LSP:
 (use-package eglot
   :defer t
   :hook ((haskell-mode . eglot-ensure)
@@ -452,11 +492,7 @@
 	      ("C-c C-a" . eglot-code-actions)
 	      ("C-c C-f" . eglot-format-buffer)))
 
-(use-package envrc
-  :diminish
-  :config
-  (envrc-global-mode))
-
+;;; Completion:
 (use-package corfu
   :defer t
   :custom
@@ -472,41 +508,41 @@
 	 (eshell-mode . corfu-mode)
 	 (c-mode . corfu-mode)))
 
-(use-package nix-mode
-  :defer t
-  :mode ("\\.nix\\'" . nix-mode))
-
-(use-package vterm
-  :defer t
-  :bind ("C-c C-t" . vterm-other-window))
-
-(use-package cc-mode
-  :ensure nil
+(use-package vertico
   :config
-  (setq c-default-style "cc-mode")
-  :bind
-  (:map c-mode-map
-	("C-c o" . ff-find-other-file)
-	("C-c c" . project-compile))
-  :hook (c-mode . electric-pair-mode))
+  (vertico-mode))
 
-(use-package gtags
-  :ensure nil)
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+	completion-category-defaults nil
+	orderless-skip-highlighting nil
+	completion-category-overrides '((file (styles partial-completion)))))
 
-(use-package avy
-  :ensure t
-  :defer t
-  :commands 'avy-goto-char-timer
+(use-package consult
   :config
-  (setq avy-timeout-seconds 0.4)
-  (setq avy-all-windows nil)
+  (setq consult-preview-key nil)
+  (recentf-mode)
   :bind
-  ("M-g g" . avy-goto-line)
-  ("M-g c" . avy-goto-char-in-line)
-  ("M-g m" . avy-move-line)
-  ("M-s" . avy-goto-char-in-line)
-  ("C-ö" . avy-goto-char-timer))
+  ("C-c r" . consult-recent-file)
+  ("C-c f" . consult-ripgrep)
+  ("C-c l" . consult-line)
+  ("C-c i" . consult-imenu)
+  ("C-c t" . gtags-find-tag)
+  ("C-x b" . consult-buffer))
 
+(use-package yasnippet
+  :diminish yas-minor-mode
+  :config
+  (yas-global-mode 1))
+
+;; Load environments (nix-shell)
+(use-package envrc
+  :diminish
+  :config
+  (envrc-global-mode))
+
+;;; Better editing
 (use-package multiple-cursors
   :ensure t
   :config
@@ -534,39 +570,18 @@
   :mode ("\\.el\\'" . emacs-lisp-mode)
   :hook (emacs-lisp-mode . enable-paredit-mode))
 
-(use-package erc
-  :defer t
-  :commands 'erc-tls
-  :config
-  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "foreground")
-  (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))))
-
-(use-package popper
+(use-package avy
   :ensure t
-  :bind (("C-´"   . popper-toggle-latest)
-         ("M-´"   . popper-cycle)
-         ("C-M-´" . popper-toggle-type))
-  :init
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$"
-          "\\*Async Shell Command\\*"
-	  "\\*eldoc\\*"
-	  "\\*ibuffer\\*"
-	  "\\*vc-git"
-          help-mode
-          compilation-mode))
+  :defer t
+  :commands 'avy-goto-char-timer
   :config
-  (popper-mode)
-  (popper-echo-mode))
+  (setq avy-timeout-seconds 0.4)
+  (setq avy-all-windows nil)
+  :bind
+  ("M-g g" . avy-goto-line)
+  ("M-g c" . avy-goto-char-in-line)
+  ("M-g m" . avy-move-line)
+  ("M-s" . avy-goto-char-in-line)
+  ("C-ö" . avy-goto-char-timer))
 
-(use-package ibuffer-project
-  :config
-  (setq ibuffer-truncate-lines nil)
-  (defun ebn/ibuffer-setup ()
-    (setq ibuffer-filter-groups
-	  (ibuffer-project-generate-filter-groups)))
-  (setq ibuffer-project-use-cache t)
-  :hook ((ibuffer . ebn/ibuffer-setup)))
-
-;; ;;; ebn-init.el ends here
+;;; ebn-init.el ends here
