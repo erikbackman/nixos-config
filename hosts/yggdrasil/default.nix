@@ -4,7 +4,7 @@
   nixpkgs.config.allowUnfree = true;
 
   programs.steam.enable = true;
-  programs.ebn.nvim.enable = false;
+  programs.ebn.nvim.enable = true;
   programs.ebn.kitty.enable = true;
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
@@ -13,7 +13,8 @@
 
   services.redshift = {
     enable = true;
-    temperature.night = 4000;
+    temperature.night = 3700;
+    temperature.day = 4500;
     inherit (config location);
   };
 
@@ -87,6 +88,8 @@
     trash-cli
     spotify
     e17gtk
+    
+    texlab
   ] 
   ++ 
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
