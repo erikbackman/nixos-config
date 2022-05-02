@@ -3,7 +3,6 @@
 ;;; Code:
 (require 'use-package)
 (require 'ebn-core)
-(require 'dired)
 
 ;;; Fonts:
 (set-face-attribute
@@ -123,6 +122,7 @@
 	("M-2" . split-window-below)
 	("M-3" . split-window-right)
 	("M-4" . delete-window)
+	("M-5" . make-frame)
 	("M-g M-g" . jump-to-register)
 	("C-0" . pop-global-mark)
 	("C-9" . forward-list)
@@ -156,8 +156,7 @@
   :config
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
-(use-package diminish
-  :ensure t)
+(use-package diminish :ensure t)
 
 (use-package which-key
   :diminish
@@ -182,7 +181,7 @@
   :ensure t
   :bind (("C-´"   . popper-toggle-latest)
          ("M-´"   . popper-cycle)
-         ("C-M-´" . popper-toggle-type))
+	 ("C-M-´" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
         '("\\*Messages\\*"
@@ -191,6 +190,7 @@
 	  "\\*eldoc\\*"
 	  "\\*ibuffer\\*"
 	  "\\*vc-git"
+	  "\\*RE-Builder\\*$"
           help-mode
           compilation-mode))
   :config
@@ -232,80 +232,92 @@
 	     org-agenda
 	     org-capture
 	     org-cdlatex-mode)
-  :init
-  (defun my/org-prettify-buffer ()
-    (interactive)
-    (when (not org-pretty-entities)
-      (org-toggle-pretty-entities))
-    (org-latex-preview))
-  (defun ebn/diary-last-day-of-month (date)
-    "Return `t` if DATE is the last day of the month."
-    (let* ((day (calendar-extract-day date))
-	   (month (calendar-extract-month date))
-	   (year (calendar-extract-year date))
-	   (last-day-of-month
-	    (calendar-last-day-of-month month year)))
-      (= day last-day-of-month)))
-  :config
-  ;; Faces
-  (set-face-attribute
-   'variable-pitch nil
-   :font (font-spec :family "CMU Concrete" :size 21 :weight 'regular))
-  
-  ;; Options
-  (setq org-startup-indented t
-	org-startup-with-latex-preview t
-	org-pretty-entities t
-	org-ellipsis " …"
-  	org-export-preserve-breaks t
-	org-highlight-latex-and-related '(native)
-	org-src-fontify-natively t
-	org-fontify-quote-and-verse-blocks t
-	org-startup-folded t
-	org-hide-leading-stars t
-	org-cycle-separator-lines -1
-	org-catch-invisible-edits 'error
-	org-ctrl-k-protect-subtree t)
-  
-  ;; Org-babel languages
-  (org-babel-do-load-languages 'org-babel-load-languages
-			       '((latex . t)
-				 (emacs-lisp . t)
-				 (python . t)
-				 (sagemath . t)))
+  :init (progn
+	  (defun my/org-prettify-buffer ()
+	    (interactive)
+	    (when (not org-pretty-entities)
+	      (org-toggle-pretty-entities))
+	    (org-latex-preview))
+	  
+	  (defun ebn/diary-last-day-of-month (date)
+	    "Return `t` if DATE is the last day of the month."
+	    (let* ((day (calendar-extract-day date))
+		   (month (calendar-extract-month date))
+		   (year (calendar-extract-year date))
+		   (last-day-of-month
+		    (calendar-last-day-of-month month year)))
+	      (= day last-day-of-month))))
 
-  ;; Org-agenda
-  (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
-	org-capture-templates
-	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
-	   "* TODO %?\n  %i\n  %a")
-	  ("j" "Journal" entry (file+datetree "~/org/journal.org")
-	   "* %?\nEntered on %U\n  %i\n  %a")
-	  ("r" "Roam node" function #'org-roam-capture))
-	
-	org-image-actual-width nil
-	org-return-follows-link t
-	org-hide-emphasis-markers t
-	org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
-	org-latex-listings 'minted
-	org-latex-packages-alist '(("" "minted"))
-	
-	org-latex-pdf-process
-	;; The reason why this is a list is that it usually takes several
-	;; runs of ‘pdflatex’, maybe mixed with a call to ‘bibtex’.  Org
-	;; does not have a clever mechanism to detect which of these
-	;; commands have to be run to get to a stable result, and it also
-	;; does not do any error checking.
-	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
-	
-	org-latex-tables-centered t
-	org-insert-heading-respect-content t)
-  
+  :config (progn
+	    (defun ebn/org-eval-block ()
+	      "Wrapper around org-ctrl-c-ctrl-c that previews latex."
+	      (interactive)
+	      (org-ctrl-c-ctrl-c)
+	      (when (string= "sage" (plist-get (car (cdr (org-element-at-point))) :language))
+		(org-latex-preview)))
+
+	    ;; Faces
+	    (set-face-attribute
+	     'variable-pitch nil
+	     :font (font-spec :family "CMU Concrete" :size 20 :weight 'regular))
+	    
+	    ;; Options
+	    (setq org-startup-indented t
+		  org-startup-with-latex-preview t
+		  org-pretty-entities t
+		  org-ellipsis " …"
+  		  org-export-preserve-breaks t
+		  org-highlight-latex-and-related '(native)
+		  org-src-fontify-natively t
+		  org-fontify-quote-and-verse-blocks t
+		  org-startup-folded t
+		  org-hide-leading-stars t
+		  org-cycle-separator-lines -1
+		  org-catch-invisible-edits 'error
+		  org-ctrl-k-protect-subtree t)
+
+	    (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
+	    
+	    ;; Org-babel languages
+	    (org-babel-do-load-languages 'org-babel-load-languages
+					 '((latex . t)
+					   (emacs-lisp . t)
+					   (python . t)
+					   (sagemath . t)))
+
+	    ;; Org-agenda
+	    (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
+		  org-capture-templates
+		  '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+		     "* TODO %?\n  %i\n  %a")
+		    ("j" "Journal" entry (file+datetree "~/org/journal.org")
+		     "* %?\nEntered on %U\n  %i\n  %a")
+		    ("r" "Roam node" function #'org-roam-capture))
+		  
+		  org-image-actual-width nil
+		  org-return-follows-link t
+		  org-hide-emphasis-markers t
+		  org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
+		  org-latex-listings 'minted
+		  org-latex-packages-alist '(("" "minted"))
+		  
+		  org-latex-pdf-process
+		  ;; The reason why this is a list is that it usually takes several
+		  ;; runs of ‘pdflatex’, maybe mixed with a call to ‘bibtex’.  Org
+		  ;; does not have a clever mechanism to detect which of these
+		  ;; commands have to be run to get to a stable result, and it also
+		  ;; does not do any error checking.
+		  '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
+		  
+		  org-latex-tables-centered t
+		  org-insert-heading-respect-content t))
+
   :bind* (:map org-mode-map
 	       ("C-<return>" . org-meta-return)
-	       ("C-c h" . consult-org-heading))
+	       ("C-c h" . consult-org-heading)
+	       ("C-c C-c" . ebn/org-eval-block))
   
   :hook ((org-mode . (lambda ()
 		       (setq line-spacing .2)
@@ -345,9 +357,11 @@
   :ensure t
   :defer t
   :config
-  (progn 
-    (setq org-babel-default-header-args:sage '((:session . t)
-					       (:results . "output replace")))
+  (progn
+    (setq org-babel-default-header-args:sage
+	  '((:session . t)
+	    (:results . "drawer replace")))
+    
     (with-eval-after-load "org"
       (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
     (setq org-confirm-babel-evaluate nil
@@ -455,7 +469,10 @@
   :config (set-face-attribute 'markdown-code-face nil :background nil))
 
 (use-package cdlatex
-  :defer t)
+  :defer t
+  ;:hook
+  ;(LaTeX-mode . cdlatex-mode)
+  )
 
 (use-package auctex
   :mode
@@ -475,7 +492,8 @@
   :defer t
   :hook ((haskell-mode . eglot-ensure)
 	 (c-mode . eglot-ensure)
-	 (python-mode . eglot-ensure))
+	 (python-mode . eglot-ensure)
+	 (LaTeX-mode . eglot-ensure))
   
   :custom
   (eglot-autoshutdown t)
@@ -486,7 +504,8 @@
   (eldoc-echo-area-use-multiline-p 3)
   
   :config
-  (add-to-list 'eglot-server-programs '(LaTeX-mode . ("texlab" "")))
+  (add-to-list 'eglot-server-programs
+	       '((tex-mode context-mode texinfo-mode bibtex-mode) . ("texlab")))
   (define-key eglot-mode-map [remap display-local-help] nil)
   :bind (:map eglot-mode-map
 	      ("C-c C-a" . eglot-code-actions)
@@ -506,7 +525,9 @@
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
 	 (eshell-mode . corfu-mode)
-	 (c-mode . corfu-mode)))
+	 (c-mode . corfu-mode)
+	 (tex-mode . corfu-mode)
+	 (LaTeX-mode . corfu-mode)))
 
 (use-package vertico
   :config
@@ -533,14 +554,13 @@
 
 (use-package yasnippet
   :diminish yas-minor-mode
-  :config
-  (yas-global-mode 1))
+  :config (yas-global-mode 1))
 
 ;; Load environments (nix-shell)
 (use-package envrc
   :diminish
   :config
-  (envrc-global-mode))
+  :hook (prog-mode . envrc-global-mode))
 
 ;;; Better editing
 (use-package multiple-cursors
@@ -568,7 +588,7 @@
   :defer t
   :diminish
   :mode ("\\.el\\'" . emacs-lisp-mode)
-  :hook (emacs-lisp-mode . enable-paredit-mode))
+  :hook ((scheme-mode emacs-lisp-mode) . enable-paredit-mode))
 
 (use-package avy
   :ensure t
