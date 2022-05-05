@@ -18,6 +18,8 @@
     inherit (config location);
   };
 
+  services.earlyoom.enable = true;
+
   windowManager.ebn.xmonad.enable = true;
   services.ebn.tint2.enable = true;
   services.ebn.polybar.enable = false;
