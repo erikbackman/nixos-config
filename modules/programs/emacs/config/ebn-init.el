@@ -260,7 +260,7 @@
 	      "Wrapper around org-ctrl-c-ctrl-c that previews latex."
 	      (interactive)
 	      (org-ctrl-c-ctrl-c)
-	      (when (string= "sage" (plist-get (car (cdr (org-element-at-point))) :language))
+	      (when (string= "sage" (plist-get (cadr (org-element-at-point)) :language))
 		(org-latex-preview)))
 
 	    ;; Faces
