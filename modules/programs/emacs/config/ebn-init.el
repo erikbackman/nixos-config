@@ -60,6 +60,13 @@
     (mark-paragraph)
     (comment-or-uncomment-region (region-beginning) (region-end))))
 
+(defun ebn/bury-scratch-buffer ()
+  (if (string= (buffer-name) "*scratch*")
+      (ignore (bury-buffer))
+    t))
+
+(add-hook 'kill-buffer-query-functions 'ebn/bury-scratch-buffer)
+
 ;;; Packages:
 (use-package emacs
   :init
