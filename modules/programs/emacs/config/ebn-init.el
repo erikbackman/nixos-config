@@ -138,6 +138,7 @@
 	("C-h ," . xref-find-definitions)
 	("C-h l" . display-local-help)
 	("C-h r" . xref-find-references)
+	("C-h t" . eldoc-doc-buffer)
 	("C-." . repeat)
 	("M-i" . back-to-indentation)
 	("<f9>" . kmacro-insert-counter)
@@ -198,6 +199,7 @@
 	  "\\*ibuffer\\*"
 	  "\\*vc-git"
 	  "\\*RE-Builder\\*$"
+	  "\\*eldoc\\*$"
           help-mode
           compilation-mode))
   :config
@@ -220,6 +222,8 @@
 (use-package eldoc
   :ensure nil
   :diminish
+  :custom
+  (eldoc-echo-area-prefer-doc-buffer t)
   :config
   (progn
     ;; Dirty hack to only show eldoc docs when thing at point is a symbol
@@ -227,9 +231,12 @@
       (if (null (thing-at-point 'symbol))
 	  (message nil)
 	(apply orig r)))
-
+    
     (advice-add 'eldoc-display-in-echo-area :around
-		'ebn/eldoc-display-in-echo-area)))
+		'ebn/eldoc-display-in-echo-area))
+  
+    ;; Actually.. don't show docs in minibuffer
+    (defun eldoc-minibuffer-message (format-string &rest args) ()))
 
 (use-package dired
   :ensure nil
