@@ -219,7 +219,17 @@
 
 (use-package eldoc
   :ensure nil
-  :diminish)
+  :diminish
+  :config
+  (progn
+    ;; Dirty hack to only show eldoc docs when thing at point is a symbol
+    (defun ebn/eldoc-display-in-echo-area (orig &rest r)
+      (if (null (thing-at-point 'symbol))
+	  (message nil)
+	(apply orig r)))
+
+    (advice-add 'eldoc-display-in-echo-area :around
+		'ebn/eldoc-display-in-echo-area)))
 
 (use-package dired
   :ensure nil
