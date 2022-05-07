@@ -219,24 +219,27 @@
   :ensure t
   :commands 'elcord-mode)
 
+(advice-remove 'eldoc-display-in-echo-area 'ebn/eldoc-display-in-echo-area)
+
 (use-package eldoc
   :ensure nil
   :diminish
   :custom
-  (eldoc-echo-area-prefer-doc-buffer t)
+  (eldoc-echo-area-prefer-doc-buffer nil)
   :config
   (progn
     ;; Dirty hack to only show eldoc docs when thing at point is a symbol
-    (defun ebn/eldoc-display-in-echo-area (orig &rest r)
-      (if (null (thing-at-point 'symbol))
-	  (message nil)
-	(apply orig r)))
+    ;; (defun ebn/eldoc-display-in-echo-area (orig &rest r)
+    ;;   (if (null (thing-at-point 'symbol))
+    ;; 	  (message nil)
+    ;; 	(apply orig r)))
     
-    (advice-add 'eldoc-display-in-echo-area :around
-		'ebn/eldoc-display-in-echo-area))
+    ;; (advice-add 'eldoc-display-in-echo-area :around
+    ;; 		'ebn/eldoc-display-in-echo-area))
   
     ;; Actually.. don't show docs in minibuffer
-    (defun eldoc-minibuffer-message (format-string &rest args) ()))
+    ;; (defun eldoc-minibuffer-message (format-string &rest args) ())
+  ))
 
 (use-package dired
   :ensure nil
