@@ -199,8 +199,7 @@
 	  "\\*ibuffer\\*"
 	  "\\*vc-git"
 	  "\\*RE-Builder\\*$"
-	  "\\*eldoc\\*$"
-          help-mode
+	  help-mode
           compilation-mode))
   :config
   (popper-mode)
