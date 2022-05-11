@@ -101,11 +101,9 @@
   (save-place-mode t)
   (initial-scratch-message nil)
 
-  :hook ((prog-mode . superword-mode)
-	 (fundamental-mode . repeat-mode)
-	 (prog-mode . repeat-mode)
-	 (prog-mode . electric-pair-local-mode)
-	 (minibuffer-mode . superword-mode))
+  :hook (((prog-mode minibuffer-mode) . superword-mode)
+	 ((fundamental-mode prog-mode) . repeat-mode)
+	 (prog-mode . electric-pair-local-mode))
   
   :bind
   (:map minibuffer-mode-map
@@ -154,7 +152,7 @@
   :ensure nil
   :load-path "themes/"
   :config
-  ;(setq mindre-use-bold nil)
+  (setq mindre-use-more-bold nil)
   (mindre))
 
 (use-package ebn-core
@@ -195,7 +193,7 @@
         '("\\*Messages\\*"
           "Output\\*$"
           "\\*Async Shell Command\\*"
-	  "\\*eldoc\\*"
+	  "\\*eldoc\\*$"
 	  "\\*ibuffer\\*"
 	  "\\*vc-git"
 	  "\\*RE-Builder\\*$"
@@ -224,21 +222,11 @@
   :ensure nil
   :diminish
   :custom
-  (eldoc-echo-area-prefer-doc-buffer nil)
-  :config
-  (progn
-    ;; Dirty hack to only show eldoc docs when thing at point is a symbol
-    ;; (defun ebn/eldoc-display-in-echo-area (orig &rest r)
-    ;;   (if (null (thing-at-point 'symbol))
-    ;; 	  (message nil)
-    ;; 	(apply orig r)))
-    
-    ;; (advice-add 'eldoc-display-in-echo-area :around
-    ;; 		'ebn/eldoc-display-in-echo-area))
-  
-    ;; Actually.. don't show docs in minibuffer
-    ;; (defun eldoc-minibuffer-message (format-string &rest args) ())
-  ))
+  (eldoc-echo-area-prefer-doc-buffer nil))
+
+(use-package olivetti
+  :ensure t
+  :commands 'olivetti-mode)
 
 (use-package dired
   :ensure nil
@@ -302,7 +290,7 @@
 		  org-catch-invisible-edits 'error
 		  org-ctrl-k-protect-subtree t)
 
-	    (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
+	    ;(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 	    
 	    ;; Org-babel languages
 	    (org-babel-do-load-languages 'org-babel-load-languages
@@ -496,10 +484,7 @@
   :config (set-face-attribute 'markdown-code-face nil :background nil))
 
 (use-package cdlatex
-  :defer t
-  ;:hook
-  ;(LaTeX-mode . cdlatex-mode)
-  )
+  :commands 'turn-on-cdlatex)
 
 (use-package auctex
   :mode
@@ -552,6 +537,8 @@
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
 	 (eshell-mode . corfu-mode)
+	 (lisp-mode . corfu-mode)
+	 (scheme-mode . corfu-mode)
 	 (c-mode . corfu-mode)
 	 (tex-mode . corfu-mode)
 	 (LaTeX-mode . corfu-mode)))
