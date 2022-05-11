@@ -401,11 +401,12 @@
   :config
   (setq sage-shell:set-ipython-version-on-startup nil)
   (setq sage-shell-sagetex:auctex-command-name "LaTeX")
-  (add-hook 'sage-shell:sage-mode-hook
-	    (setq-local prettify-symbols-alist
-			'(("lambda" . 955)
-			  ("beta" . 120573)
-			  ("alpha" . 120572)))))
+  (add-hook 'sage-shell:sage-mode-hook (lambda ()
+					 (setq-local prettify-symbols-alist
+						     '(("lambda" . 955)
+						       ("beta" . 120573)
+						       ("alpha" . 120572))))))
+
 
 ;;; Languages:
 (use-package haskell-mode
