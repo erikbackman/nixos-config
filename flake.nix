@@ -16,6 +16,9 @@
         import ps ({
           inherit system;
           config.allowUnfree = true;
+          config.permittedInsecurePackages = [
+            "electron-6.1.12" # for geogebra
+          ];
         } // attrs);
 
       pkgs = make-packages nixpkgs {
@@ -28,6 +31,7 @@
             in {
               steam = unstable.steam;
               discord = unstable.discord;
+              electron = prev.electron_14;
             })
         ];
       };
@@ -42,6 +46,7 @@
       };
       
     in {
+      inherit pkgs my-lib; # exporting these for access in nix repl
       devShell.${system} = import ./shell.nix { inherit pkgs; };
       
       nixosConfigurations = {
