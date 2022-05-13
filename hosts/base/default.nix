@@ -42,6 +42,9 @@
     extraConfig = ''
       load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1; ### Needed by mpd
     '';
+    daemon.config = {
+      default-sample-rate = 48000;
+    };
   };
 
   fonts.fontconfig = {
