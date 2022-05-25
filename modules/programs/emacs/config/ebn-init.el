@@ -7,23 +7,33 @@
 ;;; Fonts:
 (set-face-attribute
  'default nil
- :font (font-spec :family "Sarasa Mono CL" :size 14.5))
+ :font (font-spec :family "Sarasa Mono CL" :size 12.5))
 
 (set-face-attribute
  'fixed-pitch nil
- :font (font-spec :family "Sarasa Mono CL" :size 14.5))
+ :font (font-spec :family "Sarasa Mono CL" :size 12.5))
 
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-(setq-default fill-column 80)
-(setq global-mark-ring-max 16)
-(setq-default left-margin-width 1)
-(setq sentence-end-double-space nil)
-(setq kill-whole-line t)
-(setq lisp-backquote-indentation nil)
+(setq-default
+ fill-column 80
+ mark-ring-max 6
+ global-mark-ring-max 6
+ left-margin-width 1
+ sentence-end-double-space nil
+ kill-whole-line t
+ lisp-backquote-indentation nil
+ blink-cursor-blinks 1
+ fast-but-imprecise-scrolling t
+ auto-save-interval 60
+ kill-do-not-save-duplicates t)
+
+(set-register ?h '(file . "~"))
+(set-register ?r '(file . "~/org-roam"))
+(set-register ?p '(file . "~/repos/github.com/erikbackman/"))
 
 ;;; Functions:
 ;;; TODO: Move to ebn-core
@@ -110,7 +120,11 @@
 	("<DEL>" . ebn/kill-dir-or-char))
   (:map isearch-mode-map
 	("TAB" . isearch-toggle-symbol))
-  (:map global-map 
+  (:map global-map
+	("C-<tab>" . hippie-expand)
+	("C-x SPC" . rectangle-mark-mode)
+	("M-q" . fill-paragraph)
+	("C-x C-e" . eval-last-sexp)
 	("C-j" . join-line)
 	("C-t" . transpose-lines)
 	("M-u" . upcase-dwim)
@@ -123,6 +137,8 @@
 	("C-k" . ebn/kill-dwim)
 	("C-x f" . find-file)
 	("C-x C-f" . find-file-other-window)
+	("C-f" . forward-to-word)
+	("C-b" . backward-to-word)
 	("M-1" . delete-other-windows)
 	("M-2" . split-window-below)
 	("M-3" . split-window-right)
@@ -130,10 +146,13 @@
 	("M-5" . make-frame)
 	("M-g M-g" . jump-to-register)
 	("C-0" . pop-global-mark)
+	("C-x j" . jump-to-register)
+;	("C-x SPC" . point-to-register)
 	("C-9" . forward-list)
 	("C-8" . backward-list)
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-h ," . xref-find-definitions)
+	("C-," . xref-go-back)
 	("C-h l" . display-local-help)
 	("C-h r" . xref-find-references)
 	("C-h t" . eldoc-doc-buffer)
@@ -153,6 +172,21 @@
   :load-path "themes/"
   :config
   (setq mindre-use-more-bold nil)
+  (defface paren-face
+   `((((class color) (background dark))
+      (:foreground "grey20"))
+     (((class color) (background light))
+      (:foreground ,mindre-faded)))
+   "Face used to dim parentheses.")
+
+  (add-hook 'emacs-lisp-mode-hook 
+ 	    (lambda ()
+ 	      (font-lock-add-keywords nil 
+ 				      '(("(\\|)" . 'paren-face)))))
+  (add-hook 'scheme-mode-hook
+ 	    (lambda ()
+ 	      (font-lock-add-keywords nil 
+ 				      '(("(\\|)" . 'paren-face)))))
   (mindre))
 
 (use-package ebn-core
@@ -163,11 +197,6 @@
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
 (use-package diminish :ensure t)
-
-(use-package which-key
-  :diminish
-  :config
-  (which-key-mode 1))
 
 (use-package vterm
   :defer t
@@ -185,9 +214,6 @@
 
 (use-package popper
   :ensure t
-  :bind (("C-´"   . popper-toggle-latest)
-         ("M-´"   . popper-cycle)
-	 ("C-M-´" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
         '("\\*Messages\\*"
@@ -196,12 +222,14 @@
 	  "\\*eldoc\\*$"
 	  "\\*ibuffer\\*"
 	  "\\*vc-git"
+	  "\\*Help\\*"
 	  "\\*RE-Builder\\*$"
 	  help-mode
           compilation-mode))
   :config
   (popper-mode)
-  (popper-echo-mode))
+  (popper-echo-mode)
+  :bind* ("M-`" . popper-toggle-type))
 
 (use-package ibuffer-project
   :config
@@ -215,8 +243,6 @@
 (use-package elcord
   :ensure t
   :commands 'elcord-mode)
-
-(advice-remove 'eldoc-display-in-echo-area 'ebn/eldoc-display-in-echo-area)
 
 (use-package eldoc
   :ensure nil
@@ -273,7 +299,7 @@
 	    ;; Faces
 	    (set-face-attribute
 	     'variable-pitch nil
-	     :font (font-spec :family "CMU Concrete" :size 20 :weight 'regular))
+	     :font (font-spec :family "CMU Concrete" :size 19 :weight 'regular))
 	    
 	    ;; Options
 	    (setq org-startup-indented t
@@ -408,7 +434,7 @@
   
   :custom
   (haskell-process-type 'cabal-repl)
-  (haskell-process-load-or-reload-prompt t)
+  (haskell-process-load-or-reload-prompt nil)
   (haskell-process-auto-import-loaded-modules t)
   (haskell-process-log t)
   (haskell-font-lock-symbols t)
@@ -416,7 +442,7 @@
   :config
   (load-library "haskell-mode-autoloads")
   (require 'haskell-interactive-mode)
-
+  
   (defun haskell-mode-after-save-handler ()
     (let ((inhibit-message t))
       (eglot-format-buffer)))
@@ -513,7 +539,7 @@
   (eglot-confirm-server-initiated-edits nil)
   (eldoc-idle-delay 1)
   (eldoc-echo-area-display-truncation-message nil)
-  (eldoc-echo-area-use-multiline-p 3)
+  (eldoc-echo-area-use-multiline-p 2)
   
   :config
   (add-to-list 'eglot-server-programs
@@ -551,7 +577,7 @@
   :init
   (setq completion-styles '(orderless)
 	completion-category-defaults nil
-	orderless-skip-highlighting nil
+	orderless-skip-highlighting t
 	completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package consult
@@ -580,7 +606,6 @@
 (use-package multiple-cursors
   :ensure t
   :config
-  ; TODO: come up with better bindings for these, use super?
   (global-set-key (kbd "M-m") 'mc/mark-all-like-this-dwim)
   (global-set-key [(super down)] 'mc/mark-next-like-this)
   :bind
@@ -592,9 +617,8 @@
   :ensure t
   :defer t
   :commands 'er/expand-region
-  :config (unbind-key "C-<return>" python-mode-map)
+  ;:config (unbind-key "C-<return>" python-mode-map)
   :bind
-  ("C-," . er/expand-region)
   ("C-<return>" . er/expand-region))
 
 (use-package paredit
@@ -617,5 +641,9 @@
   ("M-g m" . avy-move-line)
   ("M-s" . avy-goto-char-in-line)
   ("C-ö" . avy-goto-char-timer))
+
+(use-package sh-mode
+  :ensure nil
+  :bind (:map sh-mode-map ("C-x C-e" . sh-execute-region)))
 
 ;;; ebn-init.el ends here
