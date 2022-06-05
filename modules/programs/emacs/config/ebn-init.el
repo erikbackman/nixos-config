@@ -613,7 +613,7 @@
 
 (use-package yasnippet
   :diminish yas-minor-mode
-  :config (yas-global-mode 1))
+  :hook ((org-mode tex-mode prog-mode) . yas-global-mode))
 
 ;; Load environments (nix-shell)
 (use-package envrc
