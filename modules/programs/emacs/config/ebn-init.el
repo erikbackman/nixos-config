@@ -5,13 +5,8 @@
 (require 'ebn-core)
 
 ;;; Fonts:
-(set-face-attribute
- 'default nil
- :font (font-spec :family "Sarasa Mono CL" :size 12.5))
-
-(set-face-attribute
- 'fixed-pitch nil
- :font (font-spec :family "Sarasa Mono CL" :size 12.5))
+;; This is much faster than using set-face-attribute
+(add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
 
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
@@ -54,11 +49,11 @@
   (forward-line 1))
 
 (defun ebn/kill-dir-or-char ()
-    "Kill backward by word for directories else by char"
-    (interactive)
-    (if (looking-back "/")
-	(backward-kill-word 1)
-      (backward-delete-char 1)))
+  "Kill backward by word for directories else by char"
+  (interactive)
+  (if (looking-back "/")
+      (backward-kill-word 1)
+    (backward-delete-char 1)))
 
 (defun ebn/shell-command-on-region ()
   (interactive)
@@ -76,6 +71,21 @@
     t))
 
 (add-hook 'kill-buffer-query-functions 'ebn/bury-scratch-buffer)
+
+(defun ebn/eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (let ((value (eval (elisp--preceding-sexp))))
+    (backward-kill-sexp)
+    (insert (format "%S" value))))
+
+(defun ebn/dired-open-file ()
+  "In dired, open the file named on this line."
+  (interactive)
+  (let* ((file (dired-get-filename nil t)))
+    (message "Opening %s..." file)
+    (call-process "xdg-open" nil 0 nil file)
+    (message "Opening %s done" file)))
 
 ;;; Packages:
 (use-package emacs
@@ -120,6 +130,10 @@
 	("<DEL>" . ebn/kill-dir-or-char))
   (:map isearch-mode-map
 	("TAB" . isearch-toggle-symbol))
+  (:map emacs-lisp-mode-map
+	("C-c C-e" . ebn/eval-and-replace))
+  (:map lisp-interaction-mode-map
+	("C-c C-e" . ebn/eval-and-replace))
   (:map global-map
 	("C-<tab>" . hippie-expand)
 	("C-x SPC" . rectangle-mark-mode)
@@ -147,7 +161,6 @@
 	("M-g M-g" . jump-to-register)
 	("C-0" . pop-global-mark)
 	("C-x j" . jump-to-register)
-;	("C-x SPC" . point-to-register)
 	("C-9" . forward-list)
 	("C-8" . backward-list)
 	("C-<down>" . ebn/forward-to-paragraph)
@@ -165,6 +178,7 @@
 	("s-e" . electric-pair-local-mode)
 	("s-r" . replace-string)
 	("C-c c" . ebn/comment-paragraph)
+	("C-c d" . flymake-show-buffer-diagnostics)
 	("C-x C-b" . ibuffer)))
 
 (use-package mindre-theme
@@ -172,21 +186,7 @@
   :load-path "themes/"
   :config
   (setq mindre-use-more-bold nil)
-  (defface paren-face
-   `((((class color) (background dark))
-      (:foreground "grey20"))
-     (((class color) (background light))
-      (:foreground ,mindre-faded)))
-   "Face used to dim parentheses.")
-
-  (add-hook 'emacs-lisp-mode-hook 
- 	    (lambda ()
- 	      (font-lock-add-keywords nil 
- 				      '(("(\\|)" . 'paren-face)))))
-  (add-hook 'scheme-mode-hook
- 	    (lambda ()
- 	      (font-lock-add-keywords nil 
- 				      '(("(\\|)" . 'paren-face)))))
+  (setq mindre-use-faded-lisp-parens t)
   (mindre))
 
 (use-package ebn-core
@@ -205,6 +205,19 @@
 (use-package gtags
   :ensure nil)
 
+(use-package sly
+  :commands 'sly
+  :config
+  ;(require 'sly-autoloads)
+  (setq inferior-lisp-program "/nix/store/5syp1cmyg003jyjjshgd06wqbvckyzni-sbcl-2.1.9/bin/sbcl")
+  ;; (setq sly-lisp-implementations
+  ;;          '(;(cmucl ("cmucl" "-quiet"))
+  ;;            (sbcl ("sbcl") :coding-system utf-8-unix)))
+  )
+
+;; (use-package sly-asdf
+;;   :defer t)
+
 (use-package erc
   :defer t
   :commands 'erc-tls
@@ -219,17 +232,20 @@
         '("\\*Messages\\*"
           "Output\\*$"
           "\\*Async Shell Command\\*"
-	  "\\*eldoc\\*$"
-	  "\\*ibuffer\\*"
+	  "\\*eldoc\\*"
+	  "\\*Ibuffer\\*"
 	  "\\*vc-git"
 	  "\\*Help\\*"
 	  "\\*RE-Builder\\*$"
+	  flymake-diagnostics-buffer-mode
+	  calendar-mode
 	  help-mode
-          compilation-mode))
+	  compilation-mode))
   :config
   (popper-mode)
   (popper-echo-mode)
-  :bind* ("M-`" . popper-toggle-type))
+  :bind* ("M-`" . popper-toggle-type)
+         ("C-+" . popper-toggle-latest))
 
 (use-package ibuffer-project
   :config
@@ -263,7 +279,8 @@
 	delete-by-moving-to-trash t)
   :bind*			    
   (:map dired-mode-map
-	("-" . ebn/dired-up-directory)))
+	("-" . ebn/dired-up-directory)
+	("o" . ebn/dired-open-file)))
 
 ;;; Org:
 (use-package org
@@ -300,7 +317,11 @@
 	    (set-face-attribute
 	     'variable-pitch nil
 	     :font (font-spec :family "CMU Concrete" :size 19 :weight 'regular))
-	    
+
+	    (set-face-attribute
+	     'fixed-pitch nil
+	     :font (font-spec :family "Sarasa Mono CL" :size 13.5))
+
 	    ;; Options
 	    (setq org-startup-indented t
 		  org-startup-with-latex-preview t
@@ -315,8 +336,6 @@
 		  org-cycle-separator-lines -1
 		  org-catch-invisible-edits 'error
 		  org-ctrl-k-protect-subtree t)
-
-	    ;(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 	    
 	    ;; Org-babel languages
 	    (org-babel-do-load-languages 'org-babel-load-languages
@@ -363,7 +382,8 @@
 		       (setq line-spacing .2)
 		       (setq cursor-type 'box)
 		       (org-cdlatex-mode)
-		       (variable-pitch-mode)))))
+		       ;(variable-pitch-mode)
+		       ))))
 
 (use-package org-roam
   :defer t
@@ -437,6 +457,7 @@
   (haskell-process-load-or-reload-prompt nil)
   (haskell-process-auto-import-loaded-modules t)
   (haskell-process-log t)
+  (haskell-interactive-popup-errors nil)
   (haskell-font-lock-symbols t)
   
   :config
@@ -446,25 +467,22 @@
   (defun haskell-mode-after-save-handler ()
     (let ((inhibit-message t))
       (eglot-format-buffer)))
-  
+		
   (defun ebn/haskell-mode-setup ()
     (haskell-indentation-mode)
     (autoload 'haskell-doc-current-info "haskell-doc")
-    (setq-local eldoc-documentation-function
-		'haskell-doc-current-info)
-    (setq-local tab-stop-list '(2))
-    (setq-local haskell-process-path-cabal "cabal")
-    (setq indent-line-function 'indent-relative)
-    (setq tab-width 2))
+    (setq-local eldoc-documentation-function 'haskell-doc-current-info
+		tab-stop-list '(2)
+		indent-line-function 'indent-relative
+		tab-width 2)
+    (interactive-haskell-mode)
+    (electric-pair-mode))
 
-  :hook
-  ((haskell-mode . ebn/haskell-mode-setup)
-   (haskell-mode . interactive-haskell-mode)
-   (haskell-mode . electric-pair-mode))
-  :bind
-  (:map haskell-mode-map
-	("M-<left>" . backward-sexp)
-	("M-<right>" . forward-sexp)))
+  :hook ((haskell-mode . ebn/haskell-mode-setup))
+  :bind (:map haskell-mode-map
+	      ("C-h L" . haskell-hoogle-lookup-from-website)
+	      ("M-<left>" . backward-sexp)
+	      ("M-<right>" . forward-sexp)))
 
 (use-package agda2
   :ensure nil
@@ -480,13 +498,13 @@
   :ensure t
   :defer t)
 
-(use-package elpy
-  :ensure t
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable)
-  :config
-  (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8))))
+;; (use-package elpy
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (advice-add 'python-mode :before 'elpy-enable)
+;;   :config
+;;   (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8))))
 
 (use-package yapfify
   :ensure t
@@ -528,10 +546,11 @@
 ;;; LSP:
 (use-package eglot
   :defer t
-  :hook ((haskell-mode . eglot-ensure)
-	 (c-mode . eglot-ensure)
-	 (python-mode . eglot-ensure)
-	 (LaTeX-mode . eglot-ensure))
+  :hook ((haskell-mode
+	  c-mode
+	  python-mode
+	  LaTeX-mode)
+	 . eglot-ensure)
   
   :custom
   (eglot-autoshutdown t)
@@ -562,8 +581,8 @@
   (corfu-echo-documentation nil)
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
-	 (eshell-mode . corfu-mode)
-	 (lisp-mode . corfu-mode)
+	 ;(eshell-mode . corfu-mode)
+	 ;(lisp-mode . corfu-mode)
 	 (scheme-mode . corfu-mode)
 	 (c-mode . corfu-mode)
 	 (tex-mode . corfu-mode)
@@ -617,7 +636,6 @@
   :ensure t
   :defer t
   :commands 'er/expand-region
-  ;:config (unbind-key "C-<return>" python-mode-map)
   :bind
   ("C-<return>" . er/expand-region))
 
@@ -645,5 +663,20 @@
 (use-package sh-mode
   :ensure nil
   :bind (:map sh-mode-map ("C-x C-e" . sh-execute-region)))
+
+(use-package keycast
+  :ensure t
+  :commands 'keycast-mode)
+
+;; (use-package pdf-tools
+;;   :ensure t
+;;   :defer t
+;;   :mode ("\\.pdf\\'" . pdf-view-mode)
+;;   :config
+;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+;; 	TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+;; 	TeX-source-correlate-start-server t)
+;;   (add-hook 'TeX-after-compilation-finished-functions
+;;             #'TeX-revert-document-buffer))
 
 ;;; ebn-init.el ends here
