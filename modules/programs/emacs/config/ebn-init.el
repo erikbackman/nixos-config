@@ -165,6 +165,7 @@
 	("C-8" . backward-list)
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-h ," . xref-find-definitions)
+	("C-h w" . dictionary-search)
 	("C-," . xref-go-back)
 	("C-h l" . display-local-help)
 	("C-h r" . xref-find-references)
@@ -585,8 +586,19 @@
 	 ;(lisp-mode . corfu-mode)
 	 (scheme-mode . corfu-mode)
 	 (c-mode . corfu-mode)
+	 (org-mode . corfu-mode)
 	 (tex-mode . corfu-mode)
 	 (LaTeX-mode . corfu-mode)))
+
+(use-package cape
+  :after corfu
+  :bind (("C-c p i" . cape-ispell)
+	 ("C-c p w" . cape-dict))
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-ispell)
+  (add-to-list 'completion-at-point-functions #'cape-dict)
+  )
 
 (use-package vertico
   :config

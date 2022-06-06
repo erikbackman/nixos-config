@@ -49,6 +49,8 @@ in {
       cm_unicode
       sarasa-gothic
     ];
+
+    services.dictd.enable = true;
     
     environment.systemPackages = with pkgs; [
       emacsPackage
@@ -66,10 +68,10 @@ in {
       zstd # for undo-fu-session/undo-tree compression
 
       ## Package dependencies
-      # :checkers spell
+      # Spellchecking
       (aspellWithDicts (ds: with ds; [ en en-computers en-science sv ]))
-
-      # :checkers grammar
+      
+      # Grammar
       languagetool
 
       # editorconfig
