@@ -206,15 +206,14 @@
 (use-package gtags
   :ensure nil)
 
-(use-package sly
-  :commands 'sly
-  :config
-  ;(require 'sly-autoloads)
-  (setq inferior-lisp-program "/nix/store/5syp1cmyg003jyjjshgd06wqbvckyzni-sbcl-2.1.9/bin/sbcl")
-  ;; (setq sly-lisp-implementations
-  ;;          '(;(cmucl ("cmucl" "-quiet"))
-  ;;            (sbcl ("sbcl") :coding-system utf-8-unix)))
-  )
+;; (use-package sly
+;;   :commands 'sly
+;;   :config
+;;   (require 'sly-autoloads)
+;;   (setq inferior-lisp-program "/nix/store/5syp1cmyg003jyjjshgd06wqbvckyzni-sbcl-2.1.9/bin/sbcl")
+;;   (setq sly-lisp-implementations
+;;            '(;(cmucl ("cmucl" "-quiet"))
+;;              (sbcl ("sbcl") :coding-system utf-8-unix))))
 
 ;; (use-package sly-asdf
 ;;   :defer t)
@@ -314,15 +313,6 @@
 	      (when (string= "sage" (plist-get (cadr (org-element-at-point)) :language))
 		(org-latex-preview)))
 
-	    ;; Faces
-	    (set-face-attribute
-	     'variable-pitch nil
-	     :font (font-spec :family "CMU Concrete" :size 19 :weight 'regular))
-
-	    (set-face-attribute
-	     'fixed-pitch nil
-	     :font (font-spec :family "Sarasa Mono CL" :size 13.5))
-
 	    ;; Options
 	    (setq org-startup-indented t
 		  org-startup-with-latex-preview t
@@ -383,8 +373,14 @@
 		       (setq line-spacing .2)
 		       (setq cursor-type 'box)
 		       (org-cdlatex-mode)
-		       ;(variable-pitch-mode)
-		       ))))
+		       ;; Faces
+		       (set-face-attribute
+			'variable-pitch nil
+			:font (font-spec :family "CMU Concrete" :size 19 :weight 'regular))
+
+		       (set-face-attribute
+			'fixed-pitch nil
+			:font (font-spec :family "Sarasa Mono CL" :size 13.5))))))
 
 (use-package org-roam
   :defer t
@@ -400,9 +396,13 @@
    '(("d" "default" plain "%?"
       :if-new (file+head
 	       "%<%Y%m%d%H%M%S>-${slug}.org"
-	       "#+title: ${title}\n#+startup: latexpreview\n#+startup: entitiespretty")
-      :unnarrowed t))
-   )
+	       (let ((options '("#+options: _:{}"
+				"#+options: ^:{}"
+				"#+title: ${title}"
+				"#+startup: latexpreview"
+				"#+startup: entitiespretty")))
+		 (mapconcat 'identity options "\n")))
+      :unnarrowed t)))
 
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
