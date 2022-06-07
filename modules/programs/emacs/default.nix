@@ -51,6 +51,14 @@ in {
     ];
 
     services.dictd.enable = true;
+
+    programs.git = {
+      enable = true;
+      config = {
+        init.defaultBranch = "main";
+        core.editor = "emacs -nw";
+      };
+    };
     
     environment.systemPackages = with pkgs; [
       emacsPackage
