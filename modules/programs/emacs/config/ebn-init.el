@@ -38,6 +38,22 @@
       (kill-region (region-beginning) (region-end) nil)
     (kill-line)))
 
+(defun ebn/wikipedia (query)
+  "QUERY wikipedia"
+  (interactive "sQuery: ")
+  (eww (concat "https://en.wikipedia.org/wiki/" query)))
+
+(defun ebn/wikipedia-at-point ()
+  (interactive)
+  (ebn/wikipedia (word-at-point)))
+
+(defun ebn/org-open-at-point ()
+  (interactive)
+  (let ((t/browse (lambda (url &optional args)
+		  (eww-browse-url url t)))
+	(browse-url-browser-function #'eww-browse-url))
+    (org-open-at-point)))
+
 (defun ebn/cht.sh (query)
   "QUERY cht.sh"
   (interactive "sQuery: ")
@@ -166,6 +182,7 @@
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-h ," . xref-find-definitions)
 	("C-h w" . dictionary-search)
+	("C-h p" . ebn/wikipedia-at-point)
 	("C-," . xref-go-back)
 	("C-h l" . display-local-help)
 	("C-h r" . xref-find-references)
@@ -178,6 +195,7 @@
 	("<f12>" . call-last-kbd-macro)
 	("s-e" . electric-pair-local-mode)
 	("s-r" . replace-string)
+	("s-l" . ebn/org-open-at-point)
 	("C-c c" . ebn/comment-paragraph)
 	("C-c d" . flymake-show-buffer-diagnostics)
 	("C-x C-b" . ibuffer)))
@@ -393,15 +411,15 @@
   (org-roam-directory "~/org-roam")
   (org-roam-completion-everywhere t)
   (org-roam-capture-templates
-   '(("d" "default" plain "%?"
+   `(("d" "default" plain "%?"
       :if-new (file+head
 	       "%<%Y%m%d%H%M%S>-${slug}.org"
-	       (let ((options '("#+options: _:{}"
+	       ,(let ((options '("#+options: _:{}"
 				"#+options: ^:{}"
-				"#+title: ${title}"
 				"#+startup: latexpreview"
-				"#+startup: entitiespretty")))
-		 (mapconcat 'identity options "\n")))
+				"#+startup: entitiespretty"
+				"#+title: ${title}")))
+		  (mapconcat 'identity options "\n")))
       :unnarrowed t)))
 
   :bind (("C-c n l" . org-roam-buffer-toggle)
