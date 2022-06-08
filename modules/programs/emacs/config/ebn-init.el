@@ -8,6 +8,16 @@
 ;; This is much faster than using set-face-attribute
 (add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
 
+;; (set-face-attribute
+;;  'default nil
+;;  :font (font-spec :family "Victor Mono" :size 18 :weight 'semibold))
+
+
+;; (set-face-attribute
+;;  'default nil
+;;  :font (font-spec :family "Sarasa Mono CL" :size 13.5 :weight 'regular))
+
+
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
@@ -41,17 +51,17 @@
 (defun ebn/wikipedia (query)
   "QUERY wikipedia"
   (interactive "sQuery: ")
-  (eww (concat "https://en.wikipedia.org/wiki/" query)))
+  (eww (concat "https://en.wikipedia.org/wiki/"
+	       (replace-in-string query " " "_"))))
 
 (defun ebn/wikipedia-at-point ()
+  "Query wikipedia for thing at point."
   (interactive)
   (ebn/wikipedia (word-at-point)))
 
 (defun ebn/org-open-at-point ()
   (interactive)
-  (let ((t/browse (lambda (url &optional args)
-		  (eww-browse-url url t)))
-	(browse-url-browser-function #'eww-browse-url))
+  (let ((browse-url-browser-function #'eww-browse-url))
     (org-open-at-point)))
 
 (defun ebn/cht.sh (query)
@@ -62,6 +72,11 @@
 (defun ebn/forward-to-paragraph ()
   (interactive)
   (forward-paragraph)
+  (forward-line 1))
+
+(defun ebn/backward-to-paragraph ()
+  (interactive)
+  (backward-paragraph 2)
   (forward-line 1))
 
 (defun ebn/kill-dir-or-char ()
@@ -128,13 +143,17 @@
     (electric-pair-local-mode -1))
   (add-hook 'minibuffer-setup-hook 'ebn/setup-minibuffer)
 
+  (defun ebn/back-to-mark ()
+    (interactive)
+    (set-mark-command 0))
+
   :custom
   (delete-by-moving-to-trash t)
   (gdb-many-windows t)
   (gdb-show-main t)
   (delete-selection-mode t)
   (auto-save-visited-mode t)
-  (save-place-mode t)
+  ;(save-place-mode t)
   (initial-scratch-message nil)
 
   :hook (((prog-mode minibuffer-mode) . superword-mode)
@@ -175,10 +194,11 @@
 	("M-4" . delete-window)
 	("M-5" . make-frame)
 	("M-g M-g" . jump-to-register)
-	("C-0" . pop-global-mark)
+	("C-0" . ebn/back-to-mark)
 	("C-x j" . jump-to-register)
 	("C-9" . forward-list)
 	("C-8" . backward-list)
+	("C-<up>" . backward-paragraph)
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-h ," . xref-find-definitions)
 	("C-h w" . dictionary-search)
@@ -600,9 +620,9 @@
   (corfu-echo-documentation nil)
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
-	 ;(eshell-mode . corfu-mode)
+	 (eshell-mode . corfu-mode)
 	 ;(lisp-mode . corfu-mode)
-	 (scheme-mode . corfu-mode)
+	 ;(scheme-mode . corfu-mode)
 	 (c-mode . corfu-mode)
 	 (org-mode . corfu-mode)
 	 (tex-mode . corfu-mode)
@@ -612,11 +632,12 @@
   :after corfu
   :bind (("C-c p i" . cape-ispell)
 	 ("C-c p w" . cape-dict))
+  :config
+  (setq cape-dict-file "~/.local/share/dictionaries/my.dict")
   :init
   (add-to-list 'completion-at-point-functions #'cape-abbrev)
   (add-to-list 'completion-at-point-functions #'cape-ispell)
-  (add-to-list 'completion-at-point-functions #'cape-dict)
-  )
+  (add-to-list 'completion-at-point-functions #'cape-dict))
 
 (use-package vertico
   :config
@@ -643,7 +664,10 @@
 
 (use-package yasnippet
   :diminish yas-minor-mode
-  :hook ((org-mode tex-mode prog-mode) . yas-global-mode))
+  :defer t
+  :hook ((org-mode tex-mode prog-mode) . yas-minor-mode)
+  :config
+  (yas-reload-all))
 
 ;; Load environments (nix-shell)
 (use-package envrc
