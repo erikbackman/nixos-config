@@ -1,6 +1,7 @@
 final: prev: {
   ebn = {
     ebn-xmonad = prev.callPackage ./ebn-xmonad {};
+    ebn-stumpwm = prev.callPackage ./ebn-stumpwm {};
     aurora-vim = prev.callPackage ./aurora-vim {};
     modus-theme-vim = prev.callPackage ./modus-theme-vim {};
     pop-shell = prev.callPackage ./pop-shell {};
