@@ -319,7 +319,8 @@
   :bind*			    
   (:map dired-mode-map
 	("-" . ebn/dired-up-directory)
-	("o" . ebn/dired-open-file)))
+	("o" . ebn/dired-open-file)
+	("e" . wdired-change-to-wdired-mode)))
 
 ;;; Org:
 (use-package org
