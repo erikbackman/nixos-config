@@ -86,9 +86,9 @@
       (backward-kill-word 1)
     (backward-delete-char 1)))
 
-(defun ebn/shell-command-on-region ()
-  (interactive)
-  (shell-command-on-region (region-beginning) (region-end) nil t))
+(defun ebn/shell-command-on-region (command)
+  (interactive "sCommand: ")
+  (shell-command-on-region (region-beginning) (region-end) command nil t))
 
 (defun ebn/comment-paragraph ()
   (interactive)
