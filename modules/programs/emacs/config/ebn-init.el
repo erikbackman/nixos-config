@@ -623,8 +623,8 @@
   :hook ((haskell-mode . corfu-mode)
 	 (emacs-lisp-mode . corfu-mode)
 	 (eshell-mode . corfu-mode)
-	 ;(lisp-mode . corfu-mode)
-	 ;(scheme-mode . corfu-mode)
+	 (lisp-mode . corfu-mode)
+	 (scheme-mode . corfu-mode)
 	 (c-mode . corfu-mode)
 	 (org-mode . corfu-mode)
 	 (tex-mode . corfu-mode)
@@ -639,7 +639,8 @@
   :init
   (add-to-list 'completion-at-point-functions #'cape-abbrev)
   (add-to-list 'completion-at-point-functions #'cape-ispell)
-  (add-to-list 'completion-at-point-functions #'cape-dict))
+  (add-to-list 'completion-at-point-functions #'cape-dict)
+  (add-to-list 'completion-at-point-functions #'cape-file))
 
 (use-package vertico
   :config
