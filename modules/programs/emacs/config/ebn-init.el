@@ -223,10 +223,11 @@
 (use-package mindre-theme
   :ensure nil
   :load-path "themes/"
+  :custom
+  (mindre-use-more-bold nil)
+  (mindre-use-faded-lisp-parens t)
   :config
-  (setq mindre-use-more-bold nil)
-  (setq mindre-use-faded-lisp-parens t)
-  (mindre))
+  (load-theme 'mindre t))
 
 (use-package ebn-core
   :ensure nil
