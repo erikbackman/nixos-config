@@ -8,16 +8,6 @@
 ;; This is much faster than using set-face-attribute
 (add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
 
-;; (set-face-attribute
-;;  'default nil
-;;  :font (font-spec :family "Victor Mono" :size 18 :weight 'semibold))
-
-
-;; (set-face-attribute
-;;  'default nil
-;;  :font (font-spec :family "Sarasa Mono CL" :size 13.5 :weight 'regular))
-
-
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
@@ -236,7 +226,7 @@
   :config
   (global-set-key (kbd "M-w") 'ebn/copy-dwim))
 
-(use-package diminish :ensure t)
+;(use-package diminish :ensure t)
 
 (use-package vterm
   :defer t
@@ -266,7 +256,7 @@
 
 (use-package popper
   :ensure t
-  :init
+  :config
   (setq popper-reference-buffers
         '("\\*Messages\\*"
           "Output\\*$"
@@ -280,7 +270,6 @@
 	  calendar-mode
 	  help-mode
 	  compilation-mode))
-  :config
   (popper-mode)
   (popper-echo-mode)
   :bind* ("M-`" . popper-toggle-type)
