@@ -566,7 +566,7 @@
   (haskell-mode . eglot-ensure)
   (c-mode . eglot-ensure)
   (python-mode . eglot-ensure)
-  (LaTeX-mode . eglote-ensure)
+  (LaTeX-mode . eglot-ensure)
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
