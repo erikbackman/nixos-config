@@ -90,7 +90,6 @@
   (if (string= (buffer-name) "*scratch*")
       (ignore (bury-buffer))
     t))
-
 (add-hook 'kill-buffer-query-functions 'ebn/bury-scratch-buffer)
 
 (defun ebn/eval-and-replace ()
@@ -233,18 +232,6 @@
 (use-package gtags
   :ensure nil)
 
-;; (use-package sly
-;;   :commands 'sly
-;;   :config
-;;   (require 'sly-autoloads)
-;;   (setq inferior-lisp-program "/nix/store/5syp1cmyg003jyjjshgd06wqbvckyzni-sbcl-2.1.9/bin/sbcl")
-;;   (setq sly-lisp-implementations
-;;            '(;(cmucl ("cmucl" "-quiet"))
-;;              (sbcl ("sbcl") :coding-system utf-8-unix))))
-
-;; (use-package sly-asdf
-;;   :defer t)
-
 (use-package erc
   :defer t
   :commands 'erc-tls
@@ -316,6 +303,7 @@
 	     org-agenda
 	     org-capture
 	     org-cdlatex-mode)
+  :custom (org-hide-leading-stars nil)
   :init (progn
 	  (defun my/org-prettify-buffer ()
 	    (interactive)
@@ -354,6 +342,12 @@
 		  org-cycle-separator-lines -1
 		  org-catch-invisible-edits 'error
 		  org-ctrl-k-protect-subtree t)
+
+	    ;; (font-lock-add-keywords 'org-mode
+	    ;; 			    '(("^\\(*\\) " 1 '(face nil display "●"))
+	    ;; 			      ("^\\(*\\*\\) " 1 '(face nil display "○"))
+	    ;; 			      ("^\\(*\\*\\*\\) " 1 '(face nil display "○"))))
+
 	    
 	    ;; Org-babel languages
 	    (org-babel-do-load-languages 'org-babel-load-languages
@@ -469,16 +463,21 @@
 						       ("beta" . 120573)
 						       ("alpha" . 120572))))))
 
-
 ;;; Languages:
 (use-package haskell-mode
   :defer t
   :commands (haskell-mode)
-  :diminish interactive-haskell-mode
- 
-  :mode
-  (("\\.hs\\'" . haskell-mode)
-   ("\\.cabal\\'" . haskell-cabal-mode))
+  :init
+  (defun ebn/haskell-mode-setup ()
+    (interactive)
+    (setq-local eldoc-documentation-function #'haskell-doc-current-info
+		tab-stop-list '(2)
+		indent-line-function #'indent-relative
+		tab-width 2)
+    (interactive-haskell-mode)
+    (haskell-indentation-mode)
+    (electric-pair-mode))
+  (add-hook 'haskell-mode-hook #'ebn/haskell-mode-setup)
   
   :custom
   (haskell-process-type 'cabal-repl)
@@ -489,24 +488,10 @@
   (haskell-font-lock-symbols t)
   
   :config
-  (load-library "haskell-mode-autoloads")
-  (require 'haskell-interactive-mode)
-  
   (defun haskell-mode-after-save-handler ()
     (let ((inhibit-message t))
       (eglot-format-buffer)))
-		
-  (defun ebn/haskell-mode-setup ()
-    (haskell-indentation-mode)
-    (autoload 'haskell-doc-current-info "haskell-doc")
-    (setq-local eldoc-documentation-function 'haskell-doc-current-info
-		tab-stop-list '(2)
-		indent-line-function 'indent-relative
-		tab-width 2)
-    (interactive-haskell-mode)
-    (electric-pair-mode))
 
-  :hook ((haskell-mode . ebn/haskell-mode-setup))
   :bind (:map haskell-mode-map
 	      ("C-h L" . haskell-hoogle-lookup-from-website)
 	      ("M-<left>" . backward-sexp)
@@ -550,10 +535,13 @@
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-	 ("\\.md\\'" . markdown-mode))
+  :mode (("README\\.md\\'" . gfm-mode))
   :init (setq markdown-command "multimarkdown")
-  :config (set-face-attribute 'markdown-code-face nil :background nil))
+  :custom
+  (markdown-enable-highlighting-syntax t)
+  :config
+  (set-face-attribute 'markdown-code-face nil :background nil)
+  (setq markdown-enable-highlighting-syntax t))
 
 (use-package cdlatex
   :commands 'turn-on-cdlatex)
@@ -574,12 +562,11 @@
 ;;; LSP:
 (use-package eglot
   :defer t
-  :hook ((haskell-mode
-	  c-mode
-	  python-mode
-	  LaTeX-mode)
-	 . eglot-ensure)
-  
+  :hook
+  (haskell-mode . eglot-ensure)
+  (c-mode . eglot-ensure)
+  (python-mode . eglot-ensure)
+  (LaTeX-mode . eglote-ensure)
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
@@ -592,6 +579,7 @@
   (add-to-list 'eglot-server-programs
 	       '((tex-mode context-mode texinfo-mode bibtex-mode) . ("texlab")))
   (define-key eglot-mode-map [remap display-local-help] nil)
+
   :bind (:map eglot-mode-map
 	      ("C-c C-a" . eglot-code-actions)
 	      ("C-c C-f" . eglot-format-buffer)))
@@ -706,21 +694,29 @@
 
 (use-package sh-mode
   :ensure nil
+  :commands sh-mode
   :bind (:map sh-mode-map ("C-x C-e" . sh-execute-region)))
 
 (use-package keycast
   :ensure t
   :commands 'keycast-mode)
 
-;; (use-package pdf-tools
-;;   :ensure t
-;;   :defer t
-;;   :mode ("\\.pdf\\'" . pdf-view-mode)
-;;   :config
-;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-;; 	TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
-;; 	TeX-source-correlate-start-server t)
-;;   (add-hook 'TeX-after-compilation-finished-functions
-;;             #'TeX-revert-document-buffer))
+(use-package eww
+  :ensure nil
+  :commands eww
+  :config
+  (setq eww-retrieve-command
+      '("chromium" "--headless" "--dump-dom")))
+
+(use-package pdf-tools
+  :ensure t
+  :defer t
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+	TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+	TeX-source-correlate-start-server t)
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer))
 
 ;;; ebn-init.el ends here
