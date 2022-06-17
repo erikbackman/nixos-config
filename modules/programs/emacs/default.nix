@@ -109,7 +109,7 @@ in {
       xclip
 
       # ob-jupyter
-      (python38.withPackages(ps: [ ps.jupyter ps.python-lsp-server ]))
+      #(python38.withPackages(ps: [ ps.jupyter ps.python-lsp-server ]))
 
       # agda
       haskellPackages.Agda
