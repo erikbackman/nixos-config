@@ -39,11 +39,16 @@ in {
           eval "$(${pkgs.direnv}/bin/direnv hook bash)"
           ${cfg.extraConfig}
         ''
-        else ''
+      else ''
+          HISTSIZE=10000
+          HISTFILESIZE=10000
+
           export GITUSER="$(git config -f $HOME/.config/git/config --get user.name)"
           export DOTFILES="$HOME/repos/github.com/$GITUSER/nixos-config"
           export GHREPOS="$HOME/repos/github.com/$GITUSER/"
           export STARSHIP_CONFIG=${pkgs.writeText "starship.toml" (builtins.readFile ./config/starship.toml)};
+
+          export EDITOR="emacs -nw"
 
           alias grep="grep --colour=auto"
           alias egrep="egrep --colour=auto"
@@ -55,6 +60,7 @@ in {
           alias ga="git add"
           alias gc="git commit"
           alias gp="git push"
+          alias free="free -h"
 
           p() {
           cd $(find $GHREPOS -maxdepth 1 ! -path $GHREPOS -type d | ${pkgs.fzf}/bin/fzf)
