@@ -18,7 +18,7 @@
   programs.ebn.bash.enable = true;
   programs.ebn.bash.starship.enable = true;
   programs.ebn.emacs.enable = true;
-  programs.ebn.emacs.package = pkgs.emacsGcc;
+  programs.ebn.emacs.package = pkgs.emacsNativeComp;
 
   services.redshift = {
     enable = true;

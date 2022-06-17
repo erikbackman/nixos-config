@@ -18,6 +18,7 @@
           config.allowUnfree = true;
           config.permittedInsecurePackages = [
             "electron-6.1.12" # for geogebra
+            "electron-14.2.9" # for geogebra
           ];
         } // attrs);
 
@@ -30,8 +31,8 @@
             let unstable = make-packages nixpkgs-unstable { };
             in {
               steam = unstable.steam;
-              discord = unstable.discord;
-              electron = prev.electron_14;
+              #discord = unstable.discord;
+              #electron = prev.electron_14;
             })
         ];
       };
