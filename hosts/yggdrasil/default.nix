@@ -13,22 +13,28 @@
 
   services.redshift = {
     enable = true;
-    temperature.night = 3700;
-    temperature.day = 4500;
+    temperature.night = 3200;
+    temperature.day = 3200;
     inherit (config location);
   };
 
   services.earlyoom.enable = true;
+  services.clamav = {
+    daemon.enable = true;
+    updater.enable = true;
+  };
 
   windowManager.ebn.xmonad.enable = true;
-  services.ebn.tint2.enable = true;
+  windowManager.ebn.stumpwm.enable = false;
+  services.ebn.tint2.enable = false;
   services.ebn.polybar.enable = false;
   services.xserver.enable = true;
+  
   services.xserver.displayManager.sessionCommands = ''
     xrandr --output DP-0 --mode 3440x1440 --rate 99.98
     xset r rate 150 25
   '';
-
+ 
   services.ebn.syncthing.enable = true;
   services.ebn.pulseeffects.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -55,8 +61,12 @@
     #tamsyn
     #julia-mono
     #recursive
+    fantasque-sans-mono
+    monoid
   ];
 
+  # environment.variables.WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # nyxt
+  
   environment.systemPackages = with pkgs; [
     zathura
     #maxima
@@ -70,7 +80,6 @@
     neofetch
     mpc_cli
     mpv
-    #streamlink
     feh
     discord
     gnome.gucharmap
@@ -79,19 +88,21 @@
     kdenlive
     cowsay
     ncspot
+    spotify-tui
     pavucontrol
-    #anki
     sage
-    #geogebra6
-    #jekyll
     man-pages
-    #brave
     firefox
+    chromium
+    qutebrowser
     trash-cli
     spotify
     e17gtk
-    
+    guile_3_0
     texlab
+    geogebra6
+    gnome.gnome-boxes
+    qemu_kvm
   ] 
   ++ 
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
