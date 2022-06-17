@@ -464,6 +464,11 @@
 						       ("alpha" . 120572))))))
 
 ;;; Languages:
+(use-package sh-mode
+  :ensure nil
+  :commands sh-mode
+  :bind (:map sh-mode-map ("C-x C-e" . sh-execute-region)))
+
 (use-package haskell-mode
   :defer t
   :commands (haskell-mode)
@@ -692,11 +697,7 @@
   ("M-s" . avy-goto-char-in-line)
   ("C-ö" . avy-goto-char-timer))
 
-(use-package sh-mode
-  :ensure nil
-  :commands sh-mode
-  :bind (:map sh-mode-map ("C-x C-e" . sh-execute-region)))
-
+;;; Misc
 (use-package keycast
   :ensure t
   :commands 'keycast-mode)
