@@ -412,7 +412,7 @@
   (setq org-roam-v2-ack t) ;; Disable v2-migration-prompt
 
   :custom
-  (org-roam-directory "~/org-roam")
+  (org-roam-directory "~/org/org-roam")
   (org-roam-completion-everywhere t)
   (org-roam-capture-templates
    `(("d" "default" plain "%?"
