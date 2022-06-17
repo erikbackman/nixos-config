@@ -254,10 +254,11 @@
 	  flymake-diagnostics-buffer-mode
 	  calendar-mode
 	  help-mode
-	  compilation-mode))
+	  compilation-mode
+	  sage-shell-mode))
   (popper-mode)
   (popper-echo-mode)
-  :bind* ("M-`" . popper-toggle-type)
+  :bind* ("C-å" . popper-toggle-type)
          ("C-+" . popper-toggle-latest))
 
 (use-package ibuffer-project
