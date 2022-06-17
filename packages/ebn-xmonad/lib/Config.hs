@@ -34,14 +34,14 @@ main = xmonad . ewmh . docks $ cfg
           keys = keybinds,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,
-          focusedBorderColor = "#81A1C1",
-          normalBorderColor = "#000",
+          focusedBorderColor = "#2e3338",
+          normalBorderColor = "#B0BEC5",
           workspaces = workspaceIds
         }
 
     myStartupHook :: X ()
     myStartupHook = do
-      setDefaultCursor xC_left_ptr      
+      setDefaultCursor xC_left_ptr
 
 -- Workspaces ---------------------------------------------------------------
 
@@ -60,10 +60,10 @@ workspaceIds = [webWs, devWs, comWs, wrkWs, etcWs]
 
 myLayouts =
   avoidStruts
-    . configurableNavigation noNavigateBorders 
---    . simpleDeco shrinkText (def { decoWidth = 100 })
+    . configurableNavigation noNavigateBorders
+    --    . simpleDeco shrinkText (def { decoWidth = 100 })
     . gapSpaced
---    . smartBorders
+    --    . smartBorders
     . fullScreenToggle
     . comLayout
     . devLayout
@@ -72,24 +72,30 @@ myLayouts =
     . wrkLayout
     $ (tiled ||| Mirror tiled ||| column3 ||| full)
   where
-    tiled = named "Default"
-      $ Tall nmaster ratio_increment ratio
-      where ratio = 1 / 2
-      
+    tiled =
+      named "Default" $
+        Tall nmaster ratio_increment ratio
+      where
+        ratio = 1 / 2
+
     full = named "Full" Full
-    
-    column3 = named "Three Col"
-      $ ThreeColMid nmaster ratio_increment ratio
-      where ratio = 1 / 2
-      
-    column2 = named "Master 2/3"
-      $ reflectHoriz $ Tall nmaster ratio_increment ratio
-      where ratio = 2 / 3
+
+    column3 =
+      named "Three Col" $
+        ThreeColMid nmaster ratio_increment ratio
+      where
+        ratio = 1 / 3
+
+    column2 =
+      named "Master 2/3" $
+        reflectHoriz $ Tall nmaster ratio_increment ratio
+      where
+        ratio = 2 / 3
 
     nmaster = 1
     ratio_increment = 3 / 100
 
-    gapSpaced = spacingRaw False (Border 10 10 10 10) True (Border 10 10 10 10) True
+    gapSpaced = spacingRaw False (Border 1 1 1 1) True (Border 1 1 1 1) True
     fullScreenToggle = mkToggle (single NBFULL)
 
     comLayout = onWorkspace comWs (tiled ||| full)

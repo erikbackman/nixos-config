@@ -13,8 +13,6 @@ import System.Exit
 import XMonad
 import XMonad.Actions.WindowGo (runOrRaise)
 import XMonad.Actions.WithAll (killAll)
-import XMonad.Core (io)
-import XMonad.Operations
 import XMonad.Layout.MultiToggle (Toggle (..))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers (NBFULL))
 import qualified XMonad.StackSet as W
@@ -28,6 +26,7 @@ keybinds conf@XConfig {XMonad.modMask = modm} =
       ((modm, xK_c), kill),
       ((modm .|. shiftMask, xK_c), killAll),
       ((modm, xK_p), spawn launcher),
+      ((modm, xK_o), spawn documents),
       ((modm, xK_6), runOrRaise' editor),
       ((modm, xK_7), runOrRaise' browser),
       ((modm, xK_8), runOrRaise' terminal),
@@ -41,13 +40,12 @@ keybinds conf@XConfig {XMonad.modMask = modm} =
       <> switchWsById
   where
     restart' = restart "xmonad" True
-      --spawn "xmonad --recompile; xmonad --restart"
-
     terminal = ClassApp "kitty" "kitty"
     editor = ClassApp "Emacs" "emacs"
     browser = ClassApp "Brave-browser" "brave"
     launcher = "j4-dmenu-desktop"
-
+    documents = "dmenu-files /home/ebn/Documents/books"
+    
     switchWsById =
       [ ((m, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_F1 .. xK_F6],
