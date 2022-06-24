@@ -4,6 +4,8 @@
 (require 'use-package)
 (require 'ebn-core)
 
+(add-to-list 'load-path "~/.emacs.d/themes/spaceway-theme")
+
 ;;; Fonts:
 ;; This is much faster than using set-face-attribute
 (add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
@@ -15,20 +17,13 @@
 
 (setq-default
  fill-column 80
- mark-ring-max 6
- global-mark-ring-max 6
  left-margin-width 1
  sentence-end-double-space nil
- kill-whole-line t
  lisp-backquote-indentation nil
  blink-cursor-blinks 1
  fast-but-imprecise-scrolling t
  auto-save-interval 60
  kill-do-not-save-duplicates t)
-
-(set-register ?h '(file . "~"))
-(set-register ?r '(file . "~/org-roam"))
-(set-register ?p '(file . "~/repos/github.com/erikbackman/"))
 
 ;;; Functions:
 ;;; TODO: Move to ebn-core
@@ -37,6 +32,14 @@
   (if (region-active-p)
       (kill-region (region-beginning) (region-end) nil)
     (kill-line)))
+
+(defun ebn/copy-dwim ()
+  "Run the command `kill-ring-save' on the current region
+or the current line if there is no active region."
+  (interactive)
+  (if (region-active-p)
+      (kill-ring-save nil nil t)
+    (kill-ring-save (point-at-bol) (point-at-eol))))
 
 (defun ebn/wikipedia (query)
   "QUERY wikipedia"
@@ -190,7 +193,7 @@
 	("C-x SPC" . rectangle-mark-mode)
 	("C-x f" . find-file)
 	("C-x j" . jump-to-register)
-	("C-x k" . ebn/kill-current-buffer)
+	("C-x k" . kill-current-buffer)
 	("M-1" . delete-other-windows)
 	("M-2" . split-window-below)
 	("M-3" . split-window-right)
@@ -216,21 +219,11 @@
   :config
   (load-theme 'mindre t))
 
-(use-package ebn-core
-  :ensure nil
-  :defer t
-  :commands 'ebn/copy-dwim
-  :config
-  (global-set-key (kbd "M-w") 'ebn/copy-dwim))
-
-;(use-package diminish :ensure t)
-
 (use-package vterm
   :defer t
   :bind ("C-c C-t" . vterm-other-window))
 
-(use-package gtags
-  :ensure nil)
+(use-package gtags :ensure nil)
 
 (use-package erc
   :defer t
@@ -255,7 +248,8 @@
 	  calendar-mode
 	  help-mode
 	  compilation-mode
-	  sage-shell-mode))
+	  sage-shell-mode
+	  vterm-mode))
   (popper-mode)
   (popper-echo-mode)
   :bind* ("C-å" . popper-toggle-type)
@@ -280,10 +274,6 @@
   :custom
   (eldoc-echo-area-prefer-doc-buffer nil))
 
-(use-package olivetti
-  :ensure t
-  :commands 'olivetti-mode)
-
 (use-package dired
   :ensure nil
   :config
@@ -306,12 +296,6 @@
 	     org-cdlatex-mode)
   :custom (org-hide-leading-stars nil)
   :init (progn
-	  (defun my/org-prettify-buffer ()
-	    (interactive)
-	    (when (not org-pretty-entities)
-	      (org-toggle-pretty-entities))
-	    (org-latex-preview))
-	  
 	  (defun ebn/diary-last-day-of-month (date)
 	    "Return `t` if DATE is the last day of the month."
 	    (let* ((day (calendar-extract-day date))
@@ -333,6 +317,7 @@
 	    (setq org-startup-indented t
 		  org-startup-with-latex-preview t
 		  org-pretty-entities t
+		  org-startup-with-inline-images t
 		  org-ellipsis " …"
   		  org-export-preserve-breaks t
 		  org-highlight-latex-and-related '(native)
@@ -342,13 +327,24 @@
 		  org-hide-leading-stars t
 		  org-cycle-separator-lines -1
 		  org-catch-invisible-edits 'error
-		  org-ctrl-k-protect-subtree t)
-
-	    ;; (font-lock-add-keywords 'org-mode
-	    ;; 			    '(("^\\(*\\) " 1 '(face nil display "●"))
-	    ;; 			      ("^\\(*\\*\\) " 1 '(face nil display "○"))
-	    ;; 			      ("^\\(*\\*\\*\\) " 1 '(face nil display "○"))))
-
+		  org-ctrl-k-protect-subtree t
+		  org-image-actual-width nil
+		  org-return-follows-link t
+		  org-hide-emphasis-markers t
+		  org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
+		  org-latex-listings 'minted
+		  org-latex-packages-alist '(("" "minted"))
+		  org-latex-tables-centered t
+		  org-insert-heading-respect-content t		  
+		  org-latex-pdf-process
+		  ;; The reason why this is a list is that it usually takes several
+		  ;; runs of ‘pdflatex’, maybe mixed with a call to ‘bibtex’.  Org
+		  ;; does not have a clever mechanism to detect which of these
+		  ;; commands have to be run to get to a stable result, and it also
+		  ;; does not do any error checking.
+		  '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 	    
 	    ;; Org-babel languages
 	    (org-babel-do-load-languages 'org-babel-load-languages
@@ -364,31 +360,12 @@
 		     "* TODO %?\n  %i\n  %a")
 		    ("j" "Journal" entry (file+datetree "~/org/journal.org")
 		     "* %?\nEntered on %U\n  %i\n  %a")
-		    ("r" "Roam node" function #'org-roam-capture))
-		  
-		  org-image-actual-width nil
-		  org-return-follows-link t
-		  org-hide-emphasis-markers t
-		  org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
-		  org-latex-listings 'minted
-		  org-latex-packages-alist '(("" "minted"))
-		  
-		  org-latex-pdf-process
-		  ;; The reason why this is a list is that it usually takes several
-		  ;; runs of ‘pdflatex’, maybe mixed with a call to ‘bibtex’.  Org
-		  ;; does not have a clever mechanism to detect which of these
-		  ;; commands have to be run to get to a stable result, and it also
-		  ;; does not do any error checking.
-		  '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
-		  
-		  org-latex-tables-centered t
-		  org-insert-heading-respect-content t))
+		    ("r" "Roam node" function #'org-roam-capture))))
 
   :bind* (:map org-mode-map
 	       ("C-<return>" . org-meta-return)
 	       ("C-c h" . consult-org-heading)
+	       ("C-j" . join-line)
 	       ("C-c C-c" . ebn/org-eval-block))
   
   :hook ((org-mode . (lambda ()
@@ -510,20 +487,11 @@
   :mode ("\\agda\\'" . agda2-mode))
 
 (use-package nix-mode
-  :defer t
-  :mode ("\\.nix\\'" . nix-mode))
+  :defer t)
 
 (use-package geiser-guile
   :ensure t
   :defer t)
-
-;; (use-package elpy
-;;   :ensure t
-;;   :defer t
-;;   :init
-;;   (advice-add 'python-mode :before 'elpy-enable)
-;;   :config
-;;   (add-to-list 'process-coding-system-alist '("python" . (utf-8 . utf-8))))
 
 (use-package yapfify
   :ensure t
@@ -555,11 +523,12 @@
 (use-package auctex
   :mode
   ("\\.tex\\'" . latex-mode)
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-master nil)
+  (TeX-PDF-mode t)
   :config
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq-default TeX-master nil)
-  (setq TeX-PDF-mode t)
   (add-hook 'LaTeX-mode-hook 'visual-line-mode)
   (add-hook 'LaTeX-mode-hook 'flyspell-mode)
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
@@ -592,7 +561,6 @@
 
 ;;; Completion:
 (use-package corfu
-  :defer t
   :custom
   (corfu-auto-delay 0.2)
   (corfu-cycle t)
@@ -601,15 +569,8 @@
   (corfu-quit-at-boundary t)
   (corfu-quit-no-match t)
   (corfu-echo-documentation nil)
-  :hook ((haskell-mode . corfu-mode)
-	 (emacs-lisp-mode . corfu-mode)
-	 (eshell-mode . corfu-mode)
-	 (lisp-mode . corfu-mode)
-	 (scheme-mode . corfu-mode)
-	 (c-mode . corfu-mode)
-	 (org-mode . corfu-mode)
-	 (tex-mode . corfu-mode)
-	 (LaTeX-mode . corfu-mode)))
+  :init
+  (global-corfu-mode))
 
 (use-package cape
   :after corfu
@@ -617,6 +578,8 @@
 	 ("C-c p w" . cape-dict))
   :config
   (setq cape-dict-file "~/.local/share/dictionaries/my.dict")
+  (setq-local completion-at-point-functions
+              (list (cape-super-capf #'cape-dabbrev #'cape-dict #'cape-keyword #'cape-symbol)))
   :init
   (add-to-list 'completion-at-point-functions #'cape-abbrev)
   (add-to-list 'completion-at-point-functions #'cape-ispell)
@@ -631,7 +594,7 @@
   :init
   (setq completion-styles '(orderless)
 	completion-category-defaults nil
-	orderless-skip-highlighting t
+	orderless-skip-highlighting nil
 	completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package consult
@@ -662,9 +625,6 @@
 ;;; Better editing
 (use-package multiple-cursors
   :ensure t
-  :config
-  (global-set-key (kbd "M-m") 'mc/mark-all-like-this-dwim)
-  (global-set-key [(super down)] 'mc/mark-next-like-this)
   :bind
   (:map global-map
 	("s-<down>" . mc/mark-next-like-this)
@@ -672,17 +632,17 @@
 
 (use-package expand-region
   :ensure t
-  :defer t
   :commands 'er/expand-region
   :bind
   ("C-<return>" . er/expand-region))
 
 (use-package paredit
   :ensure t
-  :defer t
   :diminish
-  :mode ("\\.el\\'" . emacs-lisp-mode)
-  :hook ((scheme-mode emacs-lisp-mode) . enable-paredit-mode))
+  :hook ((scheme-mode emacs-lisp-mode) . enable-paredit-mode)
+  :bind (:map paredit-mode-map
+	      ("M-<left>" . paredit-backward-slurp-sexp)
+	      ("M-<right>" . paredit-backward-barf-sexp)))
 
 (use-package avy
   :ensure t
@@ -720,5 +680,9 @@
 	TeX-source-correlate-start-server t)
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer))
+
+(use-package org-modern
+  :config
+  (global-org-modern-mode))
 
 ;;; ebn-init.el ends here
