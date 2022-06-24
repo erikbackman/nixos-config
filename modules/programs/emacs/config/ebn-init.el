@@ -1,9 +1,6 @@
 ;;; ebn-init.el --- init -*- lexical-binding: t; no-byte-compile: nil; -*-
 ;;; Commentary:
 ;;; Code:
-(require 'use-package)
-(require 'ebn-core)
-
 (add-to-list 'load-path "~/.emacs.d/themes/spaceway-theme")
 
 ;;; Fonts:
@@ -57,11 +54,6 @@ or the current line if there is no active region."
   (let ((browse-url-browser-function #'eww-browse-url))
     (org-open-at-point)))
 
-(defun ebn/cht.sh (query)
-  "QUERY cht.sh"
-  (interactive "sQuery: ")
-  (eww (concat "https://cht.sh/" query)))
-
 (defun ebn/forward-to-paragraph ()
   (interactive)
   (forward-paragraph)
@@ -94,6 +86,13 @@ or the current line if there is no active region."
       (ignore (bury-buffer))
     t))
 (add-hook 'kill-buffer-query-functions 'ebn/bury-scratch-buffer)
+
+(defun ebn/dired-up-directory ()
+  "Up directory - killing current buffer."
+  (interactive)
+  (let ((cb (current-buffer)))
+    (progn (dired-up-directory)
+	   (kill-buffer cb))))
 
 (defun ebn/eval-and-replace ()
   "Replace the preceding sexp with its value."
