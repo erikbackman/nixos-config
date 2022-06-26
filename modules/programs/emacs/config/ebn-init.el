@@ -556,6 +556,7 @@ or the current line if there is no active region."
 
 (use-package tex-mode
   :ensure nil
+  :mode (("\\.tex\\'" . LaTeX-mode))
   :custom
   (TeX-auto-save t)
   (TeX-parse-self t)
@@ -578,7 +579,6 @@ or the current line if there is no active region."
   (haskell-mode . eglot-ensure)
   (c-mode . eglot-ensure)
   (python-mode . eglot-ensure)
-  (LaTeX-mode . eglot-ensure)
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
