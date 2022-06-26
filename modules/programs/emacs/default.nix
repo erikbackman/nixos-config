@@ -25,7 +25,7 @@ let
         alwaysEnsure = true;
         package = package; 
         extraEmacsPackages = epkgs: with epkgs; [
-          vterm init agda2-mode use-package pkgs.ebn.ebn-core-el
+          vterm init agda2-mode use-package pkgs.emacsPackages.auctex
         ];
         override = epkgs: epkgs // {
           kaolin-themes = pkgs.ebn.kaolin-themes;
@@ -58,6 +58,13 @@ in {
         init.defaultBranch = "main";
         core.editor = "emacs -nw";
       };
+    };
+ 
+    services.emacs = {
+      enable = true;
+      install = true;
+      package = emacsPackage;
+      defaultEditor = true;
     };
     
     environment.systemPackages = with pkgs; [
@@ -110,7 +117,7 @@ in {
 
       # ob-jupyter
       #(python38.withPackages(ps: [ ps.jupyter ps.python-lsp-server ]))
-
+      (python39.withPackages (ps: [ ps.epc ps.python-lsp-server ]))
       # agda
       haskellPackages.Agda
 

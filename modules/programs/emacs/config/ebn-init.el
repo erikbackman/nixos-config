@@ -1,11 +1,14 @@
 ;;; ebn-init.el --- init -*- lexical-binding: t; no-byte-compile: nil; -*-
 ;;; Commentary:
 ;;; Code:
-(add-to-list 'load-path "~/.emacs.d/themes/spaceway-theme")
 
 ;;; Fonts:
 ;; This is much faster than using set-face-attribute
 (add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
+
+;; (set-face-attribute
+;;  'fixed-pitch nil
+;;  :font (font-spec :family "Sarasa Mono CL" :size 13.5 :weight 'normal))
 
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
@@ -20,10 +23,38 @@
  blink-cursor-blinks 1
  fast-but-imprecise-scrolling t
  auto-save-interval 60
- kill-do-not-save-duplicates t)
+ kill-do-not-save-duplicates t
+ bidi-paragraph-direction 'left-to-right
+ bidi-inhibit-bpa t)
 
+(global-so-long-mode 1)
+(save-place-mode 1)
 ;;; Functions:
 ;;; TODO: Move to ebn-core
+
+(defun ebn/--setup-variable-fonts ()
+  (interactive)
+  (set-face-attribute
+   'variable-pitch nil
+   :font (font-spec :family "CMU Concrete" :size 19 :weight 'regular))
+
+  (set-face-attribute
+   'fixed-pitch nil
+   :font (font-spec :family "Sarasa Mono CL" :size 13.5)))
+
+(defun ebn/open-line-below ()
+  "Open a newline below current line."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(defun ebn/open-line-above ()
+  "Open a newline above current line."
+  (interactive)
+  (previous-line)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
 (defun ebn/kill-dwim ()
   (interactive)
   (if (region-active-p)
@@ -174,7 +205,7 @@ or the current line if there is no active region."
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-<up>" . backward-paragraph)
 	("C-b" . backward-to-word)
-	("C-c c" . ebn/comment-paragraph)
+	("C-c C-c" . ebn/comment-paragraph)
 	("C-c d" . flymake-show-buffer-diagnostics)
 	("C-f" . forward-to-word)
 	("C-h ," . xref-find-definitions)
@@ -182,6 +213,7 @@ or the current line if there is no active region."
 	("C-h r" . xref-find-references)
 	("C-h t" . eldoc-doc-buffer)
 	("C-h w" . dictionary-search)
+	("C-x C-r" . undo-redo)
 	("C-j" . join-line)
 	("C-k" . ebn/kill-dwim)
 	("C-o" . ebn/open-line-below)
@@ -207,6 +239,7 @@ or the current line if there is no active region."
 	("s-e" . electric-pair-local-mode)
 	("s-l" . ebn/org-open-at-point)
 	("s-r" . replace-string)
+	("M-s-r" . isearch-query-replace)
  	("C-<tab>" . hippie-expand)))
 
 (use-package mindre-theme
@@ -217,6 +250,9 @@ or the current line if there is no active region."
   (mindre-use-faded-lisp-parens t)
   :config
   (load-theme 'mindre t))
+
+(use-package greymatters-theme
+  :ensure t)
 
 (use-package vterm
   :defer t
@@ -289,8 +325,7 @@ or the current line if there is no active region."
 ;;; Org:
 (use-package org
   :defer t
-  :commands (my/org-prettify-buffer
-	     org-agenda
+  :commands (org-agenda
 	     org-capture
 	     org-cdlatex-mode)
   :custom (org-hide-leading-stars nil)
@@ -334,7 +369,12 @@ or the current line if there is no active region."
 		  org-latex-listings 'minted
 		  org-latex-packages-alist '(("" "minted"))
 		  org-latex-tables-centered t
-		  org-insert-heading-respect-content t		  
+		  org-insert-heading-respect-content t
+		  org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+				      (sequence "BACKLOG(b)" "ACTIVE(a)"
+						"REVIEW(v)" "WAIT(w@/!)" "HOLD(h)"
+						"|" "DELEGATED(D)" "CANCELLED(c)"))
+		  org-agenda-current-time-string "← now ─────────────────"
 		  org-latex-pdf-process
 		  ;; The reason why this is a list is that it usually takes several
 		  ;; runs of ‘pdflatex’, maybe mixed with a call to ‘bibtex’.  Org
@@ -361,24 +401,18 @@ or the current line if there is no active region."
 		     "* %?\nEntered on %U\n  %i\n  %a")
 		    ("r" "Roam node" function #'org-roam-capture))))
 
-  :bind* (:map org-mode-map
-	       ("C-<return>" . org-meta-return)
-	       ("C-c h" . consult-org-heading)
-	       ("C-j" . join-line)
-	       ("C-c C-c" . ebn/org-eval-block))
+  :bind*
+  (:map org-mode-map
+	("C-<return>" . org-meta-return)
+	("C-c h" . consult-org-heading)
+	("C-j" . join-line)
+	("C-x C-e" . ebn/org-eval-block))
   
   :hook ((org-mode . (lambda ()
 		       (setq line-spacing .2)
 		       (setq cursor-type 'box)
 		       (org-cdlatex-mode)
-		       ;; Faces
-		       (set-face-attribute
-			'variable-pitch nil
-			:font (font-spec :family "CMU Concrete" :size 19 :weight 'regular))
-
-		       (set-face-attribute
-			'fixed-pitch nil
-			:font (font-spec :family "Sarasa Mono CL" :size 13.5))))))
+		       (ebn/--setup-variable-fonts)))))
 
 (use-package org-roam
   :defer t
@@ -395,10 +429,11 @@ or the current line if there is no active region."
       :if-new (file+head
 	       "%<%Y%m%d%H%M%S>-${slug}.org"
 	       ,(let ((options '("#+options: _:{}"
-				"#+options: ^:{}"
-				"#+startup: latexpreview"
-				"#+startup: entitiespretty"
-				"#+title: ${title}")))
+				 "#+options: ^:{}"
+				 "#+startup: latexpreview"
+				 "#+startup: entitiespretty"
+				 "#+startup: inlineimages"
+				 "#+title: ${title}")))
 		  (mapconcat 'identity options "\n")))
       :unnarrowed t)))
 
@@ -519,19 +554,22 @@ or the current line if there is no active region."
 (use-package cdlatex
   :commands 'turn-on-cdlatex)
 
-(use-package auctex
-  :mode
-  ("\\.tex\\'" . latex-mode)
+(use-package tex-mode
+  :ensure nil
   :custom
   (TeX-auto-save t)
   (TeX-parse-self t)
   (TeX-master nil)
   (TeX-PDF-mode t)
-  :config
-  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-  (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex))
+  :hook
+  (LaTeX-mode . (lambda ()
+		  (interactive)
+		  (visual-line-mode)
+		  (flyspell-mode)
+		  (LaTeX-math-mode)
+		  (turn-on-cdlatex)
+		  (eglot-ensure)
+		  (ebn/--setup-variable-fonts))))
 
 ;;; LSP:
 (use-package eglot
@@ -574,14 +612,25 @@ or the current line if there is no active region."
 (use-package cape
   :after corfu
   :bind (("C-c p i" . cape-ispell)
-	 ("C-c p w" . cape-dict))
+	 ("C-c p w" . cape-dict)
+	 ("C-c p d" . cape-dabbrev)
+	 ("C-c p l" . cape-line)
+	 ("C-c p \\" . cape-tex))
   :config
   (setq cape-dict-file "~/.local/share/dictionaries/my.dict")
   (setq-local completion-at-point-functions
               (list (cape-super-capf #'cape-dabbrev #'cape-dict #'cape-keyword #'cape-symbol)))
+
+    ;; Silence then pcomplete capf, no errors or messages!
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+
+  ;; Ensure that pcomplete does not write to the buffer
+  ;; and behaves as a pure `completion-at-point-function'.
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
+  
   :init
-  (add-to-list 'completion-at-point-functions #'cape-abbrev)
-  (add-to-list 'completion-at-point-functions #'cape-ispell)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+;  (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-file))
 
@@ -590,6 +639,7 @@ or the current line if there is no active region."
   (vertico-mode))
 
 (use-package orderless
+  :defer 10
   :init
   (setq completion-styles '(orderless)
 	completion-category-defaults nil
@@ -606,7 +656,8 @@ or the current line if there is no active region."
   ("C-c l" . consult-line)
   ("C-c i" . consult-imenu)
   ("C-c t" . gtags-find-tag)
-  ("C-x b" . consult-buffer))
+  ("C-x b" . consult-buffer)
+  ("C-c x" . consult-complex-command))
 
 (use-package yasnippet
   :diminish yas-minor-mode
@@ -627,7 +678,8 @@ or the current line if there is no active region."
   :bind
   (:map global-map
 	("s-<down>" . mc/mark-next-like-this)
-	("s-," . mc/mark-all-in-region-regexp)))
+	("s-," . mc/mark-all-in-region-regexp)
+	("s-." . mc/edit-lines)))
 
 (use-package expand-region
   :ensure t
@@ -681,7 +733,11 @@ or the current line if there is no active region."
             #'TeX-revert-document-buffer))
 
 (use-package org-modern
-  :config
+  :commands (org-modern-mode org-modern-agenda)
+  :init
+;  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+  (setq org-modern-todo nil
+        org-modern-variable-pitch nil)
   (global-org-modern-mode))
 
 ;;; ebn-init.el ends here
