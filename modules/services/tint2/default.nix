@@ -15,7 +15,7 @@ in with lib; {
     
     services.dbus = {
       enable = true;
-      packages = [ pkgs.gnome3.dconf ];
+      packages = [ pkgs.dconf ];
     };
 
     systemd.user.services.tint2 = {
