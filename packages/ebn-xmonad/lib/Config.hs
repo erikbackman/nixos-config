@@ -8,7 +8,7 @@ import Config.Keybinds (keybinds)
 import XMonad
 import XMonad.Actions.MessageFeedback
 import XMonad.Actions.SpawnOn (manageSpawn)
-import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
+import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.MultiToggle (mkToggle, single)
@@ -30,7 +30,7 @@ main = xmonad . ewmh . docks $ cfg
         { manageHook = App.manageApps <+> manageSpawn,
           startupHook = myStartupHook,
           modMask = mod4Mask,
-          borderWidth = 2,
+          borderWidth = 1,
           keys = keybinds,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,

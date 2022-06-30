@@ -27,7 +27,7 @@ keybinds conf@XConfig {XMonad.modMask = modm} =
       ((modm .|. shiftMask, xK_c), killAll),
       ((modm, xK_p), spawn launcher),
       ((modm, xK_o), spawn documents),
-      ((modm, xK_6), runOrRaise' editor),
+      ((modm, xK_6), spawn "emacsclient -c"),
       ((modm, xK_7), runOrRaise' browser),
       ((modm, xK_8), runOrRaise' terminal),
       ((modm, xK_space), sendMessage NextLayout),
@@ -41,8 +41,8 @@ keybinds conf@XConfig {XMonad.modMask = modm} =
   where
     restart' = restart "xmonad" True
     terminal = ClassApp "kitty" "kitty"
-    editor = ClassApp "Emacs" "emacs"
-    browser = ClassApp "Brave-browser" "brave"
+    editor = ClassApp "emacsclient" "emacsclient -c"
+    browser = ClassApp "qutebrowser" "qutebrowser"
     launcher = "j4-dmenu-desktop"
     documents = "dmenu-files /home/ebn/Documents/books"
     
