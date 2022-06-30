@@ -1,4 +1,5 @@
 { pkgs, lib, config, ... }: {
+
   networking.hostName = "yggdrasil";
 
   nixpkgs.config.allowUnfree = true;
@@ -14,7 +15,7 @@
   services.redshift = {
     enable = true;
     temperature.night = 3200;
-    temperature.day = 3200;
+    temperature.day = 3400;
     inherit (config location);
   };
 
@@ -26,12 +27,12 @@
 
   windowManager.ebn.xmonad.enable = true;
   windowManager.ebn.stumpwm.enable = false;
-  services.ebn.tint2.enable = false;
+  services.ebn.tint2.enable = true;
   services.ebn.polybar.enable = false;
   services.xserver.enable = true;
   
   services.xserver.displayManager.sessionCommands = ''
-    xrandr --output DP-0 --mode 3440x1440 --rate 99.98
+    xrandr --output DP-0 --mode 3440x1440 --ratefffdsf99.98
     xset r rate 150 25
   '';
  
@@ -93,16 +94,19 @@
     sage
     man-pages
     firefox
-    chromium
     qutebrowser
+    tor
+    tor-browser-bundle-bin
     trash-cli
     spotify
-    e17gtk
     guile_3_0
     texlab
     geogebra6
     gnome.gnome-boxes
     qemu_kvm
+    lxappearance
+    paper-icon-theme
+    paper-gtk-theme
   ] 
   ++ 
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
