@@ -6,10 +6,6 @@
 ;; This is much faster than using set-face-attribute
 (add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
 
-;; (set-face-attribute
-;;  'fixed-pitch nil
-;;  :font (font-spec :family "Sarasa Mono CL" :size 13.5 :weight 'normal))
-
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
@@ -36,7 +32,7 @@
   (interactive)
   (set-face-attribute
    'variable-pitch nil
-   :font (font-spec :family "CMU Concrete" :size 19 :weight 'regular))
+   :font (font-spec :family "CMU Concrete" :size 19 :weight 'regular :slant 'normal))
 
   (set-face-attribute
    'fixed-pitch nil
@@ -56,9 +52,11 @@
   (newline-and-indent))
 
 (defun ebn/kill-dwim ()
+  "Run the command `kill-region' on the current region
+or `kill-line' if there is no active region'"
   (interactive)
   (if (region-active-p)
-      (kill-region (region-beginning) (region-end) nil)
+      (kill-region (region-beginning) (region-end))
     (kill-line)))
 
 (defun ebn/copy-dwim ()
@@ -186,7 +184,8 @@ or the current line if there is no active region."
   (:map minibuffer-mode-map
 	("<DEL>" . ebn/kill-dir-or-char))
   (:map isearch-mode-map
-	("TAB" . isearch-toggle-symbol))
+	("TAB" . isearch-toggle-symbol)
+	("M-q" . isearch-query-replace))
   (:map emacs-lisp-mode-map
 	("C-c C-e" . ebn/eval-and-replace))
   (:map lisp-interaction-mode-map
@@ -200,8 +199,10 @@ or the current line if there is no active region."
 	("C-," . xref-go-back)
 	("C-." . repeat)
 	("C-0" . ebn/back-to-mark)
-	("C-8" . backward-list)
-	("C-9" . forward-list)
+	("C-8" . backward-sexp)
+	("C-9" . forward-sexp)
+	("C-6" . mark-sexp)
+	("C-7" . mark-sexp)
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-<up>" . backward-paragraph)
 	("C-b" . backward-to-word)
@@ -216,6 +217,7 @@ or the current line if there is no active region."
 	("C-x C-r" . undo-redo)
 	("C-j" . join-line)
 	("C-k" . ebn/kill-dwim)
+	("M-w" . ebn/copy-dwim)
 	("C-o" . ebn/open-line-below)
 	("C-t" . transpose-lines)
 	("C-x C-b" . ibuffer)
@@ -230,6 +232,8 @@ or the current line if there is no active region."
 	("M-3" . split-window-right)
 	("M-4" . delete-window)
 	("M-5" . make-frame)
+	("M-<f1>" . (lambda () (interactive) (tab-select 1)))
+	("M-<f2>" . (lambda () (interactive) (tab-select 2)))
 	("M-g M-g" . jump-to-register)
 	("M-i" . back-to-indentation)
 	("M-o" . ebn/open-line-above)
@@ -239,7 +243,6 @@ or the current line if there is no active region."
 	("s-e" . electric-pair-local-mode)
 	("s-l" . ebn/org-open-at-point)
 	("s-r" . replace-string)
-	("M-s-r" . isearch-query-replace)
  	("C-<tab>" . hippie-expand)))
 
 (use-package mindre-theme
@@ -251,9 +254,6 @@ or the current line if there is no active region."
   :config
   (load-theme 'mindre t))
 
-(use-package greymatters-theme
-  :ensure t)
-
 (use-package vterm
   :defer t
   :bind ("C-c C-t" . vterm-other-window))
@@ -261,7 +261,6 @@ or the current line if there is no active region."
 (use-package gtags :ensure nil)
 
 (use-package erc
-  :defer t
   :commands 'erc-tls
   :config
   (set-face-attribute 'erc-prompt-face nil :background nil :foreground "foreground")
@@ -299,13 +298,8 @@ or the current line if there is no active region."
   (setq ibuffer-project-use-cache t)
   :hook ((ibuffer . ebn/ibuffer-setup)))
 
-(use-package elcord
-  :ensure t
-  :commands 'elcord-mode)
-
 (use-package eldoc
   :ensure nil
-  :diminish
   :custom
   (eldoc-echo-area-prefer-doc-buffer nil))
 
@@ -328,7 +322,8 @@ or the current line if there is no active region."
   :commands (org-agenda
 	     org-capture
 	     org-cdlatex-mode)
-  :custom (org-hide-leading-stars nil)
+  :custom
+  (org-hide-leading-stars nil)
   :init (progn
 	  (defun ebn/diary-last-day-of-month (date)
 	    "Return `t` if DATE is the last day of the month."
@@ -389,6 +384,8 @@ or the current line if there is no active region."
 	    (org-babel-do-load-languages 'org-babel-load-languages
 					 '((latex . t)
 					   (emacs-lisp . t)
+					   (haskell . t)
+					   (lisp . t)
 					   (python . t)
 					   (sagemath . t)))
 
@@ -396,6 +393,8 @@ or the current line if there is no active region."
 	    (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
 		  org-capture-templates
 		  '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+		     "* TODO %?\n  %i\n  %a")
+		    ("s" "Someday" entry (file "~/org/someday.org")
 		     "* TODO %?\n  %i\n  %a")
 		    ("j" "Journal" entry (file+datetree "~/org/journal.org")
 		     "* %?\nEntered on %U\n  %i\n  %a")
@@ -579,6 +578,8 @@ or the current line if there is no active region."
   (haskell-mode . eglot-ensure)
   (c-mode . eglot-ensure)
   (python-mode . eglot-ensure)
+  (js-jsx-mode . eglot-ensure)
+  (js-mode . eglot-ensure)
   :custom
   (eglot-autoshutdown t)
   (eglot-autoreconnect nil)
@@ -590,6 +591,7 @@ or the current line if there is no active region."
   :config
   (add-to-list 'eglot-server-programs
 	       '((tex-mode context-mode texinfo-mode bibtex-mode) . ("texlab")))
+
   (define-key eglot-mode-map [remap display-local-help] nil)
 
   :bind (:map eglot-mode-map
@@ -621,7 +623,7 @@ or the current line if there is no active region."
   (setq-local completion-at-point-functions
               (list (cape-super-capf #'cape-dabbrev #'cape-dict #'cape-keyword #'cape-symbol)))
 
-    ;; Silence then pcomplete capf, no errors or messages!
+  ;; Silence then pcomplete capf, no errors or messages!
   (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
 
   ;; Ensure that pcomplete does not write to the buffer
@@ -630,7 +632,6 @@ or the current line if there is no active region."
   
   :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-;  (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-file))
 
@@ -714,13 +715,6 @@ or the current line if there is no active region."
   :ensure t
   :commands 'keycast-mode)
 
-(use-package eww
-  :ensure nil
-  :commands eww
-  :config
-  (setq eww-retrieve-command
-      '("chromium" "--headless" "--dump-dom")))
-
 (use-package pdf-tools
   :ensure t
   :defer t
@@ -734,10 +728,19 @@ or the current line if there is no active region."
 
 (use-package org-modern
   :commands (org-modern-mode org-modern-agenda)
+  :custom
+  (org-modern-table-vertical 1)
+  (org-modern-table-horizontal 1)
+  (org-modern-block nil)
   :init
-;  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (setq org-modern-todo nil
         org-modern-variable-pitch nil)
   (global-org-modern-mode))
+
+(use-package rainbow-mode
+  :commands rainbow-mode)
+
+(use-package package-lint
+  :commands package-lint-current-buffer)
 
 ;;; ebn-init.el ends here
