@@ -41,7 +41,7 @@ min_time = 2000
 format = 'took [$duration]($style) '
 style = 'yellow bold'
 show_milliseconds = false
-disabled = false
+disabled = true
 show_notifications = false
 min_time_to_notify = 45000
 
@@ -386,10 +386,10 @@ detect_files = ['nim.cfg']
 detect_folders = []
 
 [nix_shell]
-format = 'via [$symbol$state( \($name\))]($style) '
-symbol = '❄️  '
-style = 'bold blue'
-impure_msg = 'impure'
+format = 'via [$symbol$state(\($name\))]($style) '
+symbol = ''
+style = 'black'
+impure_msg = ''
 pure_msg = 'pure'
 disabled = false
 
