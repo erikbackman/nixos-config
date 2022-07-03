@@ -6,6 +6,8 @@
 ;; This is much faster than using set-face-attribute
 (add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
 
+;(set-face-attribute 'default nil :font "Iosevka-13.5" :weight 'normal)
+
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
       backup-directory-alist `((".*" . ,temporary-file-directory))
@@ -25,9 +27,9 @@
 
 (global-so-long-mode 1)
 (save-place-mode 1)
-;;; Functions:
-;;; TODO: Move to ebn-core
+;(mouse-avoidance-mode 'cat-and-mouse)
 
+;;; Functions:
 (defun ebn/--setup-variable-fonts ()
   (interactive)
   (set-face-attribute
@@ -138,6 +140,10 @@ or the current line if there is no active region."
     (call-process "xdg-open" nil 0 nil file)
     (message "Opening %s done" file)))
 
+(defun ebn/eval-prev-exp ()
+  (interactive)
+  (unless (null command-history) (eval (car command-history))))
+
 ;;; Packages:
 (use-package emacs
   :init
@@ -178,8 +184,11 @@ or the current line if there is no active region."
 
   :hook (((prog-mode minibuffer-mode) . superword-mode)
 	 ((fundamental-mode prog-mode) . repeat-mode)
-	 (prog-mode . electric-pair-local-mode))
-  
+	 ((emacs-lisp lisp-mode scheme-mode) . prettify-symbols-mode)
+	 (prog-mode . (lambda ()
+			(setq show-trailing-whitespace t)
+			(electric-pair-local-mode))))
+
   :bind
   (:map minibuffer-mode-map
 	("<DEL>" . ebn/kill-dir-or-char))
@@ -197,12 +206,15 @@ or the current line if there is no active region."
 	("<f7>" . call-last-kbd-macro)
 	("<f9>" . kmacro-insert-counter)
 	("C-," . xref-go-back)
-	("C-." . repeat)
+	("C-." . ebn/eval-prev-exp)
 	("C-0" . ebn/back-to-mark)
 	("C-8" . backward-sexp)
 	("C-9" . forward-sexp)
+	;("C-8" . paredit-backward-slurp-sexp)
+	;("C-9" . paredit-forward-slurp-sexp)
+	;("C-7" . paredit-backward-barf-sexp)
+	;("C-0" . paredit-forward-barf-sexp)
 	("C-6" . mark-sexp)
-	("C-7" . mark-sexp)
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-<up>" . backward-paragraph)
 	("C-b" . backward-to-word)
@@ -227,6 +239,9 @@ or the current line if there is no active region."
 	("C-x f" . find-file)
 	("C-x j" . jump-to-register)
 	("C-x k" . kill-current-buffer)
+	("C-x e" . eval-expression)
+	("C-x =" . describe-char)
+	("C-c n a" . org-agenda)
 	("M-1" . delete-other-windows)
 	("M-2" . split-window-below)
 	("M-3" . split-window-right)
@@ -245,18 +260,49 @@ or the current line if there is no active region."
 	("s-r" . replace-string)
  	("C-<tab>" . hippie-expand)))
 
+(use-package debug
+  :defer 10
+  :bind
+    (:map debugger-mode-map
+	("<tab>" . debugger-toggle-locals)))
+
 (use-package mindre-theme
   :ensure nil
   :load-path "themes/"
   :custom
   (mindre-use-more-bold nil)
-  (mindre-use-faded-lisp-parens t)
+  (mindre-use-faded-parens t)
   :config
   (load-theme 'mindre t))
+
+(use-package hippie-exp
+  :ensure nil
+  :bind ([remap dabbrev-expand] . hippie-expand)
+  :commands (hippie-expand)
+  :config
+  (setq hippie-expand-try-functions-list
+        '(try-expand-dabbrev
+          try-expand-dabbrev-all-buffers
+          try-expand-dabbrev-from-kill
+          try-complete-lisp-symbol-partially
+          try-complete-lisp-symbol
+          try-complete-file-name-partially
+          try-complete-file-name
+          try-expand-all-abbrevs
+          try-expand-list
+          try-expand-line)))
 
 (use-package vterm
   :defer t
   :bind ("C-c C-t" . vterm-other-window))
+
+(use-package save-hist
+  :ensure nil
+  :defer 10
+  :init
+  (savehist-mode 1)
+  :config
+  (setq history-length 10))
 
 (use-package gtags :ensure nil)
 
@@ -310,10 +356,11 @@ or the current line if there is no active region."
 	dired-recursive-deletes t
 	dired-dwim-target t
 	delete-by-moving-to-trash t)
-  :bind*			    
+  :bind*
   (:map dired-mode-map
 	("-" . ebn/dired-up-directory)
 	("o" . ebn/dired-open-file)
+	("q" . (lambda () (interactive) (quit-window t)))
 	("e" . wdired-change-to-wdired-mode)))
 
 ;;; Org:
@@ -335,6 +382,7 @@ or the current line if there is no active region."
 	      (= day last-day-of-month))))
 
   :config (progn
+	    (require 'org-mouse)
 	    (defun ebn/org-eval-block ()
 	      "Wrapper around org-ctrl-c-ctrl-c that previews latex."
 	      (interactive)
@@ -379,34 +427,49 @@ or the current line if there is no active region."
 		  '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 		    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-	    
+
 	    ;; Org-babel languages
 	    (org-babel-do-load-languages 'org-babel-load-languages
 					 '((latex . t)
 					   (emacs-lisp . t)
 					   (haskell . t)
 					   (lisp . t)
+					   (calc . t)
+					   (maxima . t)
 					   (python . t)
 					   (sagemath . t)))
 
 	    ;; Org-agenda
 	    (setq org-agenda-files '("gtd.org" "someday.org" "tickler.org")
+		  org-agenda-include-diary t
 		  org-capture-templates
-		  '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+		  '(("i" "Inbox" entry (file "~/org/inbox.org"))
+		    ("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
 		     "* TODO %?\n  %i\n  %a")
 		    ("s" "Someday" entry (file "~/org/someday.org")
 		     "* TODO %?\n  %i\n  %a")
-		    ("j" "Journal" entry (file+datetree "~/org/journal.org")
-		     "* %?\nEntered on %U\n  %i\n  %a")
-		    ("r" "Roam node" function #'org-roam-capture))))
+		    ("r" "Roam node" function #'org-roam-capture)
+		    ("j" "Journal: Today" function #'org-roam-dailies-capture-today)
+		    ("J" "Journal: Tomorrow" function #'org-roam-dailies-capture-tomorrow)
+		    ("d" "Journal: Date" function #'org-roam-dailies-capture-date))
+		  org-refile-targets
+		  '((nil :maxlevel . 3)
+		    (org-agenda-files :maxlevel . 3)))
+
+	    (defun ebn/rectangle-number-lines ()
+	      (interactive)
+	      (rectangle-number-lines (region-beginning) (region-end) 1 "%s. ")))
 
   :bind*
   (:map org-mode-map
 	("C-<return>" . org-meta-return)
 	("C-c h" . consult-org-heading)
 	("C-j" . join-line)
+	("C-x r N" . ebn/rectangle-number-lines)
 	("C-x C-e" . ebn/org-eval-block))
-  
+  (:map global-map
+	("C-c n n" . org-capture))
+
   :hook ((org-mode . (lambda ()
 		       (setq line-spacing .2)
 		       (setq cursor-type 'box)
@@ -435,16 +498,20 @@ or the current line if there is no active region."
 				 "#+title: ${title}")))
 		  (mapconcat 'identity options "\n")))
       :unnarrowed t)))
-
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
 	 ("C-c n g" . org-roam-graph)
-	 ("C-c n i" . org-roam-node-insert)
-	 ("C-c n c" . org-roam-capture)
-	 ("C-c n j" . org-roam-dailies-capture-today))
+	 ("C-c n c" . org-roam-capture))
   :config
-  (org-roam-db-autosync-mode)
-  (require 'org-roam-protocol))
+  (org-roam-db-autosync-mode))
+
+(use-package org-download
+  :commands (org-mode org-download-clipboard)
+  :custom
+  (org-download-screenshot-method "flameshot gui -s --raw > %s")
+  :bind ("<f8>" . org-download-screenshot))
 
 (use-package ob-sagemath
   :ensure t
@@ -454,7 +521,7 @@ or the current line if there is no active region."
     (setq org-babel-default-header-args:sage
 	  '((:session . t)
 	    (:results . "drawer replace")))
-    
+
     (with-eval-after-load "org"
       (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
     (setq org-confirm-babel-evaluate nil
@@ -494,7 +561,7 @@ or the current line if there is no active region."
     (haskell-indentation-mode)
     (electric-pair-mode))
   (add-hook 'haskell-mode-hook #'ebn/haskell-mode-setup)
-  
+
   :custom
   (haskell-process-type 'cabal-repl)
   (haskell-process-load-or-reload-prompt nil)
@@ -502,7 +569,7 @@ or the current line if there is no active region."
   (haskell-process-log t)
   (haskell-interactive-popup-errors nil)
   (haskell-font-lock-symbols t)
-  
+
   :config
   (defun haskell-mode-after-save-handler ()
     (let ((inhibit-message t))
@@ -568,6 +635,7 @@ or the current line if there is no active region."
 		  (flyspell-mode)
 		  (LaTeX-math-mode)
 		  (turn-on-cdlatex)
+		  (yas-minor-mode-on)
 		  (eglot-ensure)
 		  (ebn/--setup-variable-fonts))))
 
@@ -587,7 +655,7 @@ or the current line if there is no active region."
   (eldoc-idle-delay 1)
   (eldoc-echo-area-display-truncation-message nil)
   (eldoc-echo-area-use-multiline-p 2)
-  
+
   :config
   (add-to-list 'eglot-server-programs
 	       '((tex-mode context-mode texinfo-mode bibtex-mode) . ("texlab")))
@@ -629,41 +697,39 @@ or the current line if there is no active region."
   ;; Ensure that pcomplete does not write to the buffer
   ;; and behaves as a pure `completion-at-point-function'.
   (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
-  
+
   :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-file))
 
 (use-package vertico
-  :config
-  (vertico-mode))
-
-(use-package orderless
-  :defer 10
   :init
-  (setq completion-styles '(orderless)
-	completion-category-defaults nil
-	orderless-skip-highlighting nil
-	completion-category-overrides '((file (styles partial-completion)))))
+  (use-package orderless
+    :commands (orderless)
+    :custom (completion-styles '(orderless)))
 
-(use-package consult
+  (use-package consult
+    :init
+    (setq consult-preview-key nil)
+    :bind
+    ("C-c r" . consult-recent-file)
+    ("C-c f" . consult-ripgrep)
+    ("C-c l" . consult-line)
+    ("C-c i" . consult-imenu)
+    ("C-c t" . gtags-find-tag)
+    ("C-x b" . consult-buffer)
+    ("C-c x" . consult-complex-command)
+    (:map comint-mode-map
+	  ("C-c C-l" . consult-history)))
   :config
-  (setq consult-preview-key nil)
-  (recentf-mode)
-  :bind
-  ("C-c r" . consult-recent-file)
-  ("C-c f" . consult-ripgrep)
-  ("C-c l" . consult-line)
-  ("C-c i" . consult-imenu)
-  ("C-c t" . gtags-find-tag)
-  ("C-x b" . consult-buffer)
-  ("C-c x" . consult-complex-command))
+  (recentf-mode t)
+  (vertico-mode t))
 
 (use-package yasnippet
-  :diminish yas-minor-mode
-  :defer t
-  :hook ((org-mode tex-mode prog-mode) . yas-minor-mode)
+  :defer 10
+  :commands yas-minor-mode-on
+  :hook ((org-mode prog-mode) . #'yas-minor-mode-on)
   :config
   (yas-reload-all))
 
@@ -671,7 +737,9 @@ or the current line if there is no active region."
 (use-package envrc
   :diminish
   :config
-  :hook (prog-mode . envrc-global-mode))
+  (add-hook 'envrc-reload-hook #'eglot-reconnect)
+  :hook
+  (prog-mode . envrc-global-mode))
 
 ;;; Better editing
 (use-package multiple-cursors
@@ -693,8 +761,9 @@ or the current line if there is no active region."
   :diminish
   :hook ((scheme-mode emacs-lisp-mode) . enable-paredit-mode)
   :bind (:map paredit-mode-map
-	      ("M-<left>" . paredit-backward-slurp-sexp)
-	      ("M-<right>" . paredit-backward-barf-sexp)))
+	      ("M-<left>" . paredit-backward-barf-sexp)
+	      ("M-<right>" . paredit-forward-barf-sexp)
+	      ("C-c w" . (lambda () (interactive) (paredit-wrap-round 4)))))
 
 (use-package avy
   :ensure t
@@ -707,12 +776,12 @@ or the current line if there is no active region."
   ("M-g g" . avy-goto-line)
   ("M-g c" . avy-goto-char-in-line)
   ("M-g m" . avy-move-line)
-  ("M-s" . avy-goto-char-in-line)
   ("C-ö" . avy-goto-char-timer))
 
 ;;; Misc
 (use-package keycast
   :ensure t
+  :defer 10
   :commands 'keycast-mode)
 
 (use-package pdf-tools
@@ -731,7 +800,7 @@ or the current line if there is no active region."
   :custom
   (org-modern-table-vertical 1)
   (org-modern-table-horizontal 1)
-  (org-modern-block nil)
+  (org-modern-block t)
   :init
   (setq org-modern-todo nil
         org-modern-variable-pitch nil)
@@ -741,6 +810,29 @@ or the current line if there is no active region."
   :commands rainbow-mode)
 
 (use-package package-lint
+  :disabled
   :commands package-lint-current-buffer)
+
+(use-package clipmon
+  :defer 10
+  :commands clipmon-mode-start)
+
+(use-package sv-kalender
+  :load-path "lisp/sv-kalender/")
+
+(use-package focus
+  :disabled
+  :commands focus-mode
+  :config
+  (add-to-list 'focus-mode-to-thing '(emacs-lisp-mode . list))
+  (add-to-list 'focus-mode-to-thing '(scheme-mode . list)))
+
+(use-package imaxima
+  :disabled
+  :ensure nil
+  :commands (maxima imaxima)
+  :init
+  (setq imaxima-scale-factor 1.5
+	maxima-command "maxima"))
 
 ;;; ebn-init.el ends here
