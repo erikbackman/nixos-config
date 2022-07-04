@@ -758,7 +758,12 @@ or the current line if there is no active region."
 
 (use-package paredit
   :ensure t
-  :diminish
+  :config
+  (defun ebn/paredit-semicolon (f &rest args)
+    (if (region-active-p)
+	(comment-region (region-beginning) (region-end))
+      (apply f args)))
+  (advice-add 'paredit-semicolon :around #'ebn/paredit-semicolon)
   :hook ((scheme-mode emacs-lisp-mode) . enable-paredit-mode)
   :bind (:map paredit-mode-map
 	      ("M-<left>" . paredit-backward-barf-sexp)
