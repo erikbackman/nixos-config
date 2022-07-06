@@ -34,7 +34,7 @@ main = xmonad . ewmh . docks $ cfg
           keys = keybinds,
           handleEventHook = handleEventHook def <+> fullscreenEventHook,
           layoutHook = myLayouts,
-          focusedBorderColor = "#2e3338",
+          focusedBorderColor = "#000",
           normalBorderColor = "#B0BEC5",
           workspaces = workspaceIds
         }
@@ -62,7 +62,7 @@ myLayouts =
   avoidStruts
     . configurableNavigation noNavigateBorders
     --    . simpleDeco shrinkText (def { decoWidth = 100 })
-    . gapSpaced
+--    . gapSpaced
     --    . smartBorders
     . fullScreenToggle
     . comLayout

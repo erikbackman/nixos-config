@@ -40,7 +40,7 @@ keybinds conf@XConfig {XMonad.modMask = modm} =
       <> switchWsById
   where
     restart' = restart "xmonad" True
-    terminal = ClassApp "kitty" "kitty"
+    terminal = ClassApp "urxvt" "urxvt"
     editor = ClassApp "emacsclient" "emacsclient -c"
     browser = ClassApp "qutebrowser" "qutebrowser"
     launcher = "j4-dmenu-desktop"

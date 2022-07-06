@@ -39,8 +39,9 @@ in {
       j4-dmenu-desktop
       dmenu
       (pkgs.writeScriptBin "dmenu-files" (builtins.readFile ./scripts/dmenu_files.sh))
+      rxvt-unicode
     ];
-    
+
     services = {
       xserver = {
         enable = true;
