@@ -6,12 +6,13 @@
 
   programs.steam.enable = true;
   programs.ebn.nvim.enable = true;
-  programs.ebn.kitty.enable = true;
+  programs.ebn.kitty.enable = false;
   programs.ebn.bash.enable = true;
-  programs.ebn.bash.starship.enable = true;
+  programs.ebn.bash.starship.enable = false;
   programs.ebn.emacs.enable = true;
   programs.ebn.emacs.package = pkgs.emacsNativeComp;
 
+  services.urxvtd.enable = true;
   services.redshift = {
     enable = true;
     temperature.night = 3200;
@@ -30,12 +31,61 @@
   services.ebn.tint2.enable = true;
   services.ebn.polybar.enable = false;
   services.xserver.enable = true;
-  
+
   services.xserver.displayManager.sessionCommands = ''
-    xrandr --output DP-0 --mode 3440x1440 --ratefffdsf99.98
+    xrandr --output DP-0 --mode 3440x1440 --rate 99.98
     xset r rate 150 25
+    ${pkgs.xorg.xrdb}/bin/xrdb -merge <${pkgs.writeText "Xresources" ''
+      Emacs.menuBar: false
+      Emacs.toolBar: false
+      Emacs.verticalScrollBars: false
+      Xft.dpi: 96
+      URxvt*geometry: 240x84
+      URxvt.font: xft:Iosevka:size=13
+      URxvt.scrollBar: false
+      URxvt.clipboard.autocopy: true
+      URxvt.keysym.M-c: perl:clipboard:copy
+      URxvt.keysym.M-v: perl:clipboard:paste
+
+      ! special
+      *.foreground:   #2e3338
+      *.background:   #f7f7f7
+      *.cursorColor:  #464646
+
+      ! black
+      *.color0:       #101010
+      *.color8:       #2e3338
+
+      ! red
+      *.color1:       #7c7c7c
+      *.color9:       #7c7c7c
+
+      ! green
+      *.color2:       #8e8e8e
+      *.color10:      #8e8e8e
+
+      ! yellow
+      *.color3:       #a0a0a0
+      *.color11:      #a0a0a0
+
+      ! blue
+      *.color4:       #525252
+      *.color12:      #525252
+
+      ! magenta
+      *.color5:       #5c3e99
+      *.color13:      #5c3e99
+
+      ! cyan
+      *.color6:       #868686
+      *.color14:      #868686
+
+      ! white
+      *.color7:       #b9b9b9
+      *.color15:      #f7f7f7
+    ''}
   '';
- 
+
   services.ebn.syncthing.enable = true;
   services.ebn.pulseeffects.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -67,10 +117,10 @@
   ];
 
   # environment.variables.WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # nyxt
-  
+
   environment.systemPackages = with pkgs; [
     zathura
-    #maxima
+    maxima
     #wxmaxima
     texlive.combined.scheme-full
     libreoffice
@@ -107,8 +157,9 @@
     lxappearance
     paper-icon-theme
     paper-gtk-theme
-  ] 
-  ++ 
+    lounge-gtk-theme
+  ]
+  ++
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
 
   system.stateVersion = "20.03";
