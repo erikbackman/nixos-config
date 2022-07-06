@@ -4,9 +4,7 @@
 
 ;;; Fonts:
 ;; This is much faster than using set-face-attribute
-(add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
-
-;(set-face-attribute 'default nil :font "Iosevka-13.5" :weight 'normal)
+(add-to-list 'default-frame-alist '(font . "Iosevka-13"))
 
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
@@ -38,7 +36,12 @@
 
   (set-face-attribute
    'fixed-pitch nil
-   :font (font-spec :family "Sarasa Mono CL" :size 13.5)))
+   :font (font-spec :family "Iosevka" :size 17)))
+
+(defun ebn/advice-unadvice (sym)
+  "Remove all advices from symbol SYM."
+  (interactive "aFunction symbol: ")
+  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
 (defun ebn/open-line-below ()
   "Open a newline below current line."
@@ -171,7 +174,8 @@ or the current line if there is no active region."
 
   (defun ebn/back-to-mark ()
     (interactive)
-    (set-mark-command 0))
+    (set-mark-command 0)
+    (pulse-momentary-highlight-one-line))
 
   :custom
   (delete-by-moving-to-trash t)
@@ -203,17 +207,14 @@ or the current line if there is no active region."
 	("<f10>" . kmacro-start-macro)
 	("<f11>" . kmacro-end-macro)
 	("<f12>" . call-last-kbd-macro)
-	("<f7>" . call-last-kbd-macro)
 	("<f9>" . kmacro-insert-counter)
+	("<f6>" . eval-defun)
+	("<f7>" . eval-last-sexp)
 	("C-," . xref-go-back)
-	("C-." . ebn/eval-prev-exp)
+	("C-." . repeat)
 	("C-0" . ebn/back-to-mark)
 	("C-8" . backward-sexp)
 	("C-9" . forward-sexp)
-	;("C-8" . paredit-backward-slurp-sexp)
-	;("C-9" . paredit-forward-slurp-sexp)
-	;("C-7" . paredit-backward-barf-sexp)
-	;("C-0" . paredit-forward-barf-sexp)
 	("C-6" . mark-sexp)
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-<up>" . backward-paragraph)
@@ -242,6 +243,7 @@ or the current line if there is no active region."
 	("C-x e" . eval-expression)
 	("C-x =" . describe-char)
 	("C-c n a" . org-agenda)
+	("C-c C-b" . eval-buffer)
 	("M-1" . delete-other-windows)
 	("M-2" . split-window-below)
 	("M-3" . split-window-right)
@@ -261,6 +263,7 @@ or the current line if there is no active region."
  	("C-<tab>" . hippie-expand)))
 
 (use-package debug
+  :ensure nil
   :defer 10
   :bind
     (:map debugger-mode-map
@@ -271,7 +274,7 @@ or the current line if there is no active region."
   :load-path "themes/"
   :custom
   (mindre-use-more-bold nil)
-  (mindre-use-faded-parens t)
+  (mindre-use-faded-lisp-parens t)
   :config
   (load-theme 'mindre t))
 
@@ -329,7 +332,8 @@ or the current line if there is no active region."
 	  help-mode
 	  compilation-mode
 	  sage-shell-mode
-	  vterm-mode))
+	  vterm-mode
+	  inferior-emacs-lisp-mode))
   (popper-mode)
   (popper-echo-mode)
   :bind* ("C-å" . popper-toggle-type)
@@ -369,8 +373,6 @@ or the current line if there is no active region."
   :commands (org-agenda
 	     org-capture
 	     org-cdlatex-mode)
-  :custom
-  (org-hide-leading-stars nil)
   :init (progn
 	  (defun ebn/diary-last-day-of-month (date)
 	    "Return `t` if DATE is the last day of the month."
@@ -402,7 +404,8 @@ or the current line if there is no active region."
 		  org-fontify-quote-and-verse-blocks t
 		  org-startup-folded t
 		  org-hide-leading-stars t
-		  org-cycle-separator-lines -1
+		  org-use-speed-commands t
+		  org-cycle-separator-lines 2
 		  org-catch-invisible-edits 'error
 		  org-ctrl-k-protect-subtree t
 		  org-image-actual-width nil
@@ -539,7 +542,8 @@ or the current line if there is no active region."
 					 (setq-local prettify-symbols-alist
 						     '(("lambda" . 955)
 						       ("beta" . 120573)
-						       ("alpha" . 120572))))))
+						       ("alpha" . 120572)))
+					 (sage-shell-view-mode))))
 
 ;;; Languages:
 (use-package sh-mode
@@ -592,6 +596,21 @@ or the current line if there is no active region."
 (use-package geiser-guile
   :ensure t
   :defer t)
+
+(use-package geiser-racket
+  :ensure t
+  :disabled t
+  :defer t)
+
+(use-package racket-mode
+  :config
+  (defun setup-racket-eldoc ()
+    (eldoc-mode +1)
+    (setq eldoc-documentation-function #'racket-xp-eldoc-function))
+
+  (add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
+  (add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
+  (add-hook 'racket-mode-hook #'setup-racket-eldoc))
 
 (use-package yapfify
   :ensure t
@@ -739,7 +758,7 @@ or the current line if there is no active region."
   :config
   (add-hook 'envrc-reload-hook #'eglot-reconnect)
   :hook
-  (prog-mode . envrc-global-mode))
+  (prog-mode . envrc-mode))
 
 ;;; Better editing
 (use-package multiple-cursors
@@ -764,10 +783,12 @@ or the current line if there is no active region."
 	(comment-region (region-beginning) (region-end))
       (apply f args)))
   (advice-add 'paredit-semicolon :around #'ebn/paredit-semicolon)
-  :hook ((scheme-mode emacs-lisp-mode) . enable-paredit-mode)
+  :hook ((scheme-mode emacs-lisp-mode racket-mode racket-repl-mode) . enable-paredit-mode)
   :bind (:map paredit-mode-map
 	      ("M-<left>" . paredit-backward-barf-sexp)
 	      ("M-<right>" . paredit-forward-barf-sexp)
+	      ("M-7" . paredit-wrap-curly)
+	      ("M-8" . paredit-wrap-round)
 	      ("C-c w" . (lambda () (interactive) (paredit-wrap-round 4)))))
 
 (use-package avy
@@ -807,7 +828,7 @@ or the current line if there is no active region."
   (org-modern-table-horizontal 1)
   (org-modern-block t)
   :init
-  (setq org-modern-todo nil
+  (setq org-modern-todo t
         org-modern-variable-pitch nil)
   (global-org-modern-mode))
 
@@ -839,5 +860,8 @@ or the current line if there is no active region."
   :init
   (setq imaxima-scale-factor 1.5
 	maxima-command "maxima"))
+
+(use-package olivetti
+  :commands olivetti-mode)
 
 ;;; ebn-init.el ends here
