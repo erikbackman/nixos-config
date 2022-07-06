@@ -17,9 +17,7 @@
 |------------|-------------|
 | *OS*       | NixOS       |
 | *Shell*    | bash        |
-| *Prompt*   | Starship    |
-| *Terminal* | Kitty       |
+| *Terminal* | urxvt       |
 | *WM*       | xmonad      |
-| *Font*     | Victor Mono |
+| *Font*     | Iosevka     |
 | *Editor*   | Emacs       |
-| *Top*      | Bottom      |
