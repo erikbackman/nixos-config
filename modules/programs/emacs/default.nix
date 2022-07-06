@@ -128,6 +128,9 @@ in {
 
       # python
       yapf
+
+      # racket
+      racket
     ];
   };
 }
