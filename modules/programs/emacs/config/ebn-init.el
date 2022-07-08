@@ -356,16 +356,21 @@ or the current line if there is no active region."
 (use-package dired
   :ensure nil
   :config
+  (require 'dired-x)
   (setq dired-recursive-copies t
 	dired-recursive-deletes t
 	dired-dwim-target t
+	dired-omit-files "^\\..*$"
 	delete-by-moving-to-trash t)
+  (add-hook 'dired-mode-hook #'dired-omit-mode)
   :bind*
   (:map dired-mode-map
 	("-" . ebn/dired-up-directory)
 	("o" . ebn/dired-open-file)
+	(")" . dired-omit-mode)
 	("q" . (lambda () (interactive) (quit-window t)))
-	("e" . wdired-change-to-wdired-mode)))
+	("e" . wdired-change-to-wdired-mode)
+	("f" . dired-create-empty-file)))
 
 ;;; Org:
 (use-package org
