@@ -292,13 +292,15 @@ or the current line if there is no active region."
   :ensure nil
   :config
   (ebn/def-repeat-map to-word-repeat-map
-		  (("f" . #'forward-to-word)
-		   ("b" . #'backward-to-word))
-		  (:exit-with "RET"))
+		      (("f" . #'forward-to-word)
+		       ("b" . #'backward-to-word))
+		      (:exit-with "RET"))
   (ebn/def-repeat-map forward-word-repeat-map
-		  (("f" . #'forward-word)
-		   ("b" . #'backward-word))
-		  (:exit-with "RET"))
+		      (("f" . #'forward-word)
+		       ("b" . #'backward-word))
+		      (:exit-with "RET"))
+  (ebn/def-repeat-map cycle-tab-repeat-map
+		      (("o" . #'tab-bar-switch-to-tab)))
   :bind (:map isearch-mode-map
 	      ("<down>" . #'isearch-repeat-forward)
 	      ("<up>" . #'isearch-repeat-backward)))
