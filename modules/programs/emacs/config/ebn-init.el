@@ -304,12 +304,6 @@ or the current line if there is no active region."
   (ebn/def-repeat-map downcase-word-repeat-map
 		      :keys ("l" #'downcase-word))
 
-  (ebn/def-repeat-map mark-paragraph-repeat-map
-		      :keys ("h" #'mark-paragraph
-			     "x" #'exchange-point-and-mark
-			     [down] #'next-line
-			     [up] #'previous-line)
-		      :exit-with "RET")
   :bind (:map isearch-mode-map
 	      ("<down>" . #'isearch-repeat-forward)
 	      ("<up>" . #'isearch-repeat-backward)))
