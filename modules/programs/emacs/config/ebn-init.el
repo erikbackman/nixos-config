@@ -43,23 +43,18 @@
   (interactive "aFunction symbol: ")
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
-(defmacro ebn/def-repeat-map (name &rest keys)
+(cl-defmacro ebn/def-repeat-map (name &key keys exit-with)
   (declare (indent 0))
   (let ((def-repeat-map-result nil))
-    (dolist (arg keys)
-      (pcase (car arg)
-	(:exit-with
-	 (push `(define-key ,name (kbd ,(cadr arg)) #'keyboard-quit)
-	       def-repeat-map-result))
-	(_
-	 (dolist (key arg)
-	   (push `(define-key ,name (kbd ,(car key)) ,(cdr key))
-		 def-repeat-map-result)
-	   (push `(put ,(cdr key) 'repeat-map ,name)
-		 def-repeat-map-result)))))
+    (push `(define-key ,name ,(kbd exit-with) #'keyboard-quit)
+	  def-repeat-map-result)
+    (dolist (key (map-pairs keys))
+      (push `(define-key ,name ,(car key) ,(cdr key))
+	    def-repeat-map-result)
+      (push `(put ,(cdr key) 'repeat-map ,name)
+	    def-repeat-map-result))
     `(progn
-       (defvar ,name (make-sparse-keymap)
-	 "Repeat map defined by `def-repeat-map'")
+       (defvar ,name (make-sparse-keymap))
        ,@def-repeat-map-result)))
 
 (defun ebn/open-line-below ()
@@ -292,13 +287,13 @@ or the current line if there is no active region."
   :ensure nil
   :config
   (ebn/def-repeat-map to-word-repeat-map
-		      (("f" . #'forward-to-word)
-		       ("b" . #'backward-to-word))
-		      (:exit-with "RET"))
+		      :keys ("f" #'forward-to-word
+			     "b" #'backward-to-word)
+		      :exit-with "RET")
   (ebn/def-repeat-map forward-word-repeat-map
-		      (("f" . #'forward-word)
-		       ("b" . #'backward-word))
-		      (:exit-with "RET"))
+		      :keys ("f" #'forward-word
+			     "b" #'backward-word)
+		      :exit-with "RET")
   :bind (:map isearch-mode-map
 	      ("<down>" . #'isearch-repeat-forward)
 	      ("<up>" . #'isearch-repeat-backward)))
