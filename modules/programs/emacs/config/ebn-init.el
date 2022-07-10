@@ -25,6 +25,7 @@
 
 (global-so-long-mode 1)
 (save-place-mode 1)
+(line-number-mode -1)
 ;(mouse-avoidance-mode 'cat-and-mouse)
 
 ;;; Functions:
@@ -291,9 +292,23 @@ or the current line if there is no active region."
 		      :keys ("f" #'forward-to-word
 			     "b" #'backward-to-word)
 		      :exit-with "RET")
+
   (ebn/def-repeat-map forward-word-repeat-map
 		      :keys ("f" #'forward-word
 			     "b" #'backward-word)
+		      :exit-with "RET")
+
+  (ebn/def-repeat-map capitalize-word-repeat-map
+		      :keys ("c" #'capitalize-word))
+
+  (ebn/def-repeat-map downcase-word-repeat-map
+		      :keys ("l" #'downcase-word))
+
+  (ebn/def-repeat-map mark-paragraph-repeat-map
+		      :keys ("h" #'mark-paragraph
+			     "x" #'exchange-point-and-mark
+			     [down] #'next-line
+			     [up] #'previous-line)
 		      :exit-with "RET")
   :bind (:map isearch-mode-map
 	      ("<down>" . #'isearch-repeat-forward)
