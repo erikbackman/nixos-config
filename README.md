@@ -8,16 +8,3 @@
 
 
 ![](../assets/nixos-config-ss02.png)
-
-
-**Old screenshots**
-![](../assets/v6-semi-clean.png)
-
-|            |             |
-|------------|-------------|
-| *OS*       | NixOS       |
-| *Shell*    | bash        |
-| *Terminal* | urxvt       |
-| *WM*       | xmonad      |
-| *Font*     | Iosevka     |
-| *Editor*   | Emacs       |
