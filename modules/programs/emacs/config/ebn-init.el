@@ -46,8 +46,9 @@
 (cl-defmacro ebn/def-repeat-map (name &key keys exit-with)
   (declare (indent 0))
   (let ((def-repeat-map-result nil))
-    (push `(define-key ,name ,(kbd exit-with) #'keyboard-quit)
-	  def-repeat-map-result)
+    (when exit-with
+      (push `(define-key ,name ,(kbd exit-with) #'keyboard-quit)
+	    def-repeat-map-result))
     (dolist (key (map-pairs keys))
       (push `(define-key ,name ,(car key) ,(cdr key))
 	    def-repeat-map-result)
