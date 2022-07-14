@@ -12,6 +12,8 @@
   programs.ebn.emacs.enable = true;
   programs.ebn.emacs.package = pkgs.emacsNativeComp;
 
+  gtk.iconCache.enable = true;
+
   services.urxvtd.enable = true;
   services.redshift = {
     enable = true;
@@ -21,6 +23,14 @@
   };
 
   services.earlyoom.enable = true;
+
+  # GnuPG
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+  services.pcscd.enable = true;
+
   services.clamav = {
     daemon.enable = true;
     updater.enable = true;
@@ -34,6 +44,7 @@
 
   services.xserver.displayManager.sessionCommands = ''
     xrandr --output DP-0 --mode 3440x1440 --rate 99.98
+    hsetroot -solid '#ebebeb'
     xset r rate 150 25
     ${pkgs.xorg.xrdb}/bin/xrdb -merge <${pkgs.writeText "Xresources" ''
       Emacs.menuBar: false
@@ -91,7 +102,7 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.layout = "se";
   services.fstrim.enable = true;
-  
+
   fonts.fonts = with pkgs; [
     #etBook
     eb-garamond
@@ -156,8 +167,12 @@
     qemu_kvm
     lxappearance
     paper-icon-theme
-    paper-gtk-theme
+    papirus-icon-theme
     lounge-gtk-theme
+    pinentry
+    pinentry-gtk2
+    maim
+    hsetroot
   ]
   ++
   lib.lists.optional (! config.desktopEnvironment.ebn.gnome.enable) claws-mail;
