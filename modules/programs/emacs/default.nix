@@ -55,18 +55,18 @@ in {
     programs.git = {
       enable = true;
       config = {
-        init.defaultBranch = "main";
-        core.editor = "emacs -nw";
+        init.defaultBranch = "master";
+        core.editor = "emacsclient -nw -a 'emacs -nw'";
       };
     };
- 
+
     services.emacs = {
       enable = true;
       install = true;
       package = emacsPackage;
       defaultEditor = true;
     };
-    
+
     environment.systemPackages = with pkgs; [
       emacsPackage
 
@@ -85,7 +85,7 @@ in {
       ## Package dependencies
       # Spellchecking
       (aspellWithDicts (ds: with ds; [ en en-computers en-science sv ]))
-      
+
       # Grammar
       languagetool
 
@@ -114,6 +114,7 @@ in {
       # emacs everywhere
       xorg.xwininfo
       xclip
+      xdotool
 
       # ob-jupyter
       #(python38.withPackages(ps: [ ps.jupyter ps.python-lsp-server ]))

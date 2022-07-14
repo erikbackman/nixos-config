@@ -4,7 +4,8 @@
 
 ;;; Fonts:
 ;; This is much faster than using set-face-attribute
-(add-to-list 'default-frame-alist '(font . "Iosevka-13"))
+(add-to-list 'default-frame-alist '(font . "Sarasa Mono CL-13.5"))
+(split-window-right (/ (window-width) 3))
 
 ;;; Better defaults:
 (setq ring-bell-function 'ignore
@@ -33,11 +34,11 @@
   (interactive)
   (set-face-attribute
    'variable-pitch nil
-   :font (font-spec :family "CMU Concrete" :size 19 :weight 'regular :slant 'normal))
+   :font (font-spec :family "Sarasa Mono CL" :size 18 :weight 'regular :slant 'normal))
 
   (set-face-attribute
    'fixed-pitch nil
-   :font (font-spec :family "Iosevka" :size 17)))
+   :font (font-spec :family "Sarasa Mono CL" :size 18)))
 
 (defun ebn/advice-unadvice (sym)
   "Remove all advices from symbol SYM."
@@ -53,7 +54,7 @@
     (dolist (key (map-pairs keys))
       (push `(define-key ,name ,(car key) ,(cdr key))
 	    def-repeat-map-result)
-      (push `(put ,(cdr key) 'repeat-map ,name)
+      (push `(put ,(cdr key) 'repeat-map ',name)
 	    def-repeat-map-result))
     `(progn
        (defvar ,name (make-sparse-keymap))
@@ -125,11 +126,13 @@ or the current line if there is no active region."
   (interactive "sCommand: ")
   (shell-command-on-region (region-beginning) (region-end) command nil t))
 
-(defun ebn/comment-paragraph ()
+(defun ebn/comment-dwim ()
   (interactive)
-  (save-excursion
-    (mark-paragraph)
-    (comment-or-uncomment-region (region-beginning) (region-end))))
+  (if (region-active-p)
+      (comment-or-uncomment-region (region-beginning) (region-end))
+    (save-excursion
+      (mark-paragraph)
+      (comment-or-uncomment-region (region-beginning) (region-end)))))
 
 (defun ebn/bury-scratch-buffer ()
   (if (string= (buffer-name) "*scratch*")
@@ -235,7 +238,7 @@ or the current line if there is no active region."
 	("C-<down>" . ebn/forward-to-paragraph)
 	("C-<up>" . backward-paragraph)
 	("C-b" . backward-to-word)
-	("C-c C-c" . ebn/comment-paragraph)
+	("C-c C-c" . ebn/comment-dwim)
 	("C-c d" . flymake-show-buffer-diagnostics)
 	("C-f" . forward-to-word)
 	("C-h ," . xref-find-definitions)
@@ -249,7 +252,7 @@ or the current line if there is no active region."
 	("M-w" . ebn/copy-dwim)
 	("C-o" . ebn/open-line-below)
 	("C-t" . transpose-lines)
-	("C-x C-b" . ibuffer)
+	("C-x C-b" . ibuffer-other-window)
 	("C-x C-e" . eval-last-sexp)
 	("C-x C-f" . find-file-other-window)
 	("C-x SPC" . rectangle-mark-mode)
@@ -315,7 +318,13 @@ or the current line if there is no active region."
   (mindre-use-more-bold nil)
   (mindre-use-faded-lisp-parens t)
   :config
-  (load-theme 'mindre t))
+  (mindre-with-color-variables
+    (setq highlight-parentheses-colors `("#AB47BC")))
+  (load-theme 'mindre t)
+					;  (set-face-attribute 'mindre-keyword nil :foreground "#4f4472")
+;  (set-face-attribute 'mindre-block nil :background "#eeeeee")
+  (set-face-attribute 'mindre-bar nil :height 0.9)
+  (set-face-attribute 'mindre-bar-inactive nil :height 0.9))
 
 (use-package hippie-exp
   :ensure nil
@@ -349,9 +358,17 @@ or the current line if there is no active region."
 (use-package gtags :ensure nil)
 
 (use-package erc
-  :commands 'erc-tls
+  :commands (erc-tls ebn/erc-connect)
   :config
-  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "foreground")
+  (setq erc-server "irc.libera.chat"
+	erc-port 6697
+	erc-autojoin-channels-alist
+	'((".*" "#emacs" "#systemcrafters" "#gentoo"))
+	erc-hide-list '("JOIN" "PART" "QUIT")
+        erc-nick "ebn"
+	erc-prompt-for-password nil)
+  (setq auth-sources '("~/.authinfo.gpg"))
+  (set-face-attribute 'erc-prompt-face nil :background nil :foreground "#000")
   (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))))
 
 (use-package popper
@@ -399,7 +416,8 @@ or the current line if there is no active region."
   (setq dired-recursive-copies t
 	dired-recursive-deletes t
 	dired-dwim-target t
-	dired-omit-files "^\\..*$"
+					;	dired-omit-files "^\\..*$"
+	dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'"
 	delete-by-moving-to-trash t)
   (add-hook 'dired-mode-hook #'dired-omit-mode)
   :bind*
@@ -482,7 +500,7 @@ or the current line if there is no active region."
 					   (haskell . t)
 					   (lisp . t)
 					   (calc . t)
-					   (maxima . t)
+					   ;(maxima . t)
 					   (python . t)
 					   (sagemath . t)))
 
@@ -545,6 +563,8 @@ or the current line if there is no active region."
 				 "#+title: ${title}")))
 		  (mapconcat 'identity options "\n")))
       :unnarrowed t)))
+;  (org-roam-node-display-template (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-node-display-template "${title}")
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -630,6 +650,7 @@ or the current line if there is no active region."
 
 (use-package agda2
   :ensure nil
+  :disabled
   :init
   (add-to-list 'load-path (shell-command-to-string "agda-mode locate"))
   :mode ("\\agda\\'" . agda2-mode))
@@ -654,7 +675,11 @@ or the current line if there is no active region."
 
   (add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
   (add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
-  (add-hook 'racket-mode-hook #'setup-racket-eldoc))
+  (add-hook 'racket-mode-hook      #'setup-racket-eldoc))
+
+;; (use-package ob-racket
+;;   :disabled
+;;   :commands 'org-ctrl-c-ctrl-c)
 
 (use-package yapfify
   :ensure t
@@ -770,7 +795,7 @@ or the current line if there is no active region."
   :init
   (use-package orderless
     :commands (orderless)
-    :custom (completion-styles '(orderless)))
+    :custom (completion-styles '(orderless flex)))
 
   (use-package consult
     :init
@@ -833,6 +858,8 @@ or the current line if there is no active region."
 	      ("M-<right>" . paredit-forward-barf-sexp)
 	      ("M-7" . paredit-wrap-curly)
 	      ("M-8" . paredit-wrap-round)
+	      ("C-8" . paredit-backward)
+	      ("C-9" . paredit-forward)
 	      ("C-c w" . (lambda () (interactive) (paredit-wrap-round 4)))))
 
 (use-package avy
@@ -871,6 +898,7 @@ or the current line if there is no active region."
   (org-modern-table-vertical 1)
   (org-modern-table-horizontal 1)
   (org-modern-block t)
+
   :init
   (setq org-modern-todo t
         org-modern-variable-pitch nil)
@@ -879,8 +907,12 @@ or the current line if there is no active region."
 (use-package rainbow-mode
   :commands rainbow-mode)
 
+(use-package rainbow-delimiters
+  :disabled)
+
+(use-package highlight-parentheses)
+
 (use-package package-lint
-  :disabled
   :commands package-lint-current-buffer)
 
 (use-package clipmon
@@ -906,6 +938,24 @@ or the current line if there is no active region."
 	maxima-command "maxima"))
 
 (use-package olivetti
+  :disabled
   :commands olivetti-mode)
+
+(use-package emacs-everywhere
+  :disabled
+  :defer 10)
+
+(use-package diredfl
+  :disabled
+  :init
+  (diredfl-global-mode))
+
+(use-package elfeed
+  :commands elfeed
+  :config
+  (setq elfeed-feeds
+	'(("https://sachachua.com/blog/feed/" blog emacs)
+	  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ" emacs))))
+
 
 ;;; ebn-init.el ends here
