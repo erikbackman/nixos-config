@@ -11,8 +11,8 @@ in with lib; {
   config = mkIf cfg.enable {
     fonts.fonts = with pkgs; [
     ];
-    environment.systemPackages = [ pkgs.tint2 pkgs.pasystray pkgs.paper-icon-theme ];
-    
+    environment.systemPackages = [ pkgs.tint2 pkgs.pasystray pkgs.paper-icon-theme pkgs.papirus-icon-theme ];
+
     services.dbus = {
       enable = true;
       packages = [ pkgs.dconf ];
