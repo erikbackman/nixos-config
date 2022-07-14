@@ -358,7 +358,7 @@ or the current line if there is no active region."
 (use-package gtags :ensure nil)
 
 (use-package erc
-  :commands (erc-tls ebn/erc-connect)
+  :commands erc-tls
   :config
   (setq erc-server "irc.libera.chat"
 	erc-port 6697
