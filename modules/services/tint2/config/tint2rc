@@ -7,12 +7,12 @@
 # Backgrounds
 # Background 1: Active taskbar, Button, Clock, Inactive taskbar, Panel, Systray, Tooltip
 rounded = 0
-border_width = 0
-border_sides = 
+border_width = 1
+border_sides = B
 border_content_tint_weight = 0
 background_content_tint_weight = 0
 background_color = #303145 100
-border_color = #000000 0
+border_color = #000000 50
 background_color_hover = #000000 0
 border_color_hover = #000000 0
 background_color_pressed = #000000 0
@@ -130,13 +130,11 @@ mouse_scroll_down = none
 
 #-------------------------------------
 # System tray (notification area)
-
--systray_padding = 2 4 4
--systray_background_id = 7
+systray_padding = 2 4 4
 # systray_padding = 8 12 4
 systray_background_id = 1
 systray_sort = ascending
-sstray_icon_size = 24
+systray_icon_size = 24
 systray_icon_asb = 100 0 0
 systray_monitor = 1
 systray_name_filter =
